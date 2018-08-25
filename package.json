@@ -1,0 +1,25 @@
+{
+  "name": "draftbotv4",
+  "version": "4.0.0",
+  "description": "DraftMan Discord Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discord",
+    "draftman",
+    "commando"
+  ],
+  "author": "DraftMan",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "git+https://github.com/DraftFiles/discord.js.git",
+    "discord.js-commando": "git+https://github.com/DraftFiles/Commando.git",
+    "dotenv": "^6.0.0",
+    "jimp": "^0.3.5",
+    "moment": "^2.22.2",
+    "node-fetch": "^2.2.0",
+    "snekfetch": "^4.0.4"
+  }
+}
