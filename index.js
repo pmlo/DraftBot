@@ -1,6 +1,6 @@
 const { Client } = require('discord.js-commando'),
         path = require('path'),
-        {makeWelcomeImage} = require('./utils.js')
+        {makeWelcomeImage,addRole} = require('./utils.js')
 
 require('dotenv').config()
 
@@ -21,6 +21,7 @@ DraftBot.on('ready', () => {
 
 DraftBot.on('guildMemberAdd', member => {
     makeWelcomeImage(member)
+    addRole('Membre',member)
 })
 
 DraftBot.registry
