@@ -1,5 +1,4 @@
-const {Command} = require('discord.js-commando'), 
-  {addRole} = require('../../utils.js')
+const {Command} = require('discord.js-commando'); 
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
@@ -13,6 +12,6 @@ module.exports = class AvatarCommand extends Command {
   }
 
   run (msg) {
-    return addRole('Membre',msg.member)
+    return msg.reply('nothing to test sorry')
   }
 };
