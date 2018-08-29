@@ -10,7 +10,7 @@ const makeWelcomeImage = async (member) => {
         quantify = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify.fnt')),
         quantify_small = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify2.fnt')),
         opensans = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans.fnt')),
-        mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
+        mask = await Jimp.read('https://www.draftman.fr/uploads/files/1535393097231.png');
     
       avatar.resize(136, Jimp.AUTO);
       mask.resize(136, Jimp.AUTO);
