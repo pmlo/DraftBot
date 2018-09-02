@@ -10,7 +10,7 @@ const makeWelcomeImage = async (member) => {
         quantify = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify.fnt')),
         quantify_small = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify2.fnt')),
         opensans = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans.fnt')),
-        mask = await Jimp.read('https://www.draftman.fr/uploads/files/1535393097231.png');
+        mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
     
       avatar.resize(136, Jimp.AUTO);
       mask.resize(136, Jimp.AUTO);
@@ -30,7 +30,7 @@ const makeWelcomeImage = async (member) => {
         .setDescription(`Faites du bruit pour __**${member.displayName}**__ !`)
         .setImage('attachment://joinimg.png');
 
-        return member.guild.channels.find(c => c.name === 'general').send(`🎉  Bienvenue <@${member.id}>  🎉!`, {embed: newMemberEmbed});
+        return member.guild.channels.find(c => c.name === 'general' || c.name === 'général').send(`🎉  Bienvenue <@${member.id}>  🎉!`, {embed: newMemberEmbed});
     } catch (error) {
       return console.log(error);
     }
