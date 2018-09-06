@@ -6,7 +6,7 @@ module.exports = class PurgeCommand extends Command {
     super(client, {
       name: 'quote',
       memberName: 'quote',
-      group: 'moderation',
+      group: 'utils',
       aliases: ['recup','cite'],
       description: 'Citer un message envoyé',
       examples: ['!quote 5554845515145714'],
