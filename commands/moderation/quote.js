@@ -11,13 +11,11 @@ module.exports = class PurgeCommand extends Command {
       description: 'Citer un message envoyé',
       examples: ['!quote 5554845515145714'],
       guildOnly: true,
-      args: [
-        {
-          key: 'message',
-          prompt: 'Quel message voulez vous citez',
-          type: 'message'
-        }
-      ]
+      args: [{
+        key: 'message',
+        prompt: 'Quel message voulez vous citez',
+        type: 'message'
+      }]
     });
   }
 
