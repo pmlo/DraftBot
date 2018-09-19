@@ -64,12 +64,12 @@ module.exports = class HelpCommand extends Command {
 			try {
 				const body =`${`Pour executer une commande sur  ${msg.guild ? msg.guild.name : 'n\'importe quel serveur'},\n
 							veuillez utiliser ${Command.usage('command', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.\n
-							Par exemple, ${Command.usage('quote', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.`}\n\n
+							Par exemple, ${Command.usage('quote', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.`}\n
 							Utilisez ${this.usage('<commande>', null, null)} pour voir les détails d'une commande.
-							Utilisez ${this.usage('all', null, null)} pour voir la liste de **toutes** les commandes disponibles.\n\n
-							__**${showAll ? 'Toutes les commandes' : `Commandes disponibles : ${msg.guild || 'MP'}`}**__\n\n
+							Utilisez ${this.usage('all', null, null)} pour voir la liste de **toutes** les commandes disponibles.\n
+							__**${showAll ? 'Toutes les commandes' : `Commandes disponibles : ${msg.guild || 'MP'}`}**__\n
 							${(showAll ? groups : groups.filter(grp => grp.commands.some(cmd => cmd.isUsable(msg))))
-								.map(grp => `__${grp.name}__\n
+								.map(grp => `__${grp.name}__
 									${(showAll ? grp.commands : grp.commands.filter(cmd => cmd.isUsable(msg)))
 										.map(cmd => `**${cmd.name}:** ${cmd.description}${cmd.nsfw ? ' (NSFW)' : ''}`).join('\n')
 									}
