@@ -8,6 +8,7 @@ const DraftBot = new Client({
     commandPrefix: '!',
     unknownCommandResponse: false,
     owner: '207190782673813504',
+    invite: 'https://www.draftman.fr/discord',
     disableEveryone: true
 });
 
