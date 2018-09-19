@@ -62,7 +62,7 @@ module.exports = class HelpCommand extends Command {
 			const messages = [];
 
 			try {
-				const body =`${`Pour executer une commande sur  ${msg.guild ? msg.guild.name : 'n\'importe quel serveur'},\n
+				const body =`${`Pour executer une commande sur  ${msg.guild ? msg.guild.name : 'n\'importe quel serveur'},
 							veuillez utiliser ${Command.usage('command', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.\n
 							Par exemple, ${Command.usage('quote', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.`}\n
 							Utilisez ${this.usage('<commande>', null, null)} pour voir les détails d'une commande.
@@ -73,7 +73,7 @@ module.exports = class HelpCommand extends Command {
 									${(showAll ? grp.commands : grp.commands.filter(cmd => cmd.isUsable(msg)))
 										.map(cmd => `**${cmd.name}:** ${cmd.description}${cmd.nsfw ? ' (NSFW)' : ''}`).join('\n')
 									}
-								`).join('\n\n')
+								`).join('\n')
 							}`;
 
 				if(body.length >= 2000) {
