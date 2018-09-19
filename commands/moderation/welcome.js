@@ -7,18 +7,18 @@ module.exports = class PurgeCommand extends Command {
       name: 'welcome',
       memberName: 'welcome',
       group: 'moderation',
-      aliases: ['bvn'],
+      aliases: ['bvn','bienvenue'],
       description: 'Dire bienvenue à un membre',
-      examples: ['!welcome DraftMan'],
+      examples: ['welcome DraftMan'],
       guildOnly: true,
+      userPermissions: ['ADMINISTRATOR'],
       args: [
         {
           key: 'member',
           prompt: 'A quel membre voulez vous souhaiter la bienvenue ?',
           type: 'member'
         }
-      ],
-      userPermissions: ['ADMINISTRATOR']
+      ]
     });
   }
 
