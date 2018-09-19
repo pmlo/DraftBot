@@ -8,7 +8,7 @@ module.exports = class PurgeCommand extends Command {
       group: 'moderation',
       aliases: ['purge','prune', 'delete'],
       description: 'Supprimer des messages en masse',
-      examples: ['!clear 5'],
+      examples: ['clear 5'],
       guildOnly: true,
       args: [
         {

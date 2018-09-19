@@ -9,7 +9,7 @@ module.exports = class InviteCommand extends Command {
       group: 'bot',
       aliases: ['inv', 'link', 'add'],
       description: 'Donne un lien d\'invitation',
-      examples: ['!invite'],
+      examples: ['invite'],
       guildOnly: false
     });
   }

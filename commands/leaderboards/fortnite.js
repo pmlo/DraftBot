@@ -10,7 +10,7 @@ const {get} = require('snekfetch'),
       group: 'leaderboards',
       aliases: ['ftn'],
       description: 'Récupérer les statistiques d\'un joueur fortnite',
-      examples: ['!fortnite DraftMan_Dev pc'],
+      examples: ['fortnite DraftMan_Dev pc'],
       guildOnly: false,
       args: [
         {

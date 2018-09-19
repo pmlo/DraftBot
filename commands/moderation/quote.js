@@ -9,7 +9,7 @@ module.exports = class PurgeCommand extends Command {
       group: 'utils',
       aliases: ['recup','cite'],
       description: 'Citer un message envoyé',
-      examples: ['!quote 5554845515145714'],
+      examples: ['quote 5554845515145714'],
       guildOnly: true,
       args: [{
         key: 'message',
