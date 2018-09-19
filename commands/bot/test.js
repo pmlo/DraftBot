@@ -6,7 +6,7 @@ module.exports = class AvatarCommand extends Command {
       name: 'test',
       memberName: 'test',
       group: 'bot',
-      description: 'Pemret de tester une commande',
+      description: 'Permet de tester une commande',
       guildOnly: true,
     });
   }
