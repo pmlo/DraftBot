@@ -11,21 +11,29 @@ module.exports = class PurgeCommand extends Command {
       description: 'Citer un message envoyé',
       examples: ['quote 5554845515145714'],
       guildOnly: true,
-      args: [{
-        key: 'message',
-        prompt: 'Quel message voulez vous citez',
-        type: 'message'
-      }]
+      args: [
+        {
+          key: 'message',
+          prompt: 'Quel message voulez vous citez',
+          type: 'message'
+        },
+        {
+          key: 'member',
+          prompt: 'A quel membre voulez vous citerle message ?',
+          type: 'member'
+        }
+      ]
     });
   }
 
-  async run (msg, {message}) {
+  async run (msg, {message,member}) {
     const embed = new MessageEmbed()
     .setAuthor(`${msg.author.username} cite:`, msg.author.displayAvatarURL())
     .setColor(0xcd6e57)
     .setDescription(message)
     .setTimestamp(message.createdAt)
     .setFooter(`Dans #${message.channel.name}`, message.author.displayAvatarURL())
-    return msg.reply(embed)
+    msg.delete()
+    return msg.direct(member ? member.user: '',embed)
   }
 };
