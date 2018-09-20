@@ -34,6 +34,6 @@ module.exports = class PurgeCommand extends Command {
     .setTimestamp(message.createdAt)
     .setFooter(`Dans #${message.channel.name}`, message.author.displayAvatarURL())
     msg.delete()
-    return msg.direct(member ? member.user: '',embed)
+    return msg.say(member ? member.user: '',embed)
   }
 };
