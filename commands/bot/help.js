@@ -97,7 +97,7 @@ module.exports = class HelpCommand extends Command {
 					}));
 				}
 
-				if(msg.channel.type !== 'dm') messages.push(await msg.reply('je vous ai envoyer la liste des commandes en MP !'));
+				if(msg.channel.type !== 'dm') messages.push(await msg.reply('je vous ai envoyé la liste des commandes en MP !'));
 			} catch(err) {
 				messages.push(await msg.reply('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.'));
 			}
