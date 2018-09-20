@@ -81,7 +81,7 @@ module.exports = class HelpCommand extends Command {
 					for(const part in splitContent) {
 						messages.push(await msg.direct('', {
 							embed: {
-								title: "Help",
+								title: "Help - Voici la liste des commandes",
 								color: 0xcd6e57,
 								description: splitContent[part]
 							}
@@ -90,7 +90,7 @@ module.exports = class HelpCommand extends Command {
 				} else {
 					messages.push(await msg.direct('', {
 						embed: {
-							title: "Help",
+							title: "Help - Voici la liste des commandes",
 							color: 0xcd6e57,
 							description: body
 						}
