@@ -11,7 +11,7 @@ module.exports = class PrefixCommand extends Command {
 			examples: ['prefix', 'prefix ?', 'prefix @', 'prefix default', 'prefix none'],
 			args: [{
 				key: 'prefix',
-				prompt: 'What would you like to set the bot\'s prefix to?',
+				prompt: 'Quel prefix voulez vous pour le bot',
 				type: 'string',
 				max: 15,
 				default: ''
