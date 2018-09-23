@@ -1,8 +1,8 @@
 const { Client } = require('discord.js-commando'),
         path = require('path'),
-        {makeWelcomeImage,addRole} = require('./utils.js')
+        {makeWelcomeImage,addRole} = require('./utils.js');
 
-require('dotenv').config()
+require('dotenv').config();
 
 const DraftBot = new Client({
     commandPrefix: '!',
