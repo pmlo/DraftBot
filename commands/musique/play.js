@@ -51,7 +51,7 @@ module.exports = class PlaySongCommand extends Command {
         return msg.reply('please join a voice channel before issuing this command.');
       }
   
-      const statusMsg = await msg.reply('obtaining video details...'); // eslint-disable-line one-var
+      const statusMsg = await msg.reply('obtaining video details...');
   
       if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
         await statusMsg.edit('obtaining playlist videos... (this can take a while for long lists)');
@@ -87,11 +87,11 @@ module.exports = class PlaySongCommand extends Command {
   
         for (const video of Object.values(videos)) {
           try {
-            video2 = await this.youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
+            video2 = await this.youtube.getVideoByID(video.id); 
           } catch (err) {
             null;
           }
-          await this.handlePlaylist(video2, playlist, queue, voiceChannel, msg, statusMsg); // eslint-disable-line no-await-in-loop
+          await this.handlePlaylist(video2, playlist, queue, voiceChannel, msg, statusMsg);
         }
   
         if (!this.queue.get(msg.guild.id, queue).playing) this.play(msg.guild, this.queue.get(msg.guild.id, queue).songs[0]);
@@ -109,7 +109,7 @@ module.exports = class PlaySongCommand extends Command {
           if (!video[0] || !video) {
             return statusMsg.edit(`${msg.author}, there were no search results.`);
           }
-          const videoByID = await this.youtube.getVideoByID(video[0].id); // eslint-disable-line one-var
+          const videoByID = await this.youtube.getVideoByID(video[0].id);
   
           return this.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
         } catch (err) {
@@ -128,7 +128,6 @@ module.exports = class PlaySongCommand extends Command {
       }
   
       if (!queue) {
-        // eslint-disable-next-line no-param-reassign
         queue = {
           textChannel: msg.channel,
           voiceChannel,
@@ -216,7 +215,7 @@ module.exports = class PlaySongCommand extends Command {
           color: 3447003,
           author: {
             name: `${msg.author.tag} (${msg.author.id})`,
-            icon_url: msg.author.displayAvatarURL({format: 'png'}) // eslint-disable-line camelcase
+            icon_url: msg.author.displayAvatarURL({format: 'png'})
           },
           description: stripIndents`
             Adding playlist [${playlist.title}](https://www.youtube.com/playlist?list=${playlist.id}) to the queue!
@@ -232,7 +231,7 @@ module.exports = class PlaySongCommand extends Command {
       const queue = this.queue.get(msg.guild.id),
         songNumerator = function (prev, song) {
           if (song.member.id === msg.author.id) {
-            prev += 1; // eslint-disable-line no-param-reassign
+            prev += 1;
           }
   
           return prev;
@@ -244,7 +243,7 @@ module.exports = class PlaySongCommand extends Command {
         }
       }
   
-      const song = new Song(video, msg.member); // eslint-disable-line one-var
+      const song = new Song(video, msg.member);
   
       queue.songs.push(song);
   
@@ -269,7 +268,7 @@ module.exports = class PlaySongCommand extends Command {
       }
       let streamErrored = false;
   
-      const playing = queue.textChannel.send({ // eslint-disable-line one-var
+      const playing = queue.textChannel.send({
           embed: {
             color: 4317875,
             author: {
@@ -292,7 +291,7 @@ module.exports = class PlaySongCommand extends Command {
             this.play(guild, queue.songs[0]);
           }),
         dispatcher = queue.connection.play(stream, {
-            passes: 5,
+            passes: 1,
             fec: true
         }).on('end', () => {
             if (streamErrored) {
