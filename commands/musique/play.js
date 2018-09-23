@@ -291,7 +291,7 @@ module.exports = class PlaySongCommand extends Command {
             this.play(guild, queue.songs[0]);
           }),
         dispatcher = queue.connection.play(stream, {
-            passes: 1,
+            passes: 20,
             fec: true
         }).on('end', () => {
             if (streamErrored) {
