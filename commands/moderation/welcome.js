@@ -1,7 +1,7 @@
 const {Command} = require('discord.js-commando'),
-{addRole,makeWelcomeImage} = require('../../utils.js')
+      {addRole,makeWelcomeImage} = require('../../utils.js')
 
-module.exports = class PurgeCommand extends Command {
+module.exports = class WelcomeCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'welcome',

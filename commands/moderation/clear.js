@@ -1,6 +1,6 @@
 const {Command} = require('discord.js-commando');
 
-module.exports = class PurgeCommand extends Command {
+module.exports = class ClearCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'clear',
