@@ -282,7 +282,7 @@ module.exports = class PlaySongCommand extends Command {
         stream = ytdl(song.url, {
           quality: 'highestaudio',
           filter: 'audioonly',
-          highWaterMark: 12
+          highWaterMark: 50
         })
           .on('error', () => {
             streamErrored = true;
@@ -293,7 +293,6 @@ module.exports = class PlaySongCommand extends Command {
         dispatcher = queue.connection.play(stream, {
             passes: 20,
             bitrate: 200,
-            highWaterMark: 1,
             fec: true
         }).on('end', () => {
             if (streamErrored) {
