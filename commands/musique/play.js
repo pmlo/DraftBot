@@ -293,6 +293,7 @@ module.exports = class PlaySongCommand extends Command {
         dispatcher = queue.connection.play(stream, {
             passes: 20,
             bitrate: 200,
+            highWaterMark: 1,
             fec: true
         }).on('end', () => {
             if (streamErrored) {
