@@ -1,5 +1,6 @@
 const { splitMessage } = require('discord.js'),
-	  { Command } = require('discord.js-commando')
+	  { Command } = require('discord.js-commando'),
+	  { stripIndents } = require('common-tags')
 
 module.exports = class HelpCommand extends Command {
 	constructor(client) {
@@ -22,26 +23,38 @@ module.exports = class HelpCommand extends Command {
 		});
 	}
 
-	async run(msg, args) { // eslint-disable-line complexity
+	async run(msg, args) {
 		const groups = this.client.registry.groups;
 		const commands = this.client.registry.findCommands(args.command, false, msg);
 		const showAll = args.command && args.command.toLowerCase() === 'all';
 		if(args.command && !showAll) {
 			if(commands.length === 1) {
-				let help = `__Commande **${commands[0].name}**:__ ${commands[0].description}
-						${commands[0].guildOnly ? ' (Utilisable uniquement sur un serveur)' : ''}
-						${commands[0].nsfw ? ' (NSFW)' : ''}\n\n
-						**Format:** ${msg.anyUsage(`${commands[0].name}${commands[0].format ? ` ${commands[0].format}` : ''}`)}
-				`;
-				if(commands[0].aliases.length > 0) help += `\n**Alias:** ${commands[0].aliases.join(', ')}`;
-				help += `\n**Groupe:** ${commands[0].group.name}\n(\`${commands[0].groupID}:${commands[0].memberName}\`)`;
-				if(commands[0].details) help += `\n**Details:** ${commands[0].details}`;
-				if(commands[0].examples) help += `\n**Examples:**\n${commands[0].examples.join('\n')}`;
+				let help = {
+					embed: {
+						title: `Commande ${commands[0].name}`,
+						description: stripIndents`
+							${commands[0].description}
+							${commands[0].guildOnly ? ' (Utilisable uniquement sur un serveur)' : ''}
+							${commands[0].nsfw ? ' (NSFW)' : ''}
+						`,
+						fields: [{
+							name: "Format",
+							value: msg.anyUsage(`${commands[0].name}${commands[0].format ? ` ${commands[0].format}` : ''}`)
+						}],
+						color: 0xcd6e57,
+						
+					}
+				}
+
+				if(commands[0].aliases.length > 0) help.embed.fields.push({name: "Alias",value: commands[0].aliases.join(', ')})
+				help.embed.fields.push({name: "Groupe",value: commands[0].group.name})
+				if(commands[0].details) help.embed.fields.push({name: "Details",value:commands[0].details});
+				if(commands[0].examples) help.embed.fields.push({name: "Examples",value:commands[0].examples.join('\n')});
 
 				const messages = [];
 				try {
 					messages.push(await msg.direct(help));
-					if(msg.channel.type !== 'dm') messages.push(await msg.reply('je vous ai envoyer la liste des commandes en MP !'));
+					if(msg.channel.type !== 'dm') messages.push(await msg.reply('je viens de vous envoyer la liste des commandes en MP !'));
 				} catch(err) {
 					messages.push(await msg.reply('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.'));
 				}
@@ -62,43 +75,35 @@ module.exports = class HelpCommand extends Command {
 			const messages = [];
 
 			try {
-				const body =`${`Pour executer une commande sur  ${msg.guild ? msg.guild.name : 'n\'importe quel serveur'},
-							veuillez utiliser ${Command.usage('command', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.\n
-							Par exemple, ${Command.usage('quote', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.`}\n
+				const embed = {
+					embed: {
+						title: "Help - Voici la liste des commandes",
+						color: 0xcd6e57,
+						description: stripIndents`
+							Pour executer une commande sur  ${msg.guild ? msg.guild.name : 'n\'importe quel serveur'}
+							veuillez utiliser ${Command.usage('command', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.
+
+							Par exemple, ${Command.usage('quote', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.
+
 							Utilisez ${this.usage('<commande>', null, null)} pour voir les détails d'une commande.
-							Utilisez ${this.usage('all', null, null)} pour voir la liste de **toutes** les commandes disponibles.\n
-							${(showAll ? groups : groups.filter(grp => grp.commands.some(cmd => cmd.isUsable(msg))))
-								.map(grp => `__${grp.name}__
-									${(showAll ? grp.commands : grp.commands.filter(cmd => cmd.isUsable(msg)))
-										.map(cmd => `**${cmd.name}:** ${cmd.description}${cmd.nsfw ? ' (NSFW)' : ''}`).join('\n')
-									}
-								`).join('\n')
-							}`;
-
-				if(body.length >= 2000) {
-					const splitContent = splitMessage(body);
-
-					for(const part in splitContent) {
-						messages.push(await msg.direct('', {
-							embed: {
-								title: "Help - Voici la liste des commandes",
-								color: 0xcd6e57,
-								description: splitContent[part]
-							}
-						}));
+							Utilisez ${this.usage('all', null, null)} pour voir la liste de **toutes** les commandes disponibles.
+						`,
+						fields: []
 					}
-				} else {
-					messages.push(await msg.direct('', {
-						embed: {
-							title: "Help - Voici la liste des commandes",
-							color: 0xcd6e57,
-							description: body
-						}
-					}));
-				}
+				};
+				
+				(showAll ? groups : groups.filter(grp => grp.commands.some(cmd => cmd.isUsable(msg))))
+				.map(grp => embed.embed.fields.push({
+					name: grp.name,
+					value: `${(showAll ? grp.commands : grp.commands.filter(cmd => cmd.isUsable(msg)))
+						.map(cmd => `__${cmd.name}:__ ${cmd.description}${cmd.nsfw ? ' (NSFW)' : ''}`).join('\n')
+						}`
+				}));
+				messages.push(await msg.direct('', embed));
 
 				if(msg.channel.type !== 'dm') messages.push(await msg.reply('je vous ai envoyé la liste des commandes en MP !'));
 			} catch(err) {
+				console.log(err)
 				messages.push(await msg.reply('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.'));
 			}
 			return messages;
