@@ -3,7 +3,7 @@ const Jimp = require('jimp'),
       {MessageEmbed,MessageAttachment,Util} = require('discord.js')
 
 const makeWelcomeImage = async (member) => {
-  if (!member.guild.settings.get('welcomeMessage', false)) {
+  if (member.guild.settings.get('welcomeMessage') !== false) {
     try {
       const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'})),
         canvas = await Jimp.read(500, 150),
