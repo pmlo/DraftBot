@@ -31,7 +31,7 @@ module.exports = class QuoteCommand extends Command {
     .setAuthor(`${msg.author.username} cite:`, msg.author.displayAvatarURL())
     .setColor(0xcd6e57)
     .setDescription(message)
-    .setTimestamp(message.createdAt)
+    .setTimestamp()
     .setFooter(`Dans #${message.channel.name}`, message.author.displayAvatarURL())
     msg.delete()
     return msg.say(member ? member.user: '',embed)

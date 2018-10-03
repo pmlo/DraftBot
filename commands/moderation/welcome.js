@@ -1,5 +1,6 @@
 const {Command} = require('discord.js-commando'),
-      {addRole,makeWelcomeImage} = require('../../utils.js')
+      {MessageEmbed} = require('discord.js'),
+      {oneLine, stripIndents} = require('common-tags');
 
 module.exports = class WelcomeCommand extends Command {
   constructor (client) {
@@ -8,25 +9,33 @@ module.exports = class WelcomeCommand extends Command {
       memberName: 'welcome',
       group: 'moderation',
       aliases: ['bvn','bienvenue'],
-      description: 'Dire bienvenue à un membre',
-      examples: ['welcome DraftMan'],
+      description: 'Activer ou désactiver le message de bienvenue sur le serveur.',
+      examples: ['welcome'],
       guildOnly: true,
-      userPermissions: ['ADMINISTRATOR'],
-      args: [
-        {
-          key: 'member',
-          prompt: 'A quel membre voulez vous souhaiter la bienvenue ?',
-          type: 'member'
-        }
-      ]
+      userPermissions: ['ADMINISTRATOR']
     });
   }
 
-  async run (msg, {member}) {
+  async run (msg) {
+    const defWelcomeEmbed = new MessageEmbed();
+    let description;
 
-    addRole('Membre',member);
-    makeWelcomeImage(member);
+    console.log(msg.guild.settings)
 
-    return msg.delete();
+    if (msg.guild.settings.get('welcomeMessage') !== false) {
+      msg.guild.settings.set('welcomeMessage', false);
+      description = oneLine`🎉 Les messages de bienvenue sont maintenant **désactivés** !`;
+    }else{
+      msg.guild.settings.set('welcomeMessage',true);
+      description = oneLine`🎉 Les messages de bienvenue sont maintenant **activés** !`;
+    }
+
+    defWelcomeEmbed
+      .setColor(0xcd6e57)
+      .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
+      .setDescription(stripIndents`**Action:** ${description}`)
+      .setTimestamp();
+
+    return msg.embed(defWelcomeEmbed);
   }
 };

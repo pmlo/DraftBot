@@ -25,6 +25,7 @@
     "node-opus": "^0.3.0",
     "simple-youtube-api": "^5.0.2",
     "snekfetch": "^4.0.4",
+    "sqlite": "^3.0.0",
     "ytdl-core": "^0.25.2"
   }
 }

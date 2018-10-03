@@ -3,6 +3,7 @@ const Jimp = require('jimp'),
       {MessageEmbed,MessageAttachment,Util} = require('discord.js')
 
 const makeWelcomeImage = async (member) => {
+  if (!member.guild.settings.get('welcomeMessage', false)) {
     try {
       const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'})),
         canvas = await Jimp.read(500, 150),
@@ -34,12 +35,23 @@ const makeWelcomeImage = async (member) => {
     } catch (error) {
       return console.log(error);
     }
-  };
-
-const addRole = async (role, member) => {
-  if(member.guild.roles.find(r => r.name === 'Membre')){
-    member.roles.add(member.guild.roles.find(r => r.name === 'Membre'));
   }
+};
+
+const addRole = (role, member) => {
+  if(member.guild.roles.find(r => r.name === role)){
+    member.roles.add(member.guild.roles.find(r => r.name === role));
+  }
+}
+
+const addDefaultRole = member => {
+  if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole'))){
+    member.roles.add(member.guild.settings.get('defaultRole'));
+  }
+}
+
+const error = (message) => {
+  return `:no_entry_sign: | ${message}`
 }
 
 class Song {
@@ -111,6 +123,8 @@ const roundNumber = function (num, scale = 0) {
 module.exports = {
   makeWelcomeImage,
   addRole,
+  addDefaultRole,
   Song,
-  roundNumber
+  roundNumber,
+  error
 };

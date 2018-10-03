@@ -1,6 +1,6 @@
-const { splitMessage } = require('discord.js'),
-	  { Command } = require('discord.js-commando'),
-	  { stripIndents } = require('common-tags')
+const { Command } = require('discord.js-commando'),
+	  { stripIndents } = require('common-tags'),
+	  { error } = require('../../utils.js')
 
 module.exports = class HelpCommand extends Command {
 	constructor(client) {
@@ -56,19 +56,19 @@ module.exports = class HelpCommand extends Command {
 					messages.push(await msg.direct(help));
 					if(msg.channel.type !== 'dm') messages.push(await msg.reply('je viens de vous envoyer la liste des commandes en MP !'));
 				} catch(err) {
-					messages.push(await msg.reply('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.'));
+					messages.push(await msg.reply(error('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.')));
 				}
 				return messages;
 			} else if(commands.length > 15) {
-				return msg.reply('Plusieurs commandes ont été trouvés. s\'il vous plaît veuillez être plus précis.');
+				return msg.reply(':thinking: | Plusieurs commandes ont été trouvés. s\'il vous plaît veuillez être plus précis.');
 			} else if(commands.length > 1) {
 				const list = commands.map(item => `"${(property ? item[property] : item).replace(/ /g, '\xa0')}"`).join(',   ');
-				return msg.reply(`Plusieurs commandes ont été trouvés, s'il vous plaît veuillez être plus précis: ${list}`);
+				return msg.reply(`:thinking: | Plusieurs commandes ont été trouvés, s'il vous plaît veuillez être plus précis: ${list}`);
 			} else {
-				return msg.reply(
+				return msg.reply(error(
 					`Impossible d'identifier la commande. Veuillez utiliser ${msg.usage(
 						null, msg.channel.type === 'dm' ? null : undefined, msg.channel.type === 'dm' ? null : undefined
-					)} pour voir la liste de toutes les commandes.`
+					)} pour voir la liste de toutes les commandes.`)
 				);
 			}
 		} else {
@@ -101,10 +101,10 @@ module.exports = class HelpCommand extends Command {
 				}));
 				messages.push(await msg.direct('', embed));
 
-				if(msg.channel.type !== 'dm') messages.push(await msg.reply('je vous ai envoyé la liste des commandes en MP !'));
+				if(msg.channel.type !== 'dm') messages.push(await msg.reply(error('Je vous ai envoyé la liste des commandes en MP !')));
 			} catch(err) {
 				console.log(err)
-				messages.push(await msg.reply('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.'));
+				messages.push(await msg.reply(error('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.')));
 			}
 			return messages;
 		}

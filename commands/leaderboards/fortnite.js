@@ -59,7 +59,7 @@ const {get} = require('snekfetch'),
         .setFooter("DraftMan | Développeur FrontEnd & Graphiste", "https://www.draftman.fr/images/favicon.png")
        return msg.embed(embed);
     } catch (err) {
-      console.log(err)
+      msg.reply(error('Une erreur s\'est produite veuillez nous excusez !'))
     }
   }
 };

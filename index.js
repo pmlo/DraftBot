@@ -1,15 +1,20 @@
-const { Client } = require('discord.js-commando'),
+const { CommandoClient, SQLiteProvider } = require('discord.js-commando'),
         path = require('path'),
-        {makeWelcomeImage,addRole} = require('./utils.js');
+        sqlite = require('sqlite'),
+        {makeWelcomeImage,addDefaultRole} = require('./utils.js');
 
 require('dotenv').config();
 
-const DraftBot = new Client({
+const DraftBot = new CommandoClient({
     commandPrefix: '!',
     unknownCommandResponse: false,
     owner: '207190782673813504',
     invite: 'https://www.draftman.fr/discord',
     disableEveryone: true
+}); 
+
+sqlite.open(path.join(__dirname, "settings.sqlite")).then((db) => {
+    DraftBot.setProvider(new SQLiteProvider(db));
 });
 
 DraftBot.on('ready', () => {
@@ -21,8 +26,8 @@ DraftBot.on('ready', () => {
 });
 
 DraftBot.on('guildMemberAdd', member => {
-    makeWelcomeImage(member)
-    addRole('Membre',member)
+    makeWelcomeImage(member);
+    addDefaultRole(member)
 })
 
 DraftBot.registry

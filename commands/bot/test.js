@@ -1,4 +1,5 @@
-const {Command} = require('discord.js-commando'); 
+const {Command} = require('discord.js-commando'),
+      {error} = require('../../utils.js')
 
 module.exports = class TestCommand extends Command {
   constructor (client) {
@@ -12,6 +13,6 @@ module.exports = class TestCommand extends Command {
   }
 
   run (msg) {
-    return msg.reply('nothing to test sorry')
+    return msg.reply(error('Nothing to test sorry.'));
   }
 };

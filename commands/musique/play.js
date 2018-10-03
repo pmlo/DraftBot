@@ -104,12 +104,17 @@ module.exports = class PlaySongCommand extends Command {
         return this.handleVideo(video, queue, voiceChannel, msg, statusMsg);
       } catch (error) {
         try {
-          const video = await this.youtube.searchVideos(url, 1);
+          const videos = await this.youtube.searchVideos(url, 5);
+          console.log(videos)
   
-          if (!video[0] || !video) {
+          if (!videos[0] || !videos) {
             return statusMsg.edit(`${msg.author}, there were no search results.`);
           }
-          const videoByID = await this.youtube.getVideoByID(video[0].id);
+
+
+
+
+          const videoByID = await this.youtube.getVideoByID(videos[0].id);
   
           return this.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
         } catch (err) {
