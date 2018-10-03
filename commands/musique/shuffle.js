@@ -8,9 +8,8 @@ module.exports = class ShuffleCommand extends Command {
       name: 'shuffle',
       memberName: 'shuffle',
       group: 'musique',
-      aliases: ['remix', 'mixtape','random'],
-      description: 'Shuffles the current queue of songs',
-      details: 'Shuffles using a [modern version of the Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm)',
+      aliases: ['remix', 'mixtape','random','melange'],
+      description: 'Permet de mélanger les musiques de la queue.',
       examples: ['shuffle'],
       guildOnly: true
     });

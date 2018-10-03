@@ -7,7 +7,7 @@ module.exports = class ResumeSongCommand extends Command {
       memberName: 'resume',
       group: 'musique',
       aliases: ['go', 'continue', 'loss', 'res'],
-      description: 'Resumes the currently playing song.',
+      description: 'Permet de relancer une musique mise en pause.',
       examples: ['resume'],
       guildOnly: true
     });

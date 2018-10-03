@@ -8,8 +8,8 @@ module.exports = class SkipSongCommand extends Command {
       memberName: 'skip',
       group: 'musique',
       aliases: ['next'],
-      description: 'Skips the song that is currently playing.',
-      details: 'If there are more than 3 people (not counting the bot) a voteskip is started. Staff can force the skip by adding `force` to the command',
+      description: 'Pemret de passer la muisque en cours.',
+      details: 'Si il y a plus de 3 personnes dans le salon un vote sera lancé !',
       examples: ['skip'],
       guildOnly: true,
     });

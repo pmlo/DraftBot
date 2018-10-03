@@ -11,7 +11,7 @@ module.exports = class PlaySongCommand extends Command {
         name: 'play',
         memberName: 'play',
         group: 'musique',
-        description: 'Lancer une musique',
+        description: 'Pemret de lancer une musique',
         examples: ['play {youtube video to play}'],
         guildOnly: true,
         args: [
@@ -138,7 +138,7 @@ module.exports = class PlaySongCommand extends Command {
           voiceChannel,
           connection: null,
           songs: [],
-          volume: 50
+          volume: 1
         };
         this.queue.set(msg.guild.id, queue);
   
@@ -287,7 +287,7 @@ module.exports = class PlaySongCommand extends Command {
         stream = ytdl(song.url, {
           quality: 'highestaudio',
           filter: 'audioonly',
-          highWaterMark: 1
+          highWaterMark: 12
         })
           .on('error', () => {
             streamErrored = true;
@@ -296,10 +296,8 @@ module.exports = class PlaySongCommand extends Command {
             this.play(guild, queue.songs[0]);
           }),
         dispatcher = queue.connection.play(stream, {
-            passes: 20,
-            bitrate: 200,
-            highWaterMark: 1,
-            fec: true
+          passes: 5,
+          fec: true
         }).on('end', () => {
             if (streamErrored) {
                 return;

@@ -7,7 +7,7 @@ module.exports = class PauseSongCommand extends Command {
       memberName: 'pause',
       group: 'musique',
       aliases: ['shh', 'ho', 'tg', 'halt'],
-      description: 'Pauses the currently playing song',
+      description: 'Permet de mettre en pause une musique.',
       examples: ['pause'],
       guildOnly: true
     });
