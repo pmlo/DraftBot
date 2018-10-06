@@ -6,7 +6,7 @@ module.exports = class ClearCommand extends Command {
       name: 'clear',
       memberName: 'clear',
       group: 'moderation',
-      aliases: ['purge','prune', 'delete'],
+      aliases: ['purge','prune', 'delete','clean'],
       description: 'Supprimer des messages en masse',
       examples: ['clear 5'],
       guildOnly: true,
