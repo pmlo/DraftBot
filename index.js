@@ -30,6 +30,63 @@ DraftBot.on('guildMemberAdd', member => {
     addDefaultRole(member)
 })
 
+
+DraftBot.on('raw', event => {
+    const { d: data } = event;
+    
+    if (event.t === 'MESSAGE_REACTION_ADD' || event.t == "MESSAGE_REACTION_REMOVE"){
+
+        let channel = DraftBot.channels.get(event.d.channel_id);
+
+        channel.messages.fetch(event.d.message_id).then(msg=> {
+
+            let user = msg.guild.member(data.user_id);
+
+            if (msg.author.id == DraftBot.user.id && msg.guild.settings.get(`react-${msg.id}:${data.emoji.name}`)){
+
+                if (user.id != DraftBot.user.id){
+
+                    const role = msg.guild.roles.find(r => r.id === msg.guild.settings.get(`react-${msg.id}:${data.emoji.name}`));
+
+                    if (event.t === "MESSAGE_REACTION_ADD"){
+
+                        user.roles.add(role);
+
+                    } else {
+
+                        user.roles.remove(role)
+                    }
+                }
+            }
+        })
+    }   
+});
+
+// DraftBot.on('messageReactionAdd', (messageReaction, user) => {
+//     if (user.bot) return;
+//     messageReaction.message.channel.fetchMessage(messageReaction.message.id)
+//     .then(message => {
+//         if(message.guild.settings.get(`react-${message.id}:${messageReaction.emoji.name}`)){
+//             const role = message.guild.settings.get(`react-${message.id}:${messageReaction.emoji.name}`)
+//             if(!message.guild.member(user).roles.find(r => r.id === role)){
+//                 message.guild.member(user).roles.add(message.guild.roles.find(r => r.id === role));
+//             }
+//         }
+//     })
+//     .catch(console.error);
+// });
+
+// DraftBot.on('messageReactionRemove', (messageReaction, user) => {
+//     if (user.bot) return;
+//     const message = messageReaction.message;
+//     if(message.guild.settings.get(`react-${message.id}:${messageReaction.emoji.name}`)){
+//         const role = message.guild.settings.get(`react-${message.id}:${messageReaction.emoji.name}`)
+//         if(message.guild.member(user).roles.find(r => r.id === role)){
+//             message.guild.member(user).roles.remove(message.guild.roles.find(r => r.id === role));
+//         }
+//     }
+// });
+
 DraftBot.registry
     .registerDefaultTypes()
     .registerGroups([
