@@ -13,21 +13,21 @@ module.exports = class QuoteCommand extends Command {
       guildOnly: true,
       args: [
         {
-            key: 'message',
-            prompt: 'Message à afficher dans le message',
+            key: 'titre',
+            prompt: 'Quel titre voulez vous ?',
             type: 'string'
         }
       ]
     });
   }
 
-  async run (msg, {message}) {
+  async run (msg, {titre}) {
 
     msg.delete()
 
     const embed = new MessageEmbed()
     .setColor(0xcd6e57)
-    .setDescription(`${message}`)
+    .setTitle(titre)
     .setFooter(`Choisissez vos roles en interagissant avec les réactions !`)
 
     const focus = await msg.channel.send('',embed)
