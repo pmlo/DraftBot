@@ -42,11 +42,11 @@ DraftBot.on('raw', event => {
 
             let user = msg.guild.member(data.user_id);
 
-            if (msg.author.id == DraftBot.user.id && msg.guild.settings.get(`react-${msg.id}:${data.emoji.name}`)){
+            if (msg.author.id == DraftBot.user.id && msg.guild.settings.get(`react-${msg.id}:${data.emoji.id}`)){
 
                 if (user.id != DraftBot.user.id){
 
-                    const role = msg.guild.roles.find(r => r.id === msg.guild.settings.get(`react-${msg.id}:${data.emoji.name}`));
+                    const role = msg.guild.roles.find(r => r.id === msg.guild.settings.get(`react-${msg.id}:${data.emoji.id}`));
 
                     if (event.t === "MESSAGE_REACTION_ADD"){
 

@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando'),
-      {MessageEmbed} = require('discord.js')
+      {MessageEmbed,Util} = require('discord.js')
 
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
@@ -32,8 +32,18 @@ module.exports = class QuoteCommand extends Command {
   }
 
   async run (msg, {emoji,role,message}) {
-    msg.guild.settings.set(`react-${message.id}:${emoji}`,`${role.id}`);
-    console.log(emoji)
-    message.react(emoji)
+    msg.delete()
+    const newEmoji = Util.parseEmoji(emoji).id,
+          reactEmbed = new MessageEmbed()
+    msg.guild.settings.set(`react-${message.id}:${newEmoji}`,`${role.id}`);
+    message.react(newEmoji)
+
+    reactEmbed
+      .setColor(0xcd6e57)
+      .setAuthor(msg.author.username, msg.author.displayAvatarURL())
+      .setDescription(`**Action:** L'émoji ${newEmoji} à été attributé au role ${role.name} sur le selectionneur de roles !`)
+      .setTimestamp();
+
+    return msg.embed(reactEmbed).then(actionMessage => actionMessage.delete({timeout: 8000}))
   }
 };

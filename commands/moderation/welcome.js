@@ -40,7 +40,7 @@ module.exports = class WelcomeCommand extends Command {
     }
     defWelcomeEmbed
       .setColor(0xcd6e57)
-      .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
+      .setAuthor(msg.author.username, msg.author.displayAvatarURL())
       .setDescription(stripIndents`**Action:** ${description}`)
       .setTimestamp();
 
