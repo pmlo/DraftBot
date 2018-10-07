@@ -17,18 +17,18 @@ module.exports = class ResumeSongCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('there isn\'t any music playing to resume, oh brilliant one.');
+      return msg.reply('impossible de relancer la musique, il n\'y a pas de musique en cours de lecture.');
     }
     if (!queue.songs[0].dispatcher) {
-      return msg.reply('pretty sure a song that hasn\'t actually begun playing yet could be considered "resumed".');
+      return msg.reply('je suis presque certain qu\'une chanson qui n\'a pas encore été jouée peut être considérée comme "reprise". 😉');
     }
     if (queue.songs[0].playing) {
-      return msg.reply('resuming a song that isn\'t paused is a great move. Really fantastic.');
+      return msg.reply('reprendre une musique qui ne soit pas en pause est une très bonne idée. Vraiment fantastique. 🤔');
     }
     queue.songs[0].dispatcher.resume();
     queue.songs[0].playing = true;
 
-    return msg.reply('resumed the music. This party ain\'t over yet!');
+    return msg.reply('musique relancé ! La fête n\'est pas encore terminée! 🎉');
   }
 
   get queue () {

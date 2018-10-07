@@ -19,11 +19,11 @@ module.exports = class ShuffleCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('there are no songs in the queue. Why not put something in my jukebox?');
+      return msg.reply('il n\'y a aucune musique dans la file d\'attente. Pourquoi ne pas y ajouter quelques titres? 😎');
     }
 
     if (queue.songs.length <= 2) {
-      return msg.reply('cannot shuffle a queue smaller than 2 tracks. Why not queue some more tunes?');
+      return msg.reply('je ne peut pas mélanger une file d\'attente inférieure à 2 musiques. Pourquoi ne pas ajouter d\'autres musiques ?');
     }
 
     const currentPlaying = queue.songs[0];
@@ -41,12 +41,12 @@ module.exports = class ShuffleCommand extends Command {
       .setColor(msg.guild ? msg.guild.me.displayHexColor : '#7CFC00')
       .setAuthor(`${msg.author.tag} (${msg.author.id})`, msg.author.displayAvatarURL({format: 'png'}))
       .setImage(currentSong.thumbnail)
-      .setDescription(`__**First 10 songs in the queue**__\n
+      .setDescription(`__**10 premières musiques de la file d'attente**__\n
         ${paginated.items.map(song => `**-** ${!isNaN(song.id) ? `${song.name}
         (${song.lengthString})` : `[${song.name}](${`https://www.youtube.com/watch?v=${song.id}`})`} (${song.lengthString})`).join('\n')}\n
-            ${paginated.maxPage > 1 ? `\nUse ${msg.usage()} to view a specific page.\n` : ''}\n
-            **Now playing:** ${!isNaN(currentSong.id) ? `${currentSong.name}` : `[${currentSong.name}](${`https://www.youtube.com/watch?v=${currentSong.id}`})`}\n
-            **Progress:** ${!currentSong.playing ? 'Paused: ' : ''}${Song.timeString(currentTime)} / ${currentSong.lengthString} (${currentSong.timeLeft(currentTime)} left)
+            ${paginated.maxPage > 1 ? `\nUtilisez ${msg.usage()} pour voir une page en particulier.\n` : ''}\n
+            **En cours:** ${!isNaN(currentSong.id) ? `${currentSong.name}` : `[${currentSong.name}](${`https://www.youtube.com/watch?v=${currentSong.id}`})`}\n
+            **Progression:** ${!currentSong.playing ? 'En pause: ' : ''}${Song.timeString(currentTime)} / ${currentSong.lengthString} (${currentSong.timeLeft(currentTime)} restant)
             `);
 
     return msg.embed(embed);
