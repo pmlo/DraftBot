@@ -66,7 +66,7 @@ module.exports = class PlaySongCommand extends Command {
             voiceChannel,
             connection: null,
             songs: [],
-            volume: 1
+            volume: 50
           };
   
           this.queue.set(msg.guild.id, listQueue);
