@@ -4,6 +4,7 @@ const ytdl = require('ytdl-core');
 const { Command } = require('discord.js-commando');
 const { escapeMarkdown } = require('discord.js');
 const { Song, error } = require('../../utils.js');
+const emojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣'];
 
 const run = (current) => async (msg, { url }) =>  {
     const queue = current.queue.get(msg.guild.id);
@@ -28,7 +29,7 @@ const run = (current) => async (msg, { url }) =>  {
         return msg.reply(error('Veuillez rejoindre un salon vocal pour lancer une musique.'));
     }
 
-    const statusMsg = await msg.reply('obtaining video details...');
+    let statusMsg = await msg.reply('traitement de la demande...');
 
     if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
         await statusMsg.edit('obtention des vidéos de la playlist ... (cela peut prendre un certain temps pour en fonction de la longeur de la liste)');
@@ -80,20 +81,31 @@ const run = (current) => async (msg, { url }) =>  {
         return current.handleVideo(video, queue, voiceChannel, msg, statusMsg);
     } catch (error) {
         try {
+            statusMsg.edit(`${msg.author}, recherche des musiques disponibles...`);
             const videos = await current.youtube.searchVideos(url, 5);
-            console.log(videos)
-
             if (!videos[0] || !videos) {
                 return statusMsg.edit(`${msg.author}, il n'y a aucun résultats.`);
             }
 
+            const description = videos.reduce((prev, curr, i) => {
+              return `${prev}\n${emojis[i]} | [${videos[i].title}](https://www.youtube.com/watch?v=${videos[i].id})`;
+            }, `Ajoutez une réaction à la musique de votre choix pour la lancer !\n`);
 
+            musicsList = {
+                color: 0xcd6e57,
+                title: 'Liste des musiques disponibles',
+                description: description
+            };
 
-            const videoByID = await current.youtube.getVideoByID(videos[0].id);
+            const bot = msg.client;
 
-            return current.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
+            const sendedEmbed = await msg.say({ embed: musicsList })
+            const [reactMessage, emoji] = await [sendedEmbed, videos.map((_, index) => emojis[index])]
+            await emojis.reduce((acc, emoji) => acc.then(() => reactMessage.react(emoji)), Promise.resolve())
+
+            return bot.on('messageReactionAdd', startReactEvent);
         } catch (err) {
-
+            console.log(err)
             return statusMsg.edit(`${msg.author}, impossible d'obtenir les détails de la vidéo recherché.`);
         }
     }
@@ -286,6 +298,21 @@ const play = (current) => (guild, song) => {
     queue.playing = true;
 }
 
+const startReactEvent = async (messageReaction, user, sendedEmbed, videos) => {
+  const member = messageReaction.message.guild.member(user);
+  if (user.bot) return;
+  const emoji = messageReaction.emoji.name;
+  if (sendedEmbed.id === messageReaction.message.id && emojis.includes(emoji)) {
+      console.log(emojis, emoji)
+      const videoByID = await current.youtube.getVideoByID(videos[emojis.indexOf(emoji)].id);
+
+      current.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
+      sendedEmbed.clearReactions();
+      sendedEmbed.delete(3000);
+      return bot.off('messageReactionAdd', startReactEvent);
+  }
+}
+
 module.exports = class PlaySongCommand extends Command {
     constructor(client) {
         super(client, {
@@ -310,7 +337,7 @@ module.exports = class PlaySongCommand extends Command {
     }
 
     run(...args) {
-        return run(this)(...args)
+        return run(this)(...args).then(() => null)
     }
 
     handleVideo(...args) {

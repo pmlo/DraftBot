@@ -7,9 +7,9 @@ module.exports = class SkipSongCommand extends Command {
       name: 'skip',
       memberName: 'skip',
       group: 'musique',
-      aliases: ['next'],
+      aliases: ['next','suivant','passer'],
       description: 'Pemret de passer la muisque en cours.',
-      details: 'Si il y a plus de 3 personnes dans le salon un vote sera lancé !',
+      details: 'Si il y a plus de 3 personnes dans le salon un vote sera lancé! Le staff peut forcer l\'arrêt avec ajoutant `force` à la commande.',
       examples: ['skip'],
       guildOnly: true,
     });
@@ -20,13 +20,13 @@ module.exports = class SkipSongCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('there isn\'t a song playing right now, silly.');
+      return msg.reply('impossible de passer à la musique suivant vu qu\'il n\'y a pas de musique en attente! 🤔');
     }
     if (!queue.voiceChannel.members.has(msg.author.id)) {
-      return msg.reply('you\'re not in the voice channel. You better not be trying to mess with their mojo, man.');
+      return msg.reply('vous devez être dans un salon vocal pour passer une musique.');
     }
     if (!queue.songs[0].dispatcher) {
-      return msg.reply('the song hasn\'t even begun playing yet. Why not give it a chance?');
+      return msg.reply('il n\'y a aucune musique en cours. Pourquoi ne pas commencer par en lancer une?');
     }
 
     const threshold = Math.ceil((queue.voiceChannel.members.size - 1) / 3),
@@ -43,7 +43,7 @@ module.exports = class SkipSongCommand extends Command {
 
     if (vote && vote.count >= 1) {
       if (vote.users.some(user => user === msg.author.id)) {
-        return msg.reply('you\'ve already voted to skip the song.');
+        return msg.reply('vous avez déjà voté pour passer à la musique suivante.');
       }
 
       vote.count += 1;
@@ -55,7 +55,7 @@ module.exports = class SkipSongCommand extends Command {
       const remaining = threshold - vote.count,
         time = this.setTimeout(vote);
 
-      return msg.say(`${vote.count} vote${vote.count > 1 ? 's' : ''} received so far, ${remaining} more ${remaining > 1 ? 'are' : 'is'} needed to skip. Five more seconds on the clock! The vote will end in ${time} seconds.`);
+      return msg.say(`${vote.count} vote${vote.count > 1 ? 's' : ''} reçu jusqu'à présent, encore ${remaining} ${remaining > 1 ? 'votes sont nécessaires' : 'vote est nécessaire'} pour passer la musique. Le vote se terminera dans ${time} secondes.`);
     }
     const newVote = {       
         count: 1,
@@ -70,8 +70,7 @@ module.exports = class SkipSongCommand extends Command {
 
     this.votes.set(msg.guild.id, newVote);
 
-    return msg.say(`Starting a voteskip. ${remaining} more vote${remaining > 1 ? 's are' : ' is'} required for the song to be skipped. The vote will end in ${time} seconds.
-			`);
+    return msg.say(`Lancement d'un vote. ${remaining} ${remaining > 1 ? 'votes sont nécessaires' : 'vote est nécessaire'} pour passer la musique. Le vote se terminera dans ${time} secondes.`);
   }
 
   skip (guild, queue) {
@@ -84,7 +83,7 @@ module.exports = class SkipSongCommand extends Command {
 
     song.dispatcher.end();
 
-    return `Skipped: **${song}**`;
+    return `Muisque passé: **${song}**`;
   }
 
   setTimeout (vote) {
@@ -93,7 +92,7 @@ module.exports = class SkipSongCommand extends Command {
     clearTimeout(vote.timeout);
     vote.timeout = setTimeout(() => {
       this.votes.delete(vote.guild);
-      vote.queue.textChannel.send('The vote to skip the current song has ended. Get outta here, party poopers.');
+      vote.queue.textChannel.send('Le vote pour passer la musique en cours est terminé...');
     }, time);
 
     return roundNumber(time / 1000);

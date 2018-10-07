@@ -8,8 +8,8 @@ module.exports = class StopMusicCommand extends Command {
       memberName: 'stop',
       group: 'musique',
       aliases: ['kill', 'stfu', 'quit', 'leave', 'disconnect'],
-      description: 'Stop la musique et vide la file d\'attente.',
-      details: 'If there are more than 3 people (not counting the bot) a votestop is started. Staff can force the stop by adding `force` to the command',
+      description: 'Stopper la musique et vider la file d\'attente.',
+      details: 'Si il y a plus de 3 personnes un vote sera lancé pour valider la décision! Le staff peut forcer l\'arrêt avec ajoutant `force` à la commande.',
       guildOnly: true,
       throttling: {
         usages: 2,
@@ -24,14 +24,13 @@ module.exports = class StopMusicCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('there isn\'t any music playing right now.');
+      return msg.reply('il n\'y a aucune musique en cours');
     }
     if (!queue.voiceChannel.members.has(msg.author.id)) {
-
-      return msg.reply('you\'re not in the voice channel. They really don\'t want you to mess up their vibe man.');
+      return msg.reply('vous devez être dans un salon vocal pour arrêter une musique.');
     }
     if (!queue.songs[0].dispatcher) {
-      return msg.reply('the song hasn\'t even begun playing yet. Why not give it a chance?');
+      return msg.reply('il n\'y a aucune musique en cours. Pourquoi ne pas commencer par en lancer une?');
     }
 
     const threshold = Math.ceil((queue.voiceChannel.members.size - 1) / 3),
@@ -48,7 +47,7 @@ module.exports = class StopMusicCommand extends Command {
 
     if (vote && vote.count >= 1) {
       if (vote.users.some(user => user === msg.author.id)) {
-        return msg.reply('you\'ve already voted to stop the music.');
+        return msg.reply('vous avez déjà voté pour arrêter à la musique en cours.');
       }
 
       vote.count += 1;
@@ -60,7 +59,7 @@ module.exports = class StopMusicCommand extends Command {
       const remaining = threshold - vote.count,
         time = this.setTimeout(vote);
 
-      return msg.say(`${vote.count} vote${vote.count > 1 ? 's' : ''} received so far, ${remaining} more ${remaining > 1 ? 'are' : 'is'} needed to stop. Five more seconds on the clock! The vote will end in ${time} seconds.`);
+        return msg.say(`${vote.count} vote${vote.count > 1 ? 's' : ''} reçu jusqu'à présent, encore ${remaining} ${remaining > 1 ? 'votes sont nécessaires' : 'vote est nécessaire'} pour stopper la musique. Le vote se terminera dans ${time} secondes.`);
     }
     const newVote = {        
         count: 1,
@@ -75,7 +74,7 @@ module.exports = class StopMusicCommand extends Command {
 
     this.votes.set(msg.guild.id, newVote);
 
-    return msg.say(`Starting a votestop. ${remaining} more vote${remaining > 1 ? 's are' : ' is'} required for the music to be stopped. The vote will end in ${time} seconds.`);
+    return msg.say(`Lancement d'un vote. ${remaining} ${remaining > 1 ? 'votes sont nécessaires' : 'vote est nécessaire'} pour stopper la musique. Le vote se terminera dans ${time} secondes.`);
   }
 
   stop (guild, queue) {
@@ -91,7 +90,7 @@ module.exports = class StopMusicCommand extends Command {
       song.dispatcher.end();
     }
 
-    return 'you\'ve just killed the party. Congrats 🎉';
+    return 'tu viens purement et simplement de détruire la fête. Félicitations, bravo, c\'est le pompon 🎉';
   }
 
   setTimeout (vote) {
@@ -100,7 +99,7 @@ module.exports = class StopMusicCommand extends Command {
     clearTimeout(vote.timeout);
     vote.timeout = setTimeout(() => {
       this.votes.delete(vote.guild);
-      vote.queue.textChannel.send('The vote to stop the music has ended. Get outta here, party poopers.');
+      vote.queue.textChannel.send('Le vote pour arrêter la musique en cours est terminé...');
     }, time);
 
     return roundNumber(time / 1000);
