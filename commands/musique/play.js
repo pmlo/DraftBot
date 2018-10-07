@@ -3,7 +3,7 @@ const YouTube = require('simple-youtube-api'),
   ytdl = require('ytdl-core'),
   {Command} = require('discord.js-commando'),
   {escapeMarkdown} = require('discord.js'),
-  {Song} = require('../../utils.js');
+  {Song,error} = require('../../utils.js');
 
 module.exports = class PlaySongCommand extends Command {
     constructor (client) {
@@ -36,19 +36,19 @@ module.exports = class PlaySongCommand extends Command {
       if (!queue) {
         voiceChannel = msg.member.voice.channel;
         if (!voiceChannel) {
-          return msg.reply('please join a voice channel before issuing this command.');
+          return msg.reply(error('Veuillez rejoindre un salon vocal pour lancer une musique.'));
         }
   
         const permissions = voiceChannel.permissionsFor(msg.client.user);
   
         if (!permissions.has('CONNECT')) {
-          return msg.reply('I don\'t have permission to join your voice channel. Fix your server\'s permissions');
+          return msg.reply(error('Je n\'ai pas la permission de rejoindre un salon vocal. Merci de régler ce petit soucis 😉'));
         }
         if (!permissions.has('SPEAK')) {
-          return msg.reply('I don\'t have permission to speak in your voice channel. Fix your server\'s permissions');
+          return msg.reply(error('Je n\'ai pas la permission de parler dans un salon vocal. Merci de régler ce petit soucis 😉'));
         }
       } else if (!queue.voiceChannel.members.has(msg.author.id)) {
-        return msg.reply('please join a voice channel before issuing this command.');
+        return msg.reply(error('Veuillez rejoindre un salon vocal pour lancer une musique.'));
       }
   
       const statusMsg = await msg.reply('obtaining video details...');
@@ -66,12 +66,12 @@ module.exports = class PlaySongCommand extends Command {
             voiceChannel,
             connection: null,
             songs: [],
-            volume: 50
+            volume: 1
           };
   
           this.queue.set(msg.guild.id, listQueue);
   
-          statusMsg.edit(`${msg.author}, joining your voice channel...`);
+          statusMsg.edit(`${msg.author}, je rejoinds votre salon vocal...`);
           try {
             const connection = await listQueue.voiceChannel.join();
   
@@ -79,7 +79,7 @@ module.exports = class PlaySongCommand extends Command {
           } catch (error) {
             console.log(error)
             this.queue.delete(msg.guild.id);
-            statusMsg.edit(`${msg.author}, unable to join your voice channel.`);
+            statusMsg.edit(`${msg.author}, impossible de rejoindre votre salon vocal.`);
   
             return null;
           }
@@ -100,7 +100,6 @@ module.exports = class PlaySongCommand extends Command {
       }
       try {
         const video = await this.youtube.getVideo(url);
-  
         return this.handleVideo(video, queue, voiceChannel, msg, statusMsg);
       } catch (error) {
         try {
@@ -108,7 +107,7 @@ module.exports = class PlaySongCommand extends Command {
           console.log(videos)
   
           if (!videos[0] || !videos) {
-            return statusMsg.edit(`${msg.author}, there were no search results.`);
+            return statusMsg.edit(`${msg.author}, il n'y a aucun résultats.`);
           }
 
 
@@ -119,15 +118,14 @@ module.exports = class PlaySongCommand extends Command {
           return this.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
         } catch (err) {
   
-          return statusMsg.edit(`${msg.author}, couldn't obtain the search result video's details.`);
+          return statusMsg.edit(`${msg.author}, impossible d'obtenir les détails de la vidéo recherché.`);
         }
       }
-  
     }
   
     async handleVideo (video, queue, voiceChannel, msg, statusMsg) {
       if (moment.duration(video.raw.contentDetails.duration, moment.ISO_8601).asSeconds() === 0) {
-        statusMsg.edit(`${msg.author}, you can't play live streams.`);
+        statusMsg.edit(`${msg.author}, vous ne pouvez pas lire les flux en direct.`);
   
         return null;
       }
@@ -144,7 +142,7 @@ module.exports = class PlaySongCommand extends Command {
   
         const result = await this.addSong(msg, video),
           resultMessage = {
-            color: 3447003,
+            color: 0xcd6e57,
             author: {
               name: `${msg.author.tag} (${msg.author.id})`,
               iconURL: msg.author.displayAvatarURL({format: 'png'})
@@ -178,7 +176,7 @@ module.exports = class PlaySongCommand extends Command {
       } else {
         const result = await this.addSong(msg, video),
           resultMessage = {
-            color: 3447003,
+            color: 0xcd6e57,
             author: {
               name: `${msg.author.tag} (${msg.author.id})`,
               iconURL: msg.author.displayAvatarURL({format: 'png'})
@@ -200,7 +198,7 @@ module.exports = class PlaySongCommand extends Command {
       }
       const result = await this.addSong(msg, video),
         resultMessage = {
-          color: 3447003,
+          color: 0xcd6e57,
           author: {
             name: `${msg.author.tag} (${msg.author.id})`,
             iconURL: msg.author.displayAvatarURL({format: 'png'})
@@ -217,15 +215,12 @@ module.exports = class PlaySongCommand extends Command {
   
       statusMsg.edit('', {
         embed: {
-          color: 3447003,
+          color: 0xcd6e57,
           author: {
             name: `${msg.author.tag} (${msg.author.id})`,
             icon_url: msg.author.displayAvatarURL({format: 'png'})
           },
-          description: stripIndents`
-            Adding playlist [${playlist.title}](https://www.youtube.com/playlist?list=${playlist.id}) to the queue!
-            Check what's been added with: \`${msg.guild.commandPrefix}queue\`!
-          `
+          description: `Adding playlist [${playlist.title}](https://www.youtube.com/playlist?list=${playlist.id}) to the queue!\nCheck what's been added with: \`${msg.guild.commandPrefix}queue\`!`
         }
       });
   
@@ -275,7 +270,7 @@ module.exports = class PlaySongCommand extends Command {
   
       const playing = queue.textChannel.send({
           embed: {
-            color: 4317875,
+            color: 0xcd6e57,
             author: {
               name: song.username,
               iconURL: song.avatar
