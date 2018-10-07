@@ -1,6 +1,5 @@
-const {Command} = require('discord.js-commando'),
-      {MessageEmbed} = require('discord.js'),
-      {oneLine, stripIndents} = require('common-tags');
+const {Command} = require('discord.js-commando');
+const {sendLogs} = require('../../utils.js');
 
 module.exports = class WelcomeCommand extends Command {
   constructor (client) {
@@ -14,7 +13,7 @@ module.exports = class WelcomeCommand extends Command {
       guildOnly: true,
       args: [{
 				key: 'channel',
-				prompt: 'Quel prefix voulez vous pour le bot',
+				prompt: 'Quel salon  voulez vous pour les messages de bienvenue?',
         type: 'channel',
         default: ''
 			}],
@@ -23,27 +22,21 @@ module.exports = class WelcomeCommand extends Command {
   }
 
   async run (msg, args) {
-    const defWelcomeEmbed = new MessageEmbed();
     let description;
 
     if(args.channel) {
       msg.guild.settings.set('welcomeChannel', args.channel);
-      description = oneLine`🎉 Le salon pour les messages de bienvenue est maintenant \`#${args.channel.name}\` !`;
+      description = `🎉 Le salon pour les messages de bienvenue est maintenant \`#${args.channel.name}\` !`;
 		}else{
       if (msg.guild.settings.get('welcomeMessage') !== false) {
         msg.guild.settings.set('welcomeMessage', false);
-        description = oneLine`🎉 Les messages de bienvenue sont maintenant **désactivés** !`;
+        description = `🎉 Les messages de bienvenue sont maintenant **désactivés** !`;
       }else{
         msg.guild.settings.set('welcomeMessage',true);
-        description = oneLine`🎉 Les messages de bienvenue sont maintenant **activés** !`;
+        description = `🎉 Les messages de bienvenue sont maintenant **activés** !`;
       }
     }
-    defWelcomeEmbed
-      .setColor(0xcd6e57)
-      .setAuthor(msg.author.username, msg.author.displayAvatarURL())
-      .setDescription(stripIndents`**Action:** ${description}`)
-      .setTimestamp();
 
-    return msg.embed(defWelcomeEmbed);
+    return sendLogs(msg, description)
   }
 };

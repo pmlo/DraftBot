@@ -51,6 +51,20 @@ const addDefaultRole = member => {
   }
 }
 
+const sendLogs = (msg, message) => {
+  const embed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setAuthor(msg.author.username, msg.author.displayAvatarURL())
+    .setDescription(stripIndents`**Action:** ${message}`)
+    .setTimestamp();
+
+  if (msg.guild.settings.get('logsChannel')) {
+    const channel = msg.guild.settings.get('logsChannel')
+    return channel.send('',embed);
+  }
+  return msg.embed(embed);
+}
+
 const error = (message) => {
   return `:no_entry_sign: | ${message}`
 }
@@ -127,5 +141,6 @@ module.exports = {
   addDefaultRole,
   Song,
   roundNumber,
-  error
+  error,
+  sendLogs
 };

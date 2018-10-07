@@ -1,6 +1,5 @@
-const {Command} = require('discord.js-commando'), 
-  {MessageEmbed} = require('discord.js'),
-  {oneLine, stripIndents} = require('common-tags');
+const {Command} = require('discord.js-commando');
+const {sendLogs} = require('../../utils.js');
 
 module.exports = class autoroleCommand extends Command {
   constructor (client) {
@@ -27,9 +26,7 @@ module.exports = class autoroleCommand extends Command {
   }
 
   run (msg, {role}) {
-    const defRoleEmbed = new MessageEmbed();
-
-    let description = oneLine`🔓 \`${role.name}\` a été définit comme role par défaut sur cette guild et sera attribué aux membres à leur arrivé !`;
+    let description = `🔓 \`${role.name}\` a été définit comme role par défaut sur cette guild et sera attribué aux membres à leur arrivé !`;
 
     if (role === 'delete') {
       msg.guild.settings.remove('defaultRole');
@@ -38,12 +35,6 @@ module.exports = class autoroleCommand extends Command {
       msg.guild.settings.set('defaultRole', role.id);
     }
 
-    defRoleEmbed
-      .setColor(0xcd6e57)
-      .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-      .setDescription(stripIndents`**Action:** ${description}`)
-      .setTimestamp();
-
-    return msg.embed(defRoleEmbed);
+    return sendLogs(msg, description)
   }
 };
