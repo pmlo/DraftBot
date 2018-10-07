@@ -1,6 +1,6 @@
-const {Command, util} = require('discord.js-commando'),
-  {MessageEmbed} = require('discord.js'),
-  {Song} = require('../../utils.js');
+const {Command, util} = require('discord.js-commando');
+const {MessageEmbed} = require('discord.js');
+const {Song} = require('../../utils.js');
 
 module.exports = class ShuffleCommand extends Command {
   constructor (client) {

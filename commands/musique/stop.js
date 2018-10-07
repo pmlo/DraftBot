@@ -1,5 +1,5 @@
-const {Command} = require('discord.js-commando'), 
-  {roundNumber} = require('../../utils.js');
+const {Command} = require('discord.js-commando');
+const {roundNumber} = require('../../utils.js');
 
 module.exports = class StopMusicCommand extends Command {
   constructor (client) {
