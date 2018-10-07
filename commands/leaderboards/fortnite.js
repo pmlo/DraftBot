@@ -39,7 +39,7 @@ const {get} = require('snekfetch'),
          embed
         .setAuthor(`Statistiques fortnite de ${stats.epicUserHandle}`, msg.author.displayAvatarURL)
         .setDescription(`Voici les statistiques du joueur ${stats.epicUserHandle} sur le jeu [fortnite](https://www.epicgames.com/fortnite/fr/home).`)
-        .setColor('#cd6e57')
+        .setColor(0xcd6e57)
         .addField("Victoires Solo", stats.stats.p2.top1.value, true)
         .addField("Victoires Duo", stats.stats.p10.top1.value, true)
         .addField("Victoires Section", stats.stats.p9.top1.value, true)
