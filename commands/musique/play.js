@@ -42,10 +42,10 @@ module.exports = class PlaySongCommand extends Command {
         const permissions = voiceChannel.permissionsFor(msg.client.user);
   
         if (!permissions.has('CONNECT')) {
-          return msg.reply(error('Je n\'ai pas la permission de rejoindre un salon vocal. Merci de régler ce petit soucis 😉'));
+          return msg.reply(error('je n\'ai pas la permission de rejoindre un salon vocal. Merci de régler ce petit soucis 😉'));
         }
         if (!permissions.has('SPEAK')) {
-          return msg.reply(error('Je n\'ai pas la permission de parler dans un salon vocal. Merci de régler ce petit soucis 😉'));
+          return msg.reply(error('je n\'ai pas la permission de parler dans un salon vocal. Merci de régler ce petit soucis 😉'));
         }
       } else if (!queue.voiceChannel.members.has(msg.author.id)) {
         return msg.reply(error('Veuillez rejoindre un salon vocal pour lancer une musique.'));
@@ -54,7 +54,7 @@ module.exports = class PlaySongCommand extends Command {
       const statusMsg = await msg.reply('obtaining video details...');
   
       if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-        await statusMsg.edit('obtaining playlist videos... (this can take a while for long lists)');
+        await statusMsg.edit('obtention des vidéos de la playlist ... (cela peut prendre un certain temps pour en fonction de la longeur de la liste)');
         const playlist = await this.youtube.getPlaylist(url),
           videos = await playlist.getVideos();
   
@@ -157,7 +157,7 @@ module.exports = class PlaySongCommand extends Command {
           return null;
         }
   
-        statusMsg.edit(`${msg.author}, joining your voice channel...`);
+        statusMsg.edit(`${msg.author}, je rejoinds votre salon vocal...`);
         try {
           const connection = await queue.voiceChannel.join();
   
@@ -169,7 +169,7 @@ module.exports = class PlaySongCommand extends Command {
         } catch (error) {
           console.log(error)
           this.queue.delete(msg.guild.id);
-          statusMsg.edit(`${msg.author}, unable to join your voice channel.`);
+          statusMsg.edit(`${msg.author}, impossible de rejoindre votre salon vocal.`);
   
           return null;
         }
@@ -192,7 +192,7 @@ module.exports = class PlaySongCommand extends Command {
   
     async handlePlaylist (video, playlist, queue, voiceChannel, msg, statusMsg) {
       if (moment.duration(video.raw.contentDetails.duration, moment.ISO_8601).asSeconds() === 0) {
-        statusMsg.edit(`${msg.author}, looks like that playlist has a livestream and I cannot play livestreams`);
+        statusMsg.edit(`${msg.author}, il semblerai que cette playlist soit un live et je ne peux pas jouer des live !`);
   
         return null;
       }
@@ -220,7 +220,7 @@ module.exports = class PlaySongCommand extends Command {
             name: `${msg.author.tag} (${msg.author.id})`,
             icon_url: msg.author.displayAvatarURL({format: 'png'})
           },
-          description: `Adding playlist [${playlist.title}](https://www.youtube.com/playlist?list=${playlist.id}) to the queue!\nCheck what's been added with: \`${msg.guild.commandPrefix}queue\`!`
+          description: `Ajout de la playlist [${playlist.title}](https://www.youtube.com/playlist?list=${playlist.id}) dans la file d'attente !\nAffichez la liste des musiques en attente avce: \`${msg.guild.commandPrefix}queue\`!`
         }
       });
   
@@ -239,7 +239,7 @@ module.exports = class PlaySongCommand extends Command {
   
       if (!this.client.isOwner(msg.author)) {
         if (queue.songs.some(song => song.id === video.id)) {
-          return `👎 ${escapeMarkdown(video.title)} is already queued.`;
+          return `👎 ${escapeMarkdown(video.title)} est déjà dans la file d'attente.`;
         }
       }
   
@@ -260,7 +260,7 @@ module.exports = class PlaySongCommand extends Command {
       }
   
       if (!song) {
-        queue.textChannel.send('We\'ve run out of songs! Better queue up some more tunes.');
+        queue.textChannel.send('Il n\'y a déjà plus de musique ! Ajoutez quelques musiques à la file d\'attente et c\'est repartit !');
         queue.voiceChannel.leave();
         this.queue.delete(guild.id);
   
@@ -286,7 +286,7 @@ module.exports = class PlaySongCommand extends Command {
         })
           .on('error', () => {
             streamErrored = true;
-            playing.then(msg => msg.edit(`❌ Couldn't play ${song}. What a drag!`));
+            playing.then(msg => msg.edit(`❌ Impossible de jouer ${song}. Qu'est ce que c'est que ce travail! 😡`));
             queue.songs.shift();
             this.play(guild, queue.songs[0]);
           }),
@@ -300,7 +300,7 @@ module.exports = class PlaySongCommand extends Command {
             queue.songs.shift();
             this.play(guild, queue.songs[0]);
         }).on('error', (err) => {
-            queue.textChannel.send(`An error occurred while playing the song: \`${err}\``);
+            queue.textChannel.send(`Une erreur s'est produite lors de la lecture de la musique: \`${err}\``);
         });
   
       dispatcher.setVolumeLogarithmic(queue.volume / 5);
