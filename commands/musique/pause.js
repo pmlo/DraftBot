@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const { error } = require('../../utils.js');
 
 module.exports = class PauseSongCommand extends Command {
   constructor (client) {

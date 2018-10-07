@@ -3,7 +3,7 @@ const moment = require('moment');
 const ytdl = require('ytdl-core');
 const { Command } = require('discord.js-commando');
 const { escapeMarkdown } = require('discord.js');
-const { Song, error } = require('../../utils.js');
+const { Song } = require('../../utils.js');
 const emojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣'];
 
 const run = (current) => async (msg, { url }) =>  {
@@ -14,19 +14,19 @@ const run = (current) => async (msg, { url }) =>  {
     if (!queue) {
         voiceChannel = msg.member.voice.channel;
         if (!voiceChannel) {
-            return msg.reply(error('Veuillez rejoindre un salon vocal pour lancer une musique.'));
+            return msg.reply('veuillez rejoindre un salon vocal pour lancer une musique.');
         }
 
         const permissions = voiceChannel.permissionsFor(msg.client.user);
 
         if (!permissions.has('CONNECT')) {
-            return msg.reply(error('je n\'ai pas la permission de rejoindre un salon vocal. Merci de régler ce petit soucis 😉'));
+            return msg.reply('je n\'ai pas la permission de rejoindre un salon vocal. Merci de régler ce petit soucis 😉');
         }
         if (!permissions.has('SPEAK')) {
-            return msg.reply(error('je n\'ai pas la permission de parler dans un salon vocal. Merci de régler ce petit soucis 😉'));
+            return msg.reply('je n\'ai pas la permission de parler dans un salon vocal. Merci de régler ce petit soucis 😉');
         }
     } else if (!queue.voiceChannel.members.has(msg.author.id)) {
-        return msg.reply(error('Veuillez rejoindre un salon vocal pour lancer une musique.'));
+        return msg.reply('veuillez rejoindre un salon vocal pour lancer une musique.');
     }
 
     let statusMsg = await msg.reply('traitement de la demande...');
