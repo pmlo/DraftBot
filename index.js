@@ -1,7 +1,7 @@
 const { CommandoClient, SQLiteProvider } = require('discord.js-commando'),
         path = require('path'),
         sqlite = require('sqlite'),
-        {makeWelcomeImage,addDefaultRole} = require('./utils.js');
+        {makeWelcomeImage,newUser} = require('./utils.js');
 
 require('dotenv').config();
 
@@ -27,28 +27,45 @@ DraftBot.on('ready', () => {
 
 DraftBot.on('guildMemberAdd', member => {
     makeWelcomeImage(member);
-    addDefaultRole(member)
+    newUser(member, true)
 })
 
+DraftBot.on('guildMemberRemove', member => {
+    newUser(member, false)
+})
+
+DraftBot.on('roleCreate', role => {
+    //ajout du log
+})
+
+DraftBot.on('roleDelete', role => {
+    //ajout du log
+})
+
+DraftBot.on('emojiCreate', role => {
+    //ajout du log
+})
 
 DraftBot.on('raw', event => {
     const { d: data } = event;
     if (event.t === 'MESSAGE_REACTION_ADD' || event.t == "MESSAGE_REACTION_REMOVE"){
         const channel = DraftBot.channels.get(event.d.channel_id);
         channel.messages.fetch(event.d.message_id).then(msg=> {
-            let user = msg.guild.member(data.user_id);
-            if (msg.author.id == DraftBot.user.id && msg.guild.settings.get(`react-${msg.id}:${data.emoji.id}`)){
-                if (user.id != DraftBot.user.id){
-                    const role = msg.guild.roles.find(r => r.id === msg.guild.settings.get(`react-${msg.id}:${data.emoji.id}`));
-                    if (event.t === "MESSAGE_REACTION_ADD"){
-                        user.roles.add(role);
-                    } else {
-                        user.roles.remove(role)
+            if(msg.author.id == DraftBot.user.id){
+                let user = msg.guild.member(data.user_id);
+                if (msg.guild.settings.get(`react-${msg.id}:${data.emoji.id||data.emoji.name}`)){
+                    if (user.id != DraftBot.user.id){
+                        const role = msg.guild.roles.find(r => r.id === msg.guild.settings.get(`react-${msg.id}:${data.emoji.id||data.emoji.name}`));
+                        if (event.t === "MESSAGE_REACTION_ADD"){
+                            user.roles.add(role);
+                        } else {
+                            user.roles.remove(role)
+                        }
                     }
                 }
             }
         })
-    }   
+    }
 });
 
 DraftBot.on('unknownCommand', msg => {

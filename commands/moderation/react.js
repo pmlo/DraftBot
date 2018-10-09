@@ -45,9 +45,9 @@ module.exports = class QuoteCommand extends Command {
       focusMsg.edit('', {embed});
     })
 
-    msg.guild.settings.set(`react-${message.id}:${newEmoji.id}`,`${role.id}`);
+    msg.guild.settings.set(`react-${message.id}:${newEmoji.id||newEmoji.name}`,`${role.id}`);
 
-    message.react(newEmoji.id ? newEmoji.id : newEmoji.name)
+    message.react(newEmoji.id||newEmoji.name)
 
     reactEmbed
       .setColor(0xcd6e57)
