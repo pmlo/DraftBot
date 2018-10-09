@@ -13,15 +13,30 @@ module.exports = class WelcomeCommand extends Command {
       args: [{
 				key: 'channel',
 				prompt: 'Quel salon voulez vous pour les logs',
-        type: 'channel'
+        type: 'channel',
+        default: ''
 			}],
       userPermissions: ['ADMINISTRATOR']
     });
   }
 
   async run (msg, {channel}) {
-    msg.guild.settings.set('logsChannel', channel);
 
-    sendLogs(msg,`🎉 Les logs du serveurs seront maintenant envoyés dans \`#${channel.name}\` !`)
+    let description;
+
+    if(args.channel) {
+      msg.guild.settings.set('logsChannel', args.channel);
+      description = `🎉 Les logs du serveurs seront maintenant envoyés dans \`#${channel.name}\` !`;
+		}else{
+      if (msg.guild.settings.get('logsMessage') !== true) {
+        msg.guild.settings.set('logsMessage',true);
+        description = `🎉 Les logs du serveurs sont maintenant **activés** !`;
+      }else{
+        msg.guild.settings.set('logsMessage', false);
+        description = `🎉 Les logs du serveurs sont maintenant **désactivés** !`;
+      }
+    }
+
+    sendLogs(msg,description)
   }
 };

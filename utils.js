@@ -45,12 +45,6 @@ const addRole = (role, member) => {
   }
 }
 
-const addDefaultRole = member => {
-  if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole'))){
-    member.roles.add(member.guild.settings.get('defaultRole'));
-  }
-}
-
 const sendLogs = (msg, message) => {
   const embed = new MessageEmbed()
     .setColor(0xcd6e57)
@@ -63,6 +57,37 @@ const sendLogs = (msg, message) => {
     return channel.send('',embed);
   }
   return msg.embed(embed);
+}
+
+const newUser = (member,type) => {
+  if (member.guild.settings.get('logsMessage') === true) {
+    const channel = member.guild.settings.get('logsChannel') ? member.guild.settings.get('logsChannel').id : null;
+
+      const newMemberEmbed = new MessageEmbed()
+      .setTitle(':banana: Nouveau membre')
+      .setAuthor(`${member.user.tag} (${member.id})`, member.user.displayAvatarURL({format: 'png'}))
+      .setColor(0x39d600)
+      .setDescription(user.tag + " est arrivé !")
+      .setTimestamp();
+
+      const oldMemberEmbed = new MessageEmbed()
+      .setTitle(':wastebasket: Membre parti')
+      .setAuthor(`${member.user.tag} (${member.id})`, member.user.displayAvatarURL({format: 'png'}))
+      .setColor(0xce0000)
+      .setDescription(user.tag + " viens de quitter le serveur !")
+      .setTimestamp();
+
+    if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole') && type === true)) {
+      member.roles.add(member.guild.settings.get('defaultRole'));
+      newMemberEmbed.setDescription(`${newMemberEmbed.description}\nLe role ${member.guild.roles.get(member.guild.settings.get('defaultRole')).name} lui à été automatiquement attribué !`);
+    }
+
+    if (channel && member.guild.channels.get(channel) && member.guild.channels.get(channel).permissionsFor(this.client.user).has('SEND_MESSAGES')) {
+      return member.guild.channels.get(channel).send('', {embed: type === true ? newMemberEmbed : oldMemberEmbed});
+    }
+  }else if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole')) && type === true) {
+      member.roles.add(member.guild.settings.get('defaultRole'));
+  }
 }
 
 const error = (message) => {
@@ -138,9 +163,9 @@ const roundNumber = function (num, scale = 0) {
 module.exports = {
   makeWelcomeImage,
   addRole,
-  addDefaultRole,
   Song,
   roundNumber,
   error,
-  sendLogs
+  sendLogs,
+  newUser
 };
