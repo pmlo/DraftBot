@@ -100,10 +100,9 @@ const run = (current) => async (msg, { url }) =>  {
             const bot = msg.client;
 
             const sendedEmbed = await msg.say({ embed: musicsList })
-            const [reactMessage, emoji] = await [sendedEmbed, videos.map((_, index) => emojis[index])]
+            const [reactMessage] = await [sendedEmbed, videos.map((_, index) => emojis[index])]
             await emojis.reduce((acc, emoji) => acc.then(() => reactMessage.react(emoji)), Promise.resolve())
-
-            return bot.on('messageReactionAdd', startReactEvent);
+            bot.on('messageReactionAdd', startReactEvent(msg,videos,sendedEmbed,current,queue,voiceChannel,statusMsg));
         } catch (err) {
             console.log(err)
             return statusMsg.edit(`${msg.author}, impossible d'obtenir les détails de la vidéo recherché.`);
@@ -249,10 +248,9 @@ const play = (current) => (guild, song) => {
     }
 
     if (!song) {
-        queue.textChannel.send('Il n\'y a déjà plus de musique ! Ajoutez quelques musiques à la file d\'attente et c\'est repartit !');
+        queue.textChannel.send('Il n\'y a plus de musique ! Ajoutez quelques musiques à la file d\'attente pour lelancer la musique !');
         queue.voiceChannel.leave();
         current.queue.delete(guild.id);
-
         return;
     }
     let streamErrored = false;
@@ -298,19 +296,19 @@ const play = (current) => (guild, song) => {
     queue.playing = true;
 }
 
-const startReactEvent = async (messageReaction, user, sendedEmbed, videos) => {
-  const member = messageReaction.message.guild.member(user);
-  if (user.bot) return;
-  const emoji = messageReaction.emoji.name;
-  if (sendedEmbed.id === messageReaction.message.id && emojis.includes(emoji)) {
-      console.log(emojis, emoji)
-      const videoByID = await current.youtube.getVideoByID(videos[emojis.indexOf(emoji)].id);
+const startReactEvent =  (msg,videos,sendedEmbed,current,queue,voiceChannel,statusMsg) => {
+    return async (messageReaction,user) => {
+        if (user.bot) return;
+        const emoji = messageReaction.emoji.name;
+        if (sendedEmbed.id === messageReaction.message.id && emojis.includes(emoji)) {
+            const videoByID = await current.youtube.getVideoByID(videos[emojis.indexOf(emoji)].id);
 
-      current.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
-      sendedEmbed.clearReactions();
-      sendedEmbed.delete(3000);
-      return bot.off('messageReactionAdd', startReactEvent);
-  }
+            current.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
+            sendedEmbed.reactions.removeAll();
+            sendedEmbed.delete(3000);
+            return msg.client.removeListener('messageReactionAdd', startReactEvent);
+        }
+    }
 }
 
 module.exports = class PlaySongCommand extends Command {

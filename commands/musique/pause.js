@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const { error } = require('../../utils.js');
 
 module.exports = class PauseSongCommand extends Command {
   constructor (client) {
@@ -18,7 +17,7 @@ module.exports = class PauseSongCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply(error('je ne joue pas de musique pour le moment, pourquoi ne pas commencer maintenant?'));
+      return msg.reply('je ne joue pas de musique pour le moment, pourquoi ne pas commencer maintenant?');
     }
     if (!queue.songs[0].dispatcher) {
       return msg.reply('je ne peux pas mettre en pause une chanson qui n’a même pas encore été lancé.');
