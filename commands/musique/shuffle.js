@@ -38,7 +38,7 @@ module.exports = class ShuffleCommand extends Command {
       paginated = util.paginate(queue.songs, 1, Math.floor(10));
 
     embed
-      .setColor(msg.guild ? msg.guild.me.displayHexColor : '#7CFC00')
+      .setColor(0xcd6e57)
       .setAuthor(`${msg.author.tag} (${msg.author.id})`, msg.author.displayAvatarURL({format: 'png'}))
       .setImage(currentSong.thumbnail)
       .setDescription(`__**10 premières musiques de la file d'attente**__\n
