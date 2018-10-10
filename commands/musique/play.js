@@ -304,8 +304,7 @@ const startReactEvent =  (msg,videos,sendedEmbed,current,queue,voiceChannel,stat
             const videoByID = await current.youtube.getVideoByID(videos[emojis.indexOf(emoji)].id);
 
             current.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
-            sendedEmbed.reactions.removeAll();
-            sendedEmbed.delete(3000);
+            sendedEmbed.delete();
             return msg.client.removeListener('messageReactionAdd', startReactEvent);
         }
     }
