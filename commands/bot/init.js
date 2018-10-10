@@ -1,5 +1,5 @@
-const {MessageEmbed} = require('discord.js'), 
-  {Command} = require('discord.js-commando')
+const { MessageEmbed } = require('discord.js')
+const { Command } = require('discord.js-commando')
 
 module.exports = class InviteCommand extends Command {
   constructor (client) {
@@ -24,9 +24,9 @@ module.exports = class InviteCommand extends Command {
       .setFooter("Procéssus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
       .setTimestamp()
 
-    await msg.embed(configEmbed);
-    await msg.client.on('message', this.lisenCancel(msg));
-    await this.runProcess(msg, 0);
+    msg.embed(configEmbed);
+    msg.client.on('message', this.lisenCancel(msg));
+    this.runProcess(msg, 0);
   }
   lisenCancel(msg) {
     return async (message) => {
