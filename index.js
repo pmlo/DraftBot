@@ -51,7 +51,7 @@ DraftBot.on('raw', event => {
     if (event.t === 'MESSAGE_REACTION_ADD' || event.t == "MESSAGE_REACTION_REMOVE"){
         const channel = DraftBot.channels.get(event.d.channel_id);
         channel.messages.fetch(event.d.message_id).then(msg=> {
-            if(msg.author.id == DraftBot.user.id){
+            if(msg.author.id === DraftBot.user.id){
                 let user = msg.guild.member(data.user_id);
                 if (msg.guild.settings.get(`react-${msg.id}:${data.emoji.id||data.emoji.name}`)){
                     if (user.id != DraftBot.user.id){
@@ -64,7 +64,7 @@ DraftBot.on('raw', event => {
                     }
                 }
             }
-        })
+        }).catch(()=> null)
     }
 });
 
