@@ -1,5 +1,6 @@
 const { MessageEmbed } = require('discord.js')
 const { Command } = require('discord.js-commando')
+const {oneLine, stripIndents} = require('common-tags')
 
 module.exports = class InviteCommand extends Command {
   constructor (client) {
@@ -14,13 +15,19 @@ module.exports = class InviteCommand extends Command {
     });
   }
 
-  async run (msg) {
+  run (msg) {
     const configEmbed = new MessageEmbed()
       .setTitle('Configuration')
       .setAuthor(msg.author.username,msg.author.displayAvatarURL({format: 'png'}))
       .setThumbnail(msg.client.user.displayAvatarURL({format: 'png'}))
       .setColor(0xcd6e57)
-      .setDescription("Bienvenue sur mon procéssus de configuration !\nJe vais vous posez une série de question me permettant de répondre aux mieux à vos besoins.\n\nVous pouvez arêter cette configuration à tout moment en envoyant \`cancel\`.")
+      .setDescription(
+      stripIndents`
+        Bienvenue sur mon procéssus de configuration !
+        Je vais vous posez une série de question me permettant de répondre aux mieux à vos besoins.
+        
+        Vous pouvez arêter cette configuration à tout moment en envoyant \`cancel\`.
+      `)
       .setFooter("Procéssus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
       .setTimestamp()
 
@@ -28,14 +35,15 @@ module.exports = class InviteCommand extends Command {
     msg.client.on('message', this.lisenCancel(msg));
     this.runProcess(msg, 0);
   }
+  
   lisenCancel(msg) {
-    return async (message) => {
+    return (message) => {
       if(msg.author.id !== message.author.id) return;
   
       if(message.content.toLowerCase() === 'cancel'){
-        await msg.client.removeListener('message', this.lisenCancel(msg));
-        await msg.client.removeListener('messageReactionAdd',this.event);
-        await msg.client.removeListener('message', this.lisenMessages(msg));
+        msg.client.removeListener('message', this.lisenCancel(msg));
+        msg.client.removeListener('messageReactionAdd',this.event);
+        msg.client.removeListener('message', this.lisenMessages(msg));
         message.reply('configuration annulé !')
         return false;
       }
@@ -47,7 +55,7 @@ module.exports = class InviteCommand extends Command {
         embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoinds le serveur ? *exemple ci dessous*'),
         file: 'https://www.draftman.fr/images/draftbot/exemple_welcome_message.jpg'
       })
-      await this.trueFalse(msg,question,'Les messages de bienvenue sont maintenant **$1** !',1);
+      await this.affirmativeQuestion(msg,question,'Les messages de bienvenue sont maintenant **$1** !',1);
     }
     if(process === 1){
       await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
@@ -65,13 +73,12 @@ module.exports = class InviteCommand extends Command {
       await msg.client.on('message', lisenChannel(msg));
     }
   }
-  async trueFalse(msg,question,response,nextProcess){
+  async affirmativeQuestion(msg,question,response,nextProcess){
     const emojis = ['✅','❎']
-    await question.react('✅')
-    await question.react('❎')
+    await Promise.all(emojis.map((emoji) => question.react(emoji)));
 
     const event = async (messageReaction,user) => {
-        if(user.id === messageReaction.message.client.user.id) return;
+        if(user.bot) return;
         if(messageReaction.message.id === question.id){
           if(emojis.includes(messageReaction.emoji.name)){
             await question.delete();
