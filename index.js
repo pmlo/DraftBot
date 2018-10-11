@@ -79,7 +79,7 @@ DraftBot.registry
         ['bot', 'Bot - Informations par rapport au bot et au discord'],
         ['musique', 'Musique - Commandes permettant de mettre de la musique'],
         ['utils', 'Utils - Différents outils permettant différentes choses sur le serveur'],
-        ['recherches', 'Recherches - Faites des recherches google à partir de discord'],
+        ['fun', 'Fun - Commandes fun'],
         ['leaderboards', 'Leaderboards - Regardez vos statistiques de différents jeux'],
         ['moderation', 'Moderation - Commandes de modération'],
         ['admin', 'Admin - Commandes d\'administateur']
