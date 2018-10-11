@@ -5,7 +5,7 @@ module.exports = class PrefixCommand extends Command {
 		super(client, {
 			name: 'prefix',
 			memberName: 'prefix',
-			group: 'utils',
+			group: 'bot',
 			description: 'Afficher ou changer le prefix.',
 			format: '[prefix/"default"/"none"]',
 			examples: ['prefix', 'prefix ?', 'prefix @', 'prefix default', 'prefix none'],
