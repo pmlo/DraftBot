@@ -32,18 +32,18 @@ module.exports = class InviteCommand extends Command {
       .setTimestamp()
 
     msg.embed(configEmbed);
-    msg.client.on('message', this.lisenCancel(msg));
+    msg.client.on('message', this.listenCancel(msg));
     this.runProcess(msg, 0);
   }
   
-  lisenCancel(msg) {
+  listenCancel(msg) {
     return (message) => {
       if(msg.author.id !== message.author.id) return;
   
       if(message.content.toLowerCase() === 'cancel'){
-        msg.client.removeListener('message', this.lisenCancel(msg));
+        msg.client.removeListener('message', this.listenCancel(msg));
         msg.client.removeListener('messageReactionAdd',this.event);
-        msg.client.removeListener('message', this.lisenMessages(msg));
+        msg.client.removeListener('message', this.listenMessages(msg));
         message.reply('configuration annulé !')
         return false;
       }
@@ -60,17 +60,17 @@ module.exports = class InviteCommand extends Command {
     if(process === 1){
       await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
 
-      const lisenChannel = (msg) => {
+      const listenChannel = (msg) => {
         return async (message) => {
           if(msg.author.id !== message.author.id) return;
           const channel = await findChannel(message.content, msg);
-          if(channel !== null) msg.client.removeListener('message', lisenChannel(msg));
+          if(channel !== null) msg.client.removeListener('message', listenChannel(msg));
           msg.guild.settings.set('welcomeChannel', channel);
 
           msg.embed(questionEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${channel.name} !`))
         }
       }
-      await msg.client.on('message', lisenChannel(msg));
+      await msg.client.on('message', listenChannel(msg));
     }
   }
   async affirmativeQuestion(msg,question,response,nextProcess){
@@ -119,11 +119,10 @@ const findChannel = (val, msg) => {
 }
 
 const questionEmbed = (msg, question) => {
-  const embed = new MessageEmbed()
+  return new MessageEmbed()
   .setAuthor(msg.author.username,msg.author.displayAvatarURL({format: 'png'}))
   .setColor(0x39d600)
   .setDescription(question)
   .setFooter("Procéssus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
-  .setTimestamp()
-  return embed;
+  .setTimestamp();
 }
