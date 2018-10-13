@@ -42,11 +42,11 @@ module.exports = class InviteCommand extends Command {
         embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoinds le serveur ? *exemple ci dessous*'),
         file: 'https://www.draftman.fr/images/draftbot/exemple_welcome_message.jpg'
       })
-      return await msg.client.on('messageReactionAdd',affirmativeQuestion(msg,question,'Les messages de bienvenue sont maintenant **$1** !',1));
+      return msg.client.on('messageReactionAdd', await affirmativeQuestion(msg,question,'Les messages de bienvenue sont maintenant **$1** !',1));
     }
     if(process === 1){
       await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
-      return await msg.client.on('message', listenChannel(msg));
+      return msg.client.on('message', listenChannel(msg));
     }
     console.log('no process')
     msg.embed(questionEmbed(msg,'Félicitation la configuration est terminé, merci !'))
@@ -73,7 +73,6 @@ const affirmativeQuestion = async (msg,question,response,nextProcess) => {
     if(user.bot) return;
     if(messageReaction.message.id === question.id){
       if(emojis.includes(messageReaction.emoji.name)){
-        await question.delete();
         
         const embed = new MessageEmbed()
         .setAuthor(user.username,user.displayAvatarURL({format: 'png'}))
@@ -81,13 +80,14 @@ const affirmativeQuestion = async (msg,question,response,nextProcess) => {
         .setDescription(response.replace('$1',messageReaction.emoji.name === '✅' ? 'activés' : 'désactivés'))
         .setFooter("Procéssus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
         .setTimestamp()
-  
+
         await msg.say(embed)
         
-        question.client.removeListener('messageReactionAdd',affirmativeQuestion(msg,question,response,nextProcess));
+        question.client.removeListener('messageReactionAdd',await affirmativeQuestion(msg,question,response,nextProcess));
         
-        return this.runProcess(msg,messageReaction.emoji.name === '✅' ? nextProcess : nextProcess+1)
-  
+        await messageReaction.message.delete();
+
+        this.runProcess(msg,messageReaction.emoji.name === '✅' ? nextProcess : nextProcess+1)
       } else{
         messageReaction.users.remove(user)
       }
