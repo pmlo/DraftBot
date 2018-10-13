@@ -34,7 +34,7 @@ module.exports = class InitCommand extends Command {
 
     msg.embed(configEmbed);
     msg.client.on('message', eventCancel(msg));
-    this.runProcess(msg, 0);
+    this.runProcess(msg, 1);
   }
 
   async runProcess (msg,process) {
@@ -72,8 +72,8 @@ const welcomeMessage = (current) => async (msg,process) => {
 
 
 const channelWelcome = (current) => async (msg,process) => {
-  await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
-  await msg.client.on('message',eventListenChannel(current)(msg,process));
+  const question = await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
+  await msg.client.on('message',eventListenChannel(current)(msg,question,process));
 }
 
 /* 
@@ -82,7 +82,7 @@ const channelWelcome = (current) => async (msg,process) => {
 * Différents events pour capturer les réponses de l'utilisateur
 */
 
-const eventListenChannel = (current) => (msg,process) => {
+const eventListenChannel = (current) => (msg,question,process) => {
   const nextProcess = process + 1;
   return async (message) => {
     if(msg.author.id !== message.author.id) return;
@@ -93,6 +93,8 @@ const eventListenChannel = (current) => (msg,process) => {
       return;
     }else{
       msg.client.removeListener('message', eventListenChannel(current)(msg));
+      question.delete();
+      message.delete();
     }
     msg.guild.settings.set('welcomeChannel', channel);
 
@@ -106,7 +108,7 @@ const eventListenReactions = (current) => (msg,question,reactions,process) => {
   return async (messageReaction,user) => {
     if(user.bot) return;
     if(messageReaction.message.id !== question.id) return;
-    if(reactions.includes(messageReaction.emoji.name)){
+    if(!reactions.includes(messageReaction.emoji.name)){
       messageReaction.users.remove(user)
       return;
     }
@@ -143,7 +145,7 @@ const stopCommand = (current) => async (msg) => {
   msg.client.removeListener('message', eventCancel(msg));
   msg.client.removeListener('message', eventListenReactions(current)(msg,null,[],1000));
   msg.client.removeListener('messageReactionAdd',eventListenChannel(current)(msg,1000));
-  return current.run(msg);
+  return;
 }
 
 
