@@ -69,7 +69,7 @@ const welcomeMessage = (current) => async (msg,process) => {
   
   await Promise.all(emojis.map(emoji => question.react(emoji)));
 
-  msg.client.on('messageReactionAdd',eventListenReactions(msg,question,emojis).then(response => {
+  msg.client.on('messageReactionAdd',(msg,question,emojis) => eventListenReactions(msg,question,emojis).then(response => {
     msg.guild.settings.set('welcomeMessage', response);
 
     msg.embed(resultEmbed(msg,`Les messages de bienvenue sont maintenant **${response === true ? 'activés' : 'désactivés'}** !`))
@@ -82,7 +82,7 @@ const channelWelcome = (current) => async (msg,process) => {
   const nextProcess = process + 1;
   await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
 
-  msg.client.on('message',eventListenChannel(msg).then(channel => {
+  msg.client.on('message',(msg) => eventListenChannel(msg).then(channel => {
     msg.guild.settings.set('welcomeChannel', channel);
 
     msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${channel.name} !`))
