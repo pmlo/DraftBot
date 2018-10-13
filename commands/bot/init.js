@@ -37,20 +37,21 @@ module.exports = class InviteCommand extends Command {
   }
 
   async runProcess (msg,process) {
+    const current = this;
     if(process === 0){
       const question = await msg.say({
         embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoinds le serveur ? *exemple ci dessous*'),
         file: 'https://www.draftman.fr/images/draftbot/exemple_welcome_message.jpg'
       })
-      return msg.client.on('messageReactionAdd', await affirmativeQuestion(msg,question,'Les messages de bienvenue sont maintenant **$1** !',1));
+      return msg.client.on('messageReactionAdd', await affirmativeQuestion(current)(msg,question,'Les messages de bienvenue sont maintenant **$1** !',1));
     }
     if(process === 1){
       await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
-      return msg.client.on('message', listenChannel(msg));
+      return msg.client.on('message', listenChannel(current)(msg));
     }
     console.log('no process')
     msg.embed(questionEmbed(msg,'Félicitation la configuration est terminé, merci !'))
-    return stopCommand(msg)
+    return stopCommand(current)(msg)
   }
 };
 
@@ -66,7 +67,7 @@ const findChannel = (val, msg) => {
   return null;
 }
 
-const affirmativeQuestion = async (msg,question,response,nextProcess) => {
+const affirmativeQuestion = (current) => async (msg,question,response,nextProcess) => {
   const emojis = ['✅','❎']
   await Promise.all(emojis.map((emoji) => question.react(emoji)));
   return async (messageReaction,user) => {
@@ -83,11 +84,11 @@ const affirmativeQuestion = async (msg,question,response,nextProcess) => {
 
         await msg.say(embed)
         
-        question.client.removeListener('messageReactionAdd',await affirmativeQuestion(msg,question,response,nextProcess));
+        question.client.removeListener('messageReactionAdd',await affirmativeQuestion(current)(msg,question,response,nextProcess));
         
         await messageReaction.message.delete();
 
-        this.runProcess(msg,messageReaction.emoji.name === '✅' ? nextProcess : nextProcess+1)
+        current.runProcess(msg,messageReaction.emoji.name === '✅' ? nextProcess : nextProcess+1)
       } else{
         messageReaction.users.remove(user)
       }
@@ -95,7 +96,7 @@ const affirmativeQuestion = async (msg,question,response,nextProcess) => {
   }
 }
 
-const listenChannel = (msg) => {
+const listenChannel = (current) => (msg) => {
   return async (message) => {
     if(msg.author.id !== message.author.id) return;
     const channel = await findChannel(message.content, msg);
@@ -103,12 +104,12 @@ const listenChannel = (msg) => {
       message.delete({timeout: 2000})
       return msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
     }else{
-      msg.client.removeListener('message', listenChannel(msg));
+      msg.client.removeListener('message', listenChannel(current)(msg));
     }
     msg.guild.settings.set('welcomeChannel', channel);
 
     msg.embed(questionEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${channel.name} !`))
-    return this.runProcess(msg,2)
+    return current.runProcess(msg,2)
   }
 }
 
@@ -130,10 +131,10 @@ const errorEmbed = (msg, message) => {
   .setTimestamp();
 }
 
-const stopCommand = (msg) => {
+const stopCommand = (current) => (msg) => {
   msg.client.removeListener('message', listenCancel(msg));
-  msg.client.removeListener('messageReactionAdd',affirmativeQuestion(msg));
-  msg.client.removeListener('message', listenChannel(msg));
+  msg.client.removeListener('messageReactionAdd',affirmativeQuestion(current)(msg));
+  msg.client.removeListener('message', listenChannel(current)(msg));
   return this.run(msg)
 }
 
