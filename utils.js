@@ -160,6 +160,18 @@ const roundNumber = function (num, scale = 0) {
   return Number(`${Math.round(`${Number(arr[0])}e${sig}${Number(arr[1]) + scale}`)}e-${scale}`);
 };
 
+const findChannel = (val, msg) => {
+  const matches = val.match(/^(?:<#)?([0-9]+)>?$/);
+  if(matches) return msg.guild.channels.get(matches[1]) || null;
+  const search = val.toLowerCase();
+  const channels = msg.guild.channels.filter(thing => thing.name.toLowerCase().includes(search));
+  if(channels.size === 0) return null;
+  if(channels.size === 1) return channels.first();
+  const exactChannels = channels.filter(filter => filter.name.toLowerCase() === search);
+  if(exactChannels.size === 1) return exactChannels.first();
+  return null;
+}
+
 module.exports = {
   makeWelcomeImage,
   addRole,
@@ -167,5 +179,6 @@ module.exports = {
   roundNumber,
   error,
   sendLogs,
-  newUser
+  newUser,
+  findChannel
 };

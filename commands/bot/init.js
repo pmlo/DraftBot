@@ -3,7 +3,7 @@ const { Command } = require('discord.js-commando')
 const { stripIndents } = require('common-tags')
 const { findChannel } = require('../../utils.js')
 
-module.exports = class InviteCommand extends Command {
+module.exports = class InitCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'init',
@@ -33,7 +33,7 @@ module.exports = class InviteCommand extends Command {
       .setTimestamp()
 
     msg.embed(configEmbed);
-    msg.client.on('message', listenCancel(msg));
+    msg.client.on('message', eventCancel(msg));
     this.runProcess(msg, 0);
   }
 
@@ -59,7 +59,6 @@ module.exports = class InviteCommand extends Command {
 */
 
 const welcomeMessage = (current) => async (msg,process) => {
-  const nextProcess = process + 1;
   const emojis = ['✅','❎']
 
   const question = await msg.say({
@@ -68,30 +67,13 @@ const welcomeMessage = (current) => async (msg,process) => {
   })
   
   await Promise.all(emojis.map(emoji => question.react(emoji)));
-
-
-  const response = eventListenReactions(msg,question,emojis).resultat;
-
-  msg.guild.settings.set('welcomeMessage', response);
-
-
-  await msg.embed(resultEmbed(msg,`Les messages de bienvenue sont maintenant **${response === true ? 'activés' : 'désactivés'}** !`))
-  current.runProcess(msg, response === true ? nextProcess : nextProcess+1)
+  await msg.client.on('messageReactionAdd',eventListenReactions(current)(msg,question,emojis,process));
 }
 
 
 const channelWelcome = (current) => async (msg,process) => {
-  const nextProcess = process + 1;
   await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
-
-
-  const channel = eventListenChannel(msg).resultat;
-
-
-  msg.guild.settings.set('welcomeChannel', channel);
-
-  msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${channel.name} !`))
-  current.runProcess(msg,nextProcess)
+  await msg.client.on('message',eventListenChannel(current)(msg,process));
 }
 
 /* 
@@ -100,7 +82,8 @@ const channelWelcome = (current) => async (msg,process) => {
 * Différents events pour capturer les réponses de l'utilisateur
 */
 
-const eventListenChannel = (current) => (msg) => {
+const eventListenChannel = (current) => (msg,process) => {
+  const nextProcess = process + 1;
   return async (message) => {
     if(msg.author.id !== message.author.id) return;
     const channel = await findChannel(message.content, msg);
@@ -111,11 +94,15 @@ const eventListenChannel = (current) => (msg) => {
     }else{
       msg.client.removeListener('message', eventListenChannel(current)(msg));
     }
-    return channel
+    msg.guild.settings.set('welcomeChannel', channel);
+
+    msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${channel.name} !`))
+    current.runProcess(msg,nextProcess)
   }
 }
 
-const eventListenReactions = (current) => (msg,question,reactions) => {
+const eventListenReactions = (current) => (msg,question,reactions,process) => {
+  const nextProcess = process + 1;
   return async (messageReaction,user) => {
     if(user.bot) return;
     if(messageReaction.message.id !== question.id) return;
@@ -123,9 +110,15 @@ const eventListenReactions = (current) => (msg,question,reactions) => {
       messageReaction.users.remove(user)
       return;
     }
-    msg.client.removeListener('message', eventListenReactions(current)(msg,reactions));
+    msg.client.removeListener('message', eventListenReactions(current)(msg,question,reactions,process));
     messageReaction.message.delete();
-    return messageReaction.emoji.name === '✅' ? true : false;
+
+    const response = messageReaction.emoji.name === '✅' ? true : false;
+
+    await msg.guild.settings.set('welcomeMessage', response);
+
+    await msg.embed(resultEmbed(msg,`Les messages de bienvenue sont maintenant **${response === true ? 'activés' : 'désactivés'}** !`))
+    current.runProcess(msg, response === true ? nextProcess : nextProcess+1)
   }
 }
 
@@ -147,9 +140,9 @@ const eventCancel = (msg) => {
 }
 
 const stopCommand = (current) => async (msg) => {
-  msg.client.removeListener('message', listenCancel(msg));
-  msg.client.removeListener('message', listenChannel(current)(msg));
-  msg.client.removeListener('messageReactionAdd',await affirmativeQuestion(current)(msg,msg,'',0));
+  msg.client.removeListener('message', eventCancel(msg));
+  msg.client.removeListener('message', eventListenReactions(current)(msg,null,[],1000));
+  msg.client.removeListener('messageReactionAdd',eventListenChannel(current)(msg,1000));
   return current.run(msg);
 }
 
