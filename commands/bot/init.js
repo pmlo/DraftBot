@@ -69,12 +69,12 @@ const welcomeMessage = (current) => async (msg,process) => {
   
   await Promise.all(emojis.map(emoji => question.react(emoji)));
 
-  eventListenReactions(msg,question,emojis).then(response => {
+  msg.client.on('messageReactionAdd',eventListenReactions(msg,question,emojis).then(response => {
     msg.guild.settings.set('welcomeMessage', response);
 
     msg.embed(resultEmbed(msg,`Les messages de bienvenue sont maintenant **${response === true ? 'activés' : 'désactivés'}** !`))
     current.runProcess(msg, response === true ? nextProcess : nextProcess+1)
-  })
+  }));
 }
 
 
@@ -82,12 +82,12 @@ const channelWelcome = (current) => async (msg,process) => {
   const nextProcess = process + 1;
   await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
 
-  eventListenChannel(msg).then(channel => {
+  msg.client.on('message',eventListenChannel(msg).then(channel => {
     msg.guild.settings.set('welcomeChannel', channel);
 
     msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${channel.name} !`))
     current.runProcess(msg,nextProcess)
-  })
+  }));
 }
 
 /* 
@@ -126,11 +126,11 @@ const eventListenReactions = (msg,question,reactions) => {
       messageReaction.users.remove(user)
       return;
     }
-    msg.client.removeListener('message', func);
+    msg.client.removeListener('messageReactionAdd', func);
     messageReaction.message.delete();
 
     msg.client.once('cancel', () => {
-      msg.client.removeListener('message', func)
+      msg.client.removeListener('messageReactionAdd', func)
       return reject('cancelled')
     })
 
