@@ -12,7 +12,8 @@ module.exports = class InviteCommand extends Command {
       aliases: ['initialisation', 'setup', 'install','config','configuration'],
       description: 'Configurer le bot pour le serveur',
       examples: ['configuration'],
-      guildOnly: true
+      guildOnly: true,
+      userPermissions: ['ADMINISTRATOR']
     });
   }
 
