@@ -33,17 +33,38 @@ module.exports = class InviteCommand extends Command {
       .setTimestamp()
 
     msg.embed(configEmbed);
-    msg.client.once('message', eventCancel(msg));
+    msg.client.on('message', eventCancel);
+
+    function eventCancel(message){
+      if(msg.author.id !== message.author.id) return;
+
+      if(message.content.toLowerCase() === 'cancel'){
+        message.reply('configuration annulé !')
+        msg.client.emit('cancel')
+        msg.client.removeListener('message', eventCancel)
+      }
+    }
     this.runProcess(msg, 1);
   }
 
-  async runProcess (msg,process) {
-    const current = this;
+  runProcess (msg,process) {
     if(process === 1){
-      return welcomeMessage(current)(msg,process)
+      return welcomeMessage(msg).then(response => {
+        const value = response.response
+        msg.guild.settings.set('welcomeMessage', value);
+    
+        msg.embed(resultEmbed(msg,`Les messages de bienvenue sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
+        this.runProcess(msg, value === true ? 2 : 3)
+      }).catch(error => console.log(error))
     }
     if(process === 2){
-      return channelWelcome(current)(msg,process)
+      return channelWelcome(msg).then(response => {
+        const value = response.response;
+        msg.guild.settings.set('welcomeChannel', value);
+    
+        msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${value.name} !`))
+        this.runProcess(msg,3)
+      }).catch(error => console.log(error))
     }
 
     // Il n'y pas plus de process
@@ -58,102 +79,63 @@ module.exports = class InviteCommand extends Command {
 * Différents étapes de pour avoir les réponses de l'utilisateur
 */
 
-const welcomeMessage = (current) => async (msg,process) => {
-  const nextProcess = process + 1;
+const welcomeMessage = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  const question = await msg.say({
+  msg.say({
     embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoinds le serveur ? *exemple ci dessous*'),
     file: 'https://www.draftman.fr/images/draftbot/exemple_welcome_message.jpg'
-  })
+  }).then(question=>{
+    question.react(emojis[0]);
+    question.react(emojis[1]);
+
+    function eventListenReactions(messageReaction,user){
+        if(user.bot) return;
+        if(messageReaction.message.id !== question.id) return;
+        if(!emojis.includes(messageReaction.emoji.name)){
+          messageReaction.users.remove(user)
+          return;
+        }
+        msg.client.removeListener('messageReactionAdd', arguments.callee);
+        messageReaction.message.delete();
+    
+        return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
+    }
   
-  await Promise.all(emojis.map(emoji => question.react(emoji)));
+    msg.client.on('messageReactionAdd',eventListenReactions)
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenReactions)
+      return reject('cancelled')
+    })
+  })
+});
 
-  msg.client.on('messageReactionAdd',(msg,question,emojis) => eventListenReactions(msg,question,emojis).then(response => {
-    msg.guild.settings.set('welcomeMessage', response);
+const channelWelcome = (msg) => new Promise((resolve, reject) => {
+  msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
 
-    msg.embed(resultEmbed(msg,`Les messages de bienvenue sont maintenant **${response === true ? 'activés' : 'désactivés'}** !`))
-    current.runProcess(msg, response === true ? nextProcess : nextProcess+1)
-  }));
-}
-
-
-const channelWelcome = (current) => async (msg,process) => {
-  const nextProcess = process + 1;
-  await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
-
-  msg.client.on('message',(msg) => eventListenChannel(msg).then(channel => {
-    msg.guild.settings.set('welcomeChannel', channel);
-
-    msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${channel.name} !`))
-    current.runProcess(msg,nextProcess)
-  }));
-}
-
-/* 
-* Events des étapes
-*
-* Différents events pour capturer les réponses de l'utilisateur
-*/
-
-const eventListenChannel = (msg) => {
-  return new Promise((resolve, reject) => function (message) {
+  function eventListenChannel(message) {
     const func = arguments.callee
     if(msg.author.id !== message.author.id) return;
-    findChannel(message.content, msg).then(channel => {
+    findChannel(message.content, msg).then(response => {
+      const channel = response.channel;
       if(channel === null) {
         message.delete({timeout: 2000})
         msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
         return;
-      }else{
-        msg.client.removeListener('message', func);
       }
-      msg.client.once('cancel', () => {
-        msg.client.removeListener('message', func)
-        return reject('cancelled')
-      })
-      return resolve({ channel });
+      msg.client.removeListener('message', func);
+      return resolve({ response: channel });
     })
-  })
-}
-
-const eventListenReactions = (msg,question,reactions) => {
-  return new Promise((resolve, reject) => function (messageReaction,user) {
-    const func = arguments.callee
-    if(user.bot) return;
-    if(messageReaction.message.id !== question.id) return;
-    if(reactions.includes(messageReaction.emoji.name)){
-      messageReaction.users.remove(user)
-      return;
-    }
-    msg.client.removeListener('messageReactionAdd', func);
-    messageReaction.message.delete();
-
-    msg.client.once('cancel', () => {
-      msg.client.removeListener('messageReactionAdd', func)
-      return reject('cancelled')
-    })
-
-    return resolve({ reponse: messageReaction.emoji.name === '✅' ? true : false });
-  })
-}
-
-/* 
-* Events Cancel & Stop
-*
-* Différents events pour mener à bien le procéssus de la commande
-*/
-
-const eventCancel = (msg) => {
-  return (message) => {
-    if(msg.author.id !== message.author.id) return;
-
-    if(message.content.toLowerCase() === 'cancel'){
-      message.reply('configuration annulé !')
-      msg.client.emit('cancel')
-    }
   }
-}
+
+  msg.client.on('message',eventListenChannel);
+
+  msg.client.once('cancel', () => {
+    msg.client.removeListener('message', eventListenChannel)
+    return reject('cancelled')
+  })
+});
 
 /* 
 * Embeds 

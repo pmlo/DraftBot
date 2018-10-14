@@ -160,7 +160,7 @@ const roundNumber = function (num, scale = 0) {
   return Number(`${Math.round(`${Number(arr[0])}e${sig}${Number(arr[1]) + scale}`)}e-${scale}`);
 };
 
-const findChannel = new Promise((resolve, reject) =>  (val, msg) => {
+const findChannel = (val, msg) => new Promise((resolve, reject) =>{
   const matches = val.match(/^(?:<#)?([0-9]+)>?$/);
   if(matches) resolve({channel: msg.guild.channels.get(matches[1]) || null})
   const search = val.toLowerCase();
