@@ -1,8 +1,9 @@
-const {get} = require('snekfetch'),
-  moment = require('moment'),
-  {Command} = require('discord.js-commando'),
-  {MessageEmbed} = require('discord.js')
- module.exports = class FortniteCommand extends Command {
+const {get} = require('snekfetch');
+const moment = require('moment');
+const {Command} = require('discord.js-commando');
+const {MessageEmbed} = require('discord.js');
+
+module.exports = class FortniteCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'fortnite',
@@ -19,47 +20,45 @@ const {get} = require('snekfetch'),
           type: 'string'
         },
         {
-          key: 'platform',
-          prompt: 'Sur quelle platforme joue-t-il ? (`pc`, `xbox` or `psn`)?',
+          key: 'platforme',
+          prompt: 'Sur quelle platforme joue le joueur ? (`pc`, `xbox` or `ps4`)?',
           type: 'string',
-          validate: v => (/(pc|xbox|psn)/i).test(v) ? true : 'doit être une platforme valide, `pc`, `xbox` ou `psn`',
+          validate: v => (/(pc|xbox|ps4)/i).test(v) ? true : 'doit être une platforme valide, `pc`, `xbox` ou `ps4`',
           parse: pf => pf.toLowerCase()
         }
       ]
     });
   }
-   async run (msg, {user, platform}) {
+   async run (msg, {user, platforme}) {
     return msg.reply('The fortnite command is not finish sorry 😢')
     try {
-      const res = await get(`https://api.fortnitetracker.com/v1/profile/${platform}/${user}`).set('TRN-Api-Key',process.env.fortnite_key),
-        stats = await res.json(),
-        embed = new MessageEmbed();
-         console.log(stats)
-         if (stats.error) throw new Error('noplayer');
-         embed
-        .setAuthor(`Statistiques fortnite de ${stats.epicUserHandle}`, msg.author.displayAvatarURL)
-        .setDescription(`Voici les statistiques du joueur ${stats.epicUserHandle} sur le jeu [fortnite](https://www.epicgames.com/fortnite/fr/home).`)
-        .setColor(0xcd6e57)
-        .addField("Victoires Solo", stats.stats.p2.top1.value, true)
-        .addField("Victoires Duo", stats.stats.p10.top1.value, true)
-        .addField("Victoires Section", stats.stats.p9.top1.value, true)
-        .addField("Kills Solo", stats.stats.p2.kills.value, true)
-        .addField("Kills Duo", stats.stats.p10.kills.value, true)
-        .addField("Kills Section", stats.stats.p9.kills.value, true)
-        .addField("Parties Solo", stats.stats.p2.matches.value, true)
-        .addField("Parties Duo", stats.stats.p10.matches.value, true)
-        .addField("Parties Section", stats.stats.p10.matches.value, true)
-        // .addField("Temps de jeu Solo", (type.solo.minutesPlayed > 60 ? `${Math.trunc(type.solo.minutesPlayed/60)} heures` : `${type.solo.minutesPlayed} minutes`), true)
-        // .addField("Temps de jeu Duo", (type.duo.minutesPlayed > 60 ? `${Math.trunc(type.duo.minutesPlayed/60)} heures` : `${type.duo.minutesPlayed} minutes`), true)
-        // .addField("Temps de jeu Section", (type.squad.minutesPlayed > 60 ? `${Math.trunc(type.squad.minutesPlayed/60)} heures` : `${type.squad.minutesPlayed} minutes`), true)
-        // .addField("Dernière partie Solo", moment(type.solo.lastMatch).fromNow(), true)
-        // .addField("Dernière partie Duo", moment(type.duo.lastMatch).fromNow(), true)
-        // .addField("Dernière partie Section", moment(type.squad.lastMatch).fromNow(), true)
-        .setTimestamp(message.createdAt)
-        .setFooter("DraftMan | Développeur FrontEnd & Graphiste", "https://www.draftman.fr/images/favicon.png")
-       return msg.embed(embed);
+      const res = await get(`https://fortnite.y3n.co/v2/player/${user}`).set('X-Key',process.env.fortnite_key);
+      const stats = await res.body;
+
+      console.log(stats.br.stats[plateforme].solo.wins)
+      const embed = new MessageEmbed()
+      .setAuthor(`Statistiques fortnite de ${stats.displayName}`, message.author.displayAvatarURL)
+      .setDescription(`Voici les statistiques du joueur ${stats.displayName} sur le jeu [fortnite](https://www.epicgames.com/fortnite/fr/home).`)
+      .setColor(0xcd6e57)
+      .addField("Victoires Solo", stats.br.stats[plateforme].solo.wins, true)
+      .addField("Victoires Duo", stats.br.stats[plateforme].duo.wins, true)
+      .addField("Victoires Section", stats.br.stats[plateforme].squad.wins, true)
+      .addField("Kills Solo", stats.br.stats[plateforme].solo.kills, true)
+      .addField("Kills Duo", stats.br.stats[plateforme].duo.kills, true)
+      .addField("Kills Section", stats.br.stats[plateforme].squad.kills, true)
+      .addField("Morts Solo", stats.br.stats[plateforme].solo.deaths, true)
+      .addField("Morts Duo", stats.br.stats[plateforme].duo.deaths, true)
+      .addField("Morts Section", stats.br.stats[plateforme].squad.deaths, true)
+      .addField("Temps de jeu Solo", (stats.br.stats[plateforme].solo.minutesPlayed > 60 ? `${Math.trunc(stats.br.stats[plateforme].solo.minutesPlayed/60)} heures` : `${stats.br.stats[plateforme].solo.minutesPlayed} minutes`), true)
+      .addField("Temps de jeu Duo", (stats.br.stats[plateforme].duo.minutesPlayed > 60 ? `${Math.trunc(stats.br.stats[plateforme].duo.minutesPlayed/60)} heures` : `${stats.br.stats[plateforme].duo.minutesPlayed} minutes`), true)
+      .addField("Temps de jeu Section", (stats.br.stats[plateforme].squad.minutesPlayed > 60 ? `${Math.trunc(stats.br.stats[plateforme].squad.minutesPlayed/60)} heures` : `${stats.br.stats[plateforme].squad.minutesPlayed} minutes`), true)
+      .addField("Dernière partie Solo", moment(stats.br.stats[plateforme].solo.lastMatch).fromNow(), true)
+      .addField("Dernière partie Duo", moment(stats.br.stats[plateforme].duo.lastMatch).fromNow(), true)
+      .addField("Dernière partie Section", moment(stats.br.stats[plateforme].squad.lastMatch).fromNow(), true)
+      return msg.embed(embed);
     } catch (err) {
-      msg.reply(error('Une erreur s\'est produite veuillez nous excusez !'))
+      console.log(err)
+      msg.say(error('Une erreur s\'est produite veuillez nous excusez !'))
     }
   }
 };
