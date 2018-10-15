@@ -1,7 +1,8 @@
-const { CommandoClient, SQLiteProvider } = require('discord.js-commando'),
-        path = require('path'),
-        sqlite = require('sqlite'),
-        {makeWelcomeImage,newUser} = require('./utils.js');
+const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
+const path = require('path');
+const sqlite = require('sqlite');
+const { stripIndents } = require('common-tags')
+const {makeWelcomeImage,newUser,guildAdd,sendSysLogs} = require('./utils.js');
 
 require('dotenv').config();
 
@@ -30,21 +31,33 @@ DraftBot.on('guildMemberAdd', member => {
     newUser(member, true)
 })
 
-DraftBot.on('guildMemberRemove', member => {
-    newUser(member, false)
+DraftBot.on('guildMemberRemove', member => newUser(member, false))
+
+DraftBot.on('roleCreate', role => sendSysLogs(role.guild,null, `Le role ${role.name} a été crée.`))
+
+DraftBot.on('roleUpdate', (oldRole,newRole) => {
+    if(oldRole !== newRole){
+        sendSysLogs(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`, stripIndents`
+            ${oldRole.name !== newRole.name ? '- Le nom du role à été changé en '+newRole.name+'.':''}
+            ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été changé en '+newRole.hexColor +'.':''}
+            ${oldRole.hoist !== newRole.hoist ? (newRole.hoist === true ?'- Les membres ayant ce role seront affichés séparément des autres.':'- Les membres ayant ce role seront affichés dans la même temps.'):''}
+            ${oldRole.mentionable !== newRole.mentionable ? (newRole.mentionable === true ?'- Le role sera maintenant mentionnable.':'- Le role ne sera plus mentionnable.'):''}
+            ${oldRole.permissions !== newRole.permissions ? '- Les permissions du role ont été modifiés.':''}
+        `)
+    }
 })
 
-DraftBot.on('roleCreate', role => {
-    //ajout du log
-})
+DraftBot.on('roleDelete', role => sendSysLogs(role.guild,`Le role ${role.name} a été supprimé.`,null))
 
-DraftBot.on('roleDelete', role => {
-    //ajout du log
-})
+DraftBot.on('emojiCreate', emoji => sendSysLogs(emoji.guild, `L'émoji ${emoji.name} a été crée.`,null))
 
-DraftBot.on('emojiCreate', role => {
-    //ajout du log
-})
+DraftBot.on('emojiDelete', emoji => sendSysLogs(emoji.guild, `L'émoji ${emoji.name} a été supprimé.`,null))
+
+DraftBot.on('guildCreate', guild => guildAdd(guild))
+
+DraftBot.on('channelCreate', channel => sendSysLogs(channel.guild, `Le salon ${channel.name} a été crée.`,null))
+
+DraftBot.on('channelDelete', channel => sendSysLogs(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
 
 DraftBot.on('raw', event => {
     const { d: data } = event;
@@ -70,7 +83,7 @@ DraftBot.on('raw', event => {
 
 DraftBot.on('unknownCommand', msg => {
     const {guild} = msg;
-    msg.reply(`cette commande est inconnu !\nVeuillez utiliser \`${guild ? guild.commandPrefix : this.client.commandPrefix}help\` ou ${DraftBot.user} help\npour afficher la liste des commandes disponibles.`)
+    msg.reply(`cette commande est inconnu !\nVeuillez utiliser \`${guild ? guild.commandPrefix : msg.client.commandPrefix}help\` ou ${DraftBot.user} help\npour afficher la liste des commandes disponibles.`)
 })
 
 DraftBot.registry

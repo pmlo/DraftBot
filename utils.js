@@ -1,18 +1,19 @@
-const Jimp = require('jimp'),
-      path = require('path'),
-      {MessageEmbed,MessageAttachment,Util} = require('discord.js')
+const Jimp = require('jimp');
+const path = require('path');
+const { stripIndents } = require('common-tags')
+const {MessageEmbed,MessageAttachment,Util} = require('discord.js');
 
 const makeWelcomeImage = async (member) => {
-  if (member.guild.settings.get('welcomeMessage') !== false) {
+  if (member.guild.settings.get('welcomeMessage') !== false && !member.user.bot) {
     const channel = member.guild.settings.get('welcomeChannel') ? member.guild.settings.get('welcomeChannel') : member.guild.channels.find(c => c.name === 'general' || c.name === 'général');
     try {
-      const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'})),
-        canvas = await Jimp.read(500, 150),
-        newMemberEmbed = new MessageEmbed(),
-        quantify = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify.fnt')),
-        quantify_small = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify2.fnt')),
-        opensans = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans.fnt')),
-        mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
+      const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'}));
+      const canvas = await Jimp.read(500, 150);
+      const newMemberEmbed = new MessageEmbed();
+      const quantify = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify.fnt'));
+      const quantify_small = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify2.fnt'));
+      const opensans = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans.fnt'));
+      const mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
     
       avatar.resize(136, Jimp.AUTO);
       mask.resize(136, Jimp.AUTO);
@@ -39,6 +40,31 @@ const makeWelcomeImage = async (member) => {
   }
 };
 
+const guildAdd = async guild => {
+  try {
+    const channel = guild.systemChannel ? guild.systemChannel : null;
+    const newGuildEmbed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setTitle('Plop 👋')
+    .setDescription(stripIndents`
+    Hey, Je m'appelle ${guild.client.user}.
+    Je suis un bot polyvalent français, j'espère pouvoir améliorer votre serveur!
+
+    Je possède de nombreuses commandes, elles sont toutes visibles avec \`${guild.client.commandPrefix}help\`.
+
+    Vous n'apréciez pas mon prefix ? \`${guild.client.commandPrefix}prefix [nouveau prefix]\`
+    Toutes mes commandes peuvent être lancés à partir de mon prefix \`${guild.client.commandPrefix}\` ou par mention \`@${guild.client.user.tag}\`
+    
+    **Pour répondre au mieux à vos besoins vous pouvez me configurer facielement avec: \`${guild.client.commandPrefix}init\`**
+    `)
+
+    return channel ? channel.send('', {embed: newGuildEmbed}) : null;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
 const addRole = (role, member) => {
   if(member.guild.roles.find(r => r.name === role)){
     member.roles.add(member.guild.roles.find(r => r.name === role));
@@ -52,11 +78,25 @@ const sendLogs = (msg, message) => {
     .setDescription(stripIndents`**Action:** ${message}`)
     .setTimestamp();
 
-  if (msg.guild.settings.get('logsChannel')) {
-    const channel = msg.guild.settings.get('logsChannel')
-    return channel.send('',embed);
+  if (msg.guild.settings.get('logsMessage') !== false) {
+    const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
+      return channel.send('',embed);
   }
   return msg.embed(embed);
+}
+
+const sendSysLogs = (guild,title, message) => {
+  const embed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setTimestamp();
+
+  if(title !== null) embed.setTitle(title)
+  if(message !== null) embed.setDescription(message)
+
+  if (guild.settings.get('logsMessage') !== false) {
+      const channel = guild.settings.get('logsChannel') ? guild.settings.get('logsChannel') : guild.channels.find(c => c.name === 'logs');
+      return channel.send('',embed);
+  }
 }
 
 const newUser = (member,type) => {
@@ -164,12 +204,13 @@ const findChannel = (val, msg) => new Promise((resolve, reject) =>{
   const matches = val.match(/^(?:<#)?([0-9]+)>?$/);
   if(matches) resolve({channel: msg.guild.channels.get(matches[1]) || null})
   const search = val.toLowerCase();
-  const channels = msg.guild.channels.filter(thing => thing.name.toLowerCase().includes(search));
-  if(channels.size === 0) return reject({});
-  if(channels.size === 1) return resolve({channel: channels.first()})
+  const channels = msg.guild.channels.filter(thing => thing.name.toLowerCase().includes(search) && thing.type === 'text');
+  console.log('zef',channels.size)
+  if(channels.size === 0) return reject();
+  if(channels.size >= 1) return resolve({channel: channels.first()})
   const exactChannels = channels.filter(filter => filter.name.toLowerCase() === search);
   if(exactChannels.size === 1) return resolve({channel: exactChannels.first()});
-  return reject({});
+  return reject();
 })
 
 module.exports = {
@@ -179,6 +220,8 @@ module.exports = {
   roundNumber,
   error,
   sendLogs,
+  sendSysLogs,
   newUser,
-  findChannel
+  findChannel,
+  guildAdd
 };
