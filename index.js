@@ -2,7 +2,7 @@ const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
 const path = require('path');
 const sqlite = require('sqlite');
 const { stripIndents } = require('common-tags')
-const {makeWelcomeImage,newUser,guildAdd,sendSysLogs} = require('./utils.js');
+const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites} = require('./utils.js');
 
 require('dotenv').config();
 
@@ -58,6 +58,10 @@ DraftBot.on('guildCreate', guild => guildAdd(guild))
 DraftBot.on('channelCreate', channel => sendSysLogs(channel.guild, `Le salon ${channel.name} a été crée.`,null))
 
 DraftBot.on('channelDelete', channel => sendSysLogs(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
+
+DraftBot.on('message', message => {
+    if (message.guild.settings.get('invites', false) && invites(message, message.client)) message.delete();
+});
 
 DraftBot.on('raw', event => {
     const { d: data } = event;

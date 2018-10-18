@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 const { Command } = require('discord.js-commando')
 const { stripIndents } = require('common-tags')
-const { findChannel } = require('../../utils.js')
+const { findChannel,findRole } = require('../../utils.js')
 
 module.exports = class InviteCommand extends Command {
   constructor (client) {
@@ -68,21 +68,47 @@ module.exports = class InviteCommand extends Command {
       }).catch(error => console.log(error))
     }
     if(process === 3){
+      return roleAutoAsk(msg).then(response => {
+        const value = response.response
+        //aucun stockage 
+        msg.embed(resultEmbed(msg,`La fonction de role automatique est maintenant **${value === true ? 'activé' : 'désactivé'}** !`))
+        this.runProcess(msg, value === true ? 4 : 5)
+      }).catch(error => console.log(error))
+    }
+    if(process === 4){
+      return roleAuto(msg).then(response => {
+        const value = response.response;
+        msg.guild.settings.set('defaultRole', value.id);
+    
+        msg.embed(resultEmbed(msg,`Le role \`${value.name}\` sera maintenant ajouté automatiquement aux nouveaux membres !`))
+        this.runProcess(msg,5)
+      }).catch(error => console.log(error))
+    }
+    if(process === 5){
       return logsMessages(msg).then(response => {
         const value = response.response
         msg.guild.settings.set('logsMessage',value);
     
         msg.embed(resultEmbed(msg,`Les messages de logs sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
-        this.runProcess(msg, value === true ? 4 : 5)
+        this.runProcess(msg, value === true ? 6 : 7)
       }).catch(error => console.log(error))
     }
-    if(process === 4){
+    if(process === 6){
       return channelLogs(msg).then(response => {
         const value = response.response;
         msg.guild.settings.set('logsChannel', value);
     
         msg.embed(resultEmbed(msg,`Les messages de logs seront maintenant envoyés dans le salon #${value.name} !`))
-        this.runProcess(msg,5)
+        this.runProcess(msg,7)
+      }).catch(error => console.log(error))
+    }
+    if(process === 7){
+      return authorizeInvites(msg).then(response => {
+        const value = response.response;
+        msg.guild.settings.set('invites', value);
+    
+        msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisés' : 'interdites donc supprimés'}** !`))
+        this.runProcess(msg,8)
       }).catch(error => console.log(error))
     }
 
@@ -156,6 +182,62 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
   })
 });
 
+const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
+  const emojis = ['✅','❎']
+
+  msg.embed(questionEmbed(msg,'Voulez vous un role à ajouter automatiquement aux nouveaux membres ?'))
+  .then(question => {
+    question.react(emojis[0]);
+    question.react(emojis[1]);
+
+    function eventListenRoleAutoAskReactions(messageReaction,user){
+        if(user.bot) return;
+        if(messageReaction.message.id !== question.id) return;
+        if(!emojis.includes(messageReaction.emoji.name)){
+          messageReaction.users.remove(user)
+          return;
+        }
+        msg.client.removeListener('messageReactionAdd', arguments.callee);
+        messageReaction.message.delete();
+    
+        return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
+    }
+  
+    msg.client.on('messageReactionAdd',eventListenRoleAutoAskReactions)
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenRoleAutoAskReactions)
+      return reject('cancelled')
+    })
+  })
+});
+
+const roleAuto = (msg) => new Promise((resolve, reject) => {
+  msg.embed(questionEmbed(msg,'Quel est le role que vous souhaitez ajouter automatiquement aux nouveaux membres ?'));
+
+  function eventListenRoleAutoRole(message) {
+    const func = arguments.callee
+    if(msg.author.id !== message.author.id) return;
+    findRole(message.content, msg).then(response => {
+      const role = response.role;
+      msg.client.removeListener('message', func);
+      return resolve({ response: role });
+    }).catch(error => {
+      message.delete({timeout: 2000})
+      msg.embed(errorEmbed(msg,`Impossible de trouver le role \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
+      console.log(error)
+      return;
+    })
+  }
+
+  msg.client.on('message',eventListenRoleAutoRole);
+
+  msg.client.once('cancel', () => {
+    msg.client.removeListener('message', eventListenRoleAutoRole)
+    return reject('cancelled')
+  })
+});
+
 const logsMessages = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
@@ -211,6 +293,36 @@ const channelLogs = (msg) => new Promise((resolve, reject) => {
   msg.client.once('cancel', () => {
     msg.client.removeListener('message', eventListenChannelLogsChannel)
     return reject('cancelled')
+  })
+});
+
+const authorizeInvites = (msg) => new Promise((resolve, reject) => {
+  const emojis = ['✅','❎']
+
+  msg.embed(questionEmbed(msg,'Autorisez vous les invitations d\'autres serveurs ?'))
+  .then(question => {
+    question.react(emojis[0]);
+    question.react(emojis[1]);
+
+    function eventListenInvitesReactions(messageReaction,user){
+        if(user.bot) return;
+        if(messageReaction.message.id !== question.id) return;
+        if(!emojis.includes(messageReaction.emoji.name)){
+          messageReaction.users.remove(user)
+          return;
+        }
+        msg.client.removeListener('messageReactionAdd', arguments.callee);
+        messageReaction.message.delete();
+    
+        return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
+    }
+  
+    msg.client.on('messageReactionAdd',eventListenInvitesReactions)
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenInvitesReactions)
+      return reject('cancelled')
+    })
   })
 });
 

@@ -76,6 +76,7 @@ const sendLogs = (msg, message) => {
     .setColor(0xcd6e57)
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
     .setDescription(stripIndents`**Action:** ${message}`)
+    .setFooter(`Logs du serveur ${msg.guild.name}`)
     .setTimestamp();
 
   if (msg.guild.settings.get('logsMessage') !== false) {
@@ -88,7 +89,8 @@ const sendLogs = (msg, message) => {
 const sendSysLogs = (guild,title, message) => {
   const embed = new MessageEmbed()
     .setColor(0xcd6e57)
-    .setTimestamp();
+    .setTimestamp()
+    .setFooter(`Logs du serveur ${guild.name}`);
 
   if(title !== null) embed.setTitle(title)
   if(message !== null) embed.setDescription(message)
@@ -205,13 +207,34 @@ const findChannel = (val, msg) => new Promise((resolve, reject) =>{
   if(matches) resolve({channel: msg.guild.channels.get(matches[1]) || null})
   const search = val.toLowerCase();
   const channels = msg.guild.channels.filter(thing => thing.name.toLowerCase().includes(search) && thing.type === 'text');
-  console.log('zef',channels.size)
   if(channels.size === 0) return reject();
   if(channels.size >= 1) return resolve({channel: channels.first()})
   const exactChannels = channels.filter(filter => filter.name.toLowerCase() === search);
   if(exactChannels.size === 1) return resolve({channel: exactChannels.first()});
   return reject();
 })
+
+const findRole = (val, msg) => new Promise((resolve, reject) =>{
+  const matches = val.match(/^(?:<@&)?([0-9]+)>?$/);
+  if(matches) return resolve({role: msg.guild.roles.get(matches[1]) || null});
+  const search = val.toLowerCase();
+  const roles = msg.guild.roles.filter(thing => thing.name.toLowerCase().includes(search));
+  if(roles.size === 0) return reject();
+  if(roles.size >= 1) return resolve({role: roles.first()});
+  const exactRoles = roles.filter(thing => thing.name.toLowerCase() === search);
+  if(exactRoles.size === 1) return resolve({role: exactRoles.first()});
+  return reject();
+});
+
+const invites = function (msg, client) {
+  if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
+    return false;
+  }
+  if ((/(?:discord\.gg|discordapp.com\/invite)/gim).test(msg.content)) {
+    return true;
+  }
+  return false;
+};
 
 module.exports = {
   makeWelcomeImage,
@@ -223,5 +246,7 @@ module.exports = {
   sendSysLogs,
   newUser,
   findChannel,
-  guildAdd
+  findRole,
+  guildAdd,
+  invites
 };
