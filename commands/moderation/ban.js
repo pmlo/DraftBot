@@ -24,7 +24,7 @@ module.exports = class BanCommand extends Command {
         {
           key: 'jours',
           prompt: 'Combien de jours?',
-          type: 'integger',
+          type: 'integer',
           default: 0
         }
       ],
