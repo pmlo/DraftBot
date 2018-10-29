@@ -8,7 +8,7 @@ module.exports = class HelpCommand extends Command {
 			name: 'help',
 			group: 'bot',
 			memberName: 'help',
-			aliases: ['commands','aide'],
+			aliases: ['commands','commandes','aide'],
 			description: 'Afficher la liste des différentes commandes ou les details à propos d\'une commande en particulier.',
 			examples: ['help', 'help quote'],
 			guarded: true,
