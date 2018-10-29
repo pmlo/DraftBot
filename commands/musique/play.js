@@ -4,7 +4,7 @@ const ytdl = require('ytdl-core');
 const { Command } = require('discord.js-commando');
 const { escapeMarkdown } = require('discord.js');
 const { Song } = require('../../utils.js');
-const emojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣'];
+const emojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣','❌'];
 
 const run = (current) => async (msg, { url }) =>  {
     const queue = current.queue.get(msg.guild.id);
@@ -216,20 +216,7 @@ const handlePlaylist = (current) => async (video, playlist, queue, voiceChannel,
 }
 
 const addSong = (current) => (msg, video) => {
-    const queue = current.queue.get(msg.guild.id),
-        songNumerator = function (prev, song) {
-            if (song.member.id === msg.author.id) {
-                prev += 1;
-            }
-
-            return prev;
-        };
-
-    if (!current.client.isOwner(msg.author)) {
-        if (queue.songs.some(song => song.id === video.id)) {
-            return `👎 ${escapeMarkdown(video.title)} est déjà dans la file d'attente.`;
-        }
-    }
+    const queue = current.queue.get(msg.guild.id)
 
     const song = new Song(video, msg.member);
 
@@ -301,11 +288,14 @@ const startReactEvent =  (msg,videos,sendedEmbed,current,queue,voiceChannel,stat
         if (user.bot) return;
         const emoji = messageReaction.emoji.name;
         if (sendedEmbed.id === messageReaction.message.id && emojis.includes(emoji)) {
-            const videoByID = await current.youtube.getVideoByID(videos[emojis.indexOf(emoji)].id);
-
-            current.handleVideo(videoByID, queue, voiceChannel, msg, statusMsg);
             sendedEmbed.delete();
-            return msg.client.removeListener('messageReactionAdd', startReactEvent);
+            msg.client.removeListener('messageReactionAdd', startReactEvent);
+            if(emoji === '❌'){
+                return null;
+            }
+
+            const video = await current.youtube.getVideoByID(videos[emojis.indexOf(emoji)].id);
+            return current.handleVideo(video, queue, voiceChannel, msg, statusMsg);
         }
     }
 }
