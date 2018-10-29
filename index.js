@@ -3,6 +3,7 @@ const path = require('path');
 const sqlite = require('sqlite');
 const { stripIndents } = require('common-tags')
 const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites} = require('./utils.js');
+const websocket = require('./websocket');
 
 require('dotenv').config();
 
@@ -12,9 +13,11 @@ const DraftBot = new CommandoClient({
     owner: '207190782673813504',
     invite: 'https://www.draftman.fr/discord',
     disableEveryone: true
-}); 
+});
 
-sqlite.open(path.join(__dirname, "settings.sqlite")).then((db) => {
+new websocket(process.env.token, 8000, DraftBot)
+
+sqlite.open(path.join(__dirname, "./databases/settings.sqlite")).then((db) => {
     DraftBot.setProvider(new SQLiteProvider(db));
 });
 
@@ -55,12 +58,59 @@ DraftBot.on('emojiDelete', emoji => sendSysLogs(emoji.guild, `L'émoji ${emoji.n
 
 DraftBot.on('guildCreate', guild => guildAdd(guild))
 
-DraftBot.on('channelCreate', channel => sendSysLogs(channel.guild, `Le salon ${channel.name} a été crée.`,null))
+DraftBot.on('channelCreate', channel => {
+    if(!channel.guild) return;
+    sendSysLogs(channel.guild, `Le salon ${channel.name} a été crée.`,null)
+})
 
 DraftBot.on('channelDelete', channel => sendSysLogs(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
 
 DraftBot.on('message', message => {
-    if (message.guild.settings.get('invites', false) && invites(message, message.client)) message.delete();
+    if(!message.guild) return;
+    if (message.guild && message.guild.settings.get('invites', false) && invites(message, message.client)) message.delete();
+
+    //level system
+    const xp = Math.floor(Math.random()*11)+15;
+
+    //ouverture de la bdd
+    const testdb = sqlite.open(path.join(__dirname, "./databases/levels.sqlite"))
+    sqlite.open(path.join(__dirname, "./databases/settings.sqlite")).then((db) => {
+        db.run(`CREATE TABLE IF NOT EXISTS "${message.guild.id}"(user TEXT, level TEXT, xp TEXT)`)
+    });
+    //création de la table guild
+    // const test = testdb.prepare(`CREATE TABLE IF NOT EXISTS "${message.guild.id}"(user TEXT, level TEXT, xp TEXT)`).run()
+    // console.log(test,testdb)
+
+    //est ce que la ligne existe pour l'user ?
+
+    // si elle existe on update
+
+    //sinon on l'insert
+
+    // sqlite.open(path.join(__dirname, "./databases/levels.sqlite")).then((db) => {
+    //     db.run(`CREATE TABLE IF NOT EXISTS "${message.guild.id}"(user TEXT, level TEXT, xp TEXT)`)
+    // }
+    // db.serialize(() => {
+    //   db.run(`CREATE TABLE IF NOT EXISTS "${message.guild.id}"(user TEXT, level TEXT, xp TEXT)`)
+    //     .run(`INSERT INTO "${msg.guild.id}"(user, reason, date, mod) VALUES (?, ?, ?, ?)`,[
+    //       member.id,
+    //       reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur',
+    //       new Date(),
+    //       msg.member.id
+    //     ])
+    //     .each(`SELECT count('user') AS 'count' FROM "${msg.guild.id}" WHERE user = ?`,[member.id],(err, {count}) => {
+    //       const embed = new MessageEmbed()
+    //       .setColor(0xcd6e57)
+    //       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
+    //       .setDescription(stripIndents`
+    //         **Membre:** ${member.user.tag}
+    //         **Action:** Avertissement
+    //         **Avertissements:** \`${count-1}\` => \`${count}\`
+    //         **Raison:** ${reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur'}`)
+    //       .setTimestamp();
+    //       return msg.embed(embed);
+    //     })
+    // })
 });
 
 DraftBot.on('raw', event => {
