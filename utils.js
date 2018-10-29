@@ -80,8 +80,8 @@ const sendLogs = (msg, message) => {
     .setTimestamp();
 
   if (msg.guild.settings.get('logsMessage') !== false) {
-    const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
-      return channel.send('',embed);
+      const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
+      return msg.guild.channels.find(c => c.id === channel.id).send('',embed);
   }
   return msg.embed(embed);
 }
@@ -97,7 +97,7 @@ const sendSysLogs = (guild,title, message) => {
 
   if (guild.settings.get('logsMessage') !== false) {
       const channel = guild.settings.get('logsChannel') ? guild.settings.get('logsChannel') : guild.channels.find(c => c.name === 'logs');
-      return channel.send('',embed);
+      return guild.channels.find(c => c.id === channel.id).send('',embed);
   }
 }
 
@@ -109,14 +109,14 @@ const newUser = (member,type) => {
       .setTitle(':banana: Nouveau membre')
       .setAuthor(`${member.user.tag} (${member.id})`, member.user.displayAvatarURL({format: 'png'}))
       .setColor(0x39d600)
-      .setDescription(user.tag + " est arrivé !")
+      .setDescription(member.user.tag + " est arrivé !")
       .setTimestamp();
 
       const oldMemberEmbed = new MessageEmbed()
       .setTitle(':wastebasket: Membre parti')
       .setAuthor(`${member.user.tag} (${member.id})`, member.user.displayAvatarURL({format: 'png'}))
       .setColor(0xce0000)
-      .setDescription(user.tag + " viens de quitter le serveur !")
+      .setDescription(member.user.tag + " viens de quitter le serveur !")
       .setTimestamp();
 
     if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole') && type === true)) {
@@ -134,6 +134,10 @@ const newUser = (member,type) => {
 
 const error = (message) => {
   return `:no_entry_sign: | ${message}`
+}
+
+const createDataBases = () => {
+  
 }
 
 class Song {
