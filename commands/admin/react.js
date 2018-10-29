@@ -6,7 +6,7 @@ module.exports = class QuoteCommand extends Command {
     super(client, {
       name: 'react',
       memberName: 'react',
-      group: 'moderation',
+      group: 'admin',
       aliases: ['ra'],
       description: 'Ajouter des roles à un message avec des réactions',
       examples: ['react 5554845515145714 '],

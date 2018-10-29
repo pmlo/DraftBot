@@ -6,7 +6,7 @@ module.exports = class InvitesCommand extends Command {
     super(client, {
       name: 'invites',
       memberName: 'invites',
-      group: 'moderation',
+      group: 'admin',
       aliases: ['invitations','invs'],
       description: 'Autoriser ou Interdir les invitations vers d\'autres serveurs discord.',
       examples: ['invites'],

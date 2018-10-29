@@ -1,12 +1,12 @@
 const {Command} = require('discord.js-commando');
 const {sendLogs} = require('../../utils.js');
 
-module.exports = class WelcomeCommand extends Command {
+module.exports = class LogsCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'logs',
       memberName: 'logs',
-      group: 'moderation',
+      group: 'admin',
       description: 'Définir le channel pour les logs du serveur.',
       examples: ['logs #logs'],
       guildOnly: true,

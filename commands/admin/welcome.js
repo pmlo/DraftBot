@@ -6,7 +6,7 @@ module.exports = class WelcomeCommand extends Command {
     super(client, {
       name: 'welcome',
       memberName: 'welcome',
-      group: 'moderation',
+      group: 'admin',
       aliases: ['bvn','bienvenue'],
       description: 'Activer ou désactiver le message de bienvenue sur le serveur.',
       examples: ['welcome'],
