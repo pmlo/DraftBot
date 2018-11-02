@@ -46,7 +46,6 @@ module.exports = class ViewQueueCommand extends Command {
             __**File d'attente, page ${paginated.page}**__
             ${paginated.items.map(song => `**-** ${!isNaN(song.id) ? `${song.name} (${song.lengthString})` : `[${song.name}](${`https://www.youtube.com/watch?v=${song.id}`})`} (${song.lengthString})`).join('\n')}
             ${paginated.maxPage > 1 ? `\nVeuillez utiliser ${msg.usage()} pour voir une page en particulier.\n` : ''}
-
             **En cours:** ${!isNaN(currentSong.id) ? `${currentSong.name}` : `[${currentSong.name}](${`https://www.youtube.com/watch?v=${currentSong.id}`})`}
             ${oneLine`
                 **Progression:**

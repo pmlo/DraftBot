@@ -131,7 +131,7 @@ const handleVideo = (current) => async (video, queue, voiceChannel, msg, statusM
             resultMessage = {
                 color: 0xcd6e57,
                 author: {
-                    name: `${msg.author.tag} (${msg.author.id})`,
+                    name: `${msg.author.tag}`,
                     iconURL: msg.author.displayAvatarURL({ format: 'png' })
                 },
                 description: result
@@ -165,7 +165,7 @@ const handleVideo = (current) => async (video, queue, voiceChannel, msg, statusM
             resultMessage = {
                 color: 0xcd6e57,
                 author: {
-                    name: `${msg.author.tag} (${msg.author.id})`,
+                    name: `${msg.author.tag}`,
                     iconURL: msg.author.displayAvatarURL({ format: 'png' })
                 },
                 description: result
@@ -188,7 +188,7 @@ const handlePlaylist = (current) => async (video, playlist, queue, voiceChannel,
         resultMessage = {
             color: 0xcd6e57,
             author: {
-                name: `${msg.author.tag} (${msg.author.id})`,
+                name: `${msg.author.tag}`,
                 iconURL: msg.author.displayAvatarURL({ format: 'png' })
             },
             description: result
@@ -205,7 +205,7 @@ const handlePlaylist = (current) => async (video, playlist, queue, voiceChannel,
         embed: {
             color: 0xcd6e57,
             author: {
-                name: `${msg.author.tag} (${msg.author.id})`,
+                name: `${msg.author.tag}`,
                 icon_url: msg.author.displayAvatarURL({ format: 'png' })
             },
             description: `Ajout de la playlist [${playlist.title}](https://www.youtube.com/playlist?list=${playlist.id}) dans la file d'attente !\nAffichez la liste des musiques en attente avce: \`${msg.guild.commandPrefix}queue\`!`
@@ -285,15 +285,14 @@ const play = (current) => (guild, song) => {
 
 const startReactEvent =  (msg,videos,sendedEmbed,current,queue,voiceChannel,statusMsg) => {
     return async (messageReaction,user) => {
-        if (user.bot) return;
+        if (user.bot && sendedEmbed.id !== messageReaction.message.id && msg.author.id !== user.id) return;
         const emoji = messageReaction.emoji.name;
-        if (sendedEmbed.id === messageReaction.message.id && emojis.includes(emoji)) {
+        if (emojis.includes(emoji)) {
             sendedEmbed.delete();
             msg.client.removeListener('messageReactionAdd', startReactEvent);
             if(emoji === '❌'){
                 return null;
             }
-
             const video = await current.youtube.getVideoByID(videos[emojis.indexOf(emoji)].id);
             return current.handleVideo(video, queue, voiceChannel, msg, statusMsg);
         }

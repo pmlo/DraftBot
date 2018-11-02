@@ -5,15 +5,14 @@ const {Command} = require('discord.js-commando'),
 module.exports = class MusicStatusCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'duplique',
-      memberName: 'duplique',
+      name: 'playlist',
+      memberName: 'playlist',
       group: 'musique',
-      aliases: ['encore','duplicate','repeat'],
       description: 'Relancer la musique en cours.',
       guildOnly: true,
       args: [{
-        key: 'nombre',
-        prompt: 'Combien de fois souhaitez vous dupliquer la musique en cours ?',
+        key: 'argument',
+        prompt: 'Que souhaitez vous faire ? \`add, ajouter\`, `lire, read, jouer`',
         type: 'integer',
         default: 1,
         min: 1,
