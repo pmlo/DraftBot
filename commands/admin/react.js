@@ -1,5 +1,7 @@
-const {Command} = require('discord.js-commando'),
-      {MessageEmbed,Util} = require('discord.js')
+const {Command} = require('discord.js-commando');
+const {MessageEmbed,Util} = require('discord.js');
+const sqlite = require('sqlite');
+const path = require('path');
 
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
@@ -34,40 +36,32 @@ module.exports = class QuoteCommand extends Command {
   async run (msg, {emoji,role,message}) {
 
     const newEmoji = Util.parseEmoji(emoji)
-    
-    embed.description ? `${embed.description} | ${role.name}` : role.name
+
     msg.delete()
 
     const selectEmoji = connexion => {
-      return connexion.get(`SELECT emoji,role FROM "reacts" WHERE message=${message.id} AND guild=${msg.guild.id}`)
+      return connexion.get(`SELECT * FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`)
         .then(result => ({ connexion, result }))
     }
-    sqlite.open(path.join(__dirname, './storage.sqlite'))
+    sqlite.open(path.join(__dirname, '../../storage.sqlite'))
     .then(selectEmoji)
     .then(({ connexion, result }) => {
-      if (result) {
-        embed.description.
-        truc a régler
-        msg.result.role
+      msg.channel.messages.fetch(message.id).then(focusMsg=> {
+        const embed = focusMsg.embeds[0];
 
-        return connexion.run(`UPDATE "reacts" SET role= ${role.id} WHERE message=${message.id} AND guild=${msg.guild.id}`)
-      } else {
-        message.react(newEmoji.id||newEmoji.name)
-
-        embed.description ? `${embed.description} | ${role.name}` : role.name
-
-        return connexion.then(connexion => connexion.run(`INSERT INTO "reacts" (guild, message, emoji, role) VALUES (?, ?, ?, ?)`,[msg.guild.id, message.id, newEmoji.id||newEmoji.name, role.id]))
-      }
+        if (result) {
+          const currentRole = msg.guild.roles.find(r => r.id === result.role)
+          embed.setDescription(embed.description.replace(currentRole.name, role.name))
+          connexion.run(`UPDATE "reacts" SET role= ${role.id} WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`)
+        } else {
+          message.react(newEmoji.id||newEmoji.name)
+          embed.setDescription(embed.description ? `${embed.description} | ${role.name}` : role.name);
+          connexion.then(connexion => connexion.run(`INSERT INTO "reacts" (guild, message, emoji, role) VALUES (?, ?, ?, ?)`,[msg.guild.id, message.id, newEmoji.id||newEmoji.name, role.id]))
+        }
+        focusMsg.edit('', {embed});
+      })
     })
-
-
-    msg.channel.messages.fetch(message.id).then(focusMsg=> {
-      const embed = focusMsg.embeds[0];
-
-      embed.setDescription(newDescription)
-      focusMsg.edit('', {embed});
-    })
-
+  
     const reactEmbed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
