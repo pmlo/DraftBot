@@ -103,12 +103,21 @@ module.exports = class InviteCommand extends Command {
       }).catch(error => console.log(error))
     }
     if(process === 7){
+      return levelSystem(msg).then(response => {
+        const value = response.response;
+        msg.guild.settings.set('levelSystem', value);
+    
+        msg.embed(resultEmbed(msg,`Le système de niveau est maintenant **${value === true ? 'activé' : 'désactivé'}** !`))
+        this.runProcess(msg,8)
+      }).catch(error => console.log(error))
+    }
+    if(process === 8){
       return authorizeInvites(msg).then(response => {
         const value = response.response;
         msg.guild.settings.set('invites', value);
     
         msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisés' : 'interdites donc supprimés'}** !`))
-        this.runProcess(msg,8)
+        this.runProcess(msg,9)
       }).catch(error => console.log(error))
     }
 
@@ -129,7 +138,7 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
 
   msg.say({
     embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoinds le serveur ? *exemple ci dessous*'),
-    file: 'https://www.draftman.fr/images/draftbot/exemple_welcome_message.jpg'
+    file: 'https://www.draftman.fr/images/draftbot/exemple_welcome_message.png'
   }).then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -191,8 +200,7 @@ const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
     question.react(emojis[1]);
 
     function eventListenRoleAutoAskReactions(messageReaction,user){
-        if(user.bot) return;
-        if(messageReaction.message.id !== question.id) return;
+        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
           return;
@@ -249,8 +257,7 @@ const logsMessages = (msg) => new Promise((resolve, reject) => {
     question.react(emojis[1]);
 
     function eventListenLogsMessagesReactions(messageReaction,user){
-        if(user.bot) return;
-        if(messageReaction.message.id !== question.id) return;
+        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
           return;
@@ -305,8 +312,7 @@ const authorizeInvites = (msg) => new Promise((resolve, reject) => {
     question.react(emojis[1]);
 
     function eventListenInvitesReactions(messageReaction,user){
-        if(user.bot) return;
-        if(messageReaction.message.id !== question.id) return;
+        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
           return;
@@ -321,6 +327,40 @@ const authorizeInvites = (msg) => new Promise((resolve, reject) => {
   
     msg.client.once('cancel', () => {
       msg.client.removeListener('message', eventListenInvitesReactions)
+      return reject('cancelled')
+    })
+  })
+});
+
+const levelSystem = (msg) => new Promise((resolve, reject) => {
+  const emojis = ['✅','❎']
+
+  msg.embed(questionEmbed(msg,'Souhaitez vous activer la fonction de niveau ?'))
+
+  msg.say({
+    embed: questionEmbed(msg,'Souhaitez vous activer la fonction de niveau ? *exemple ci dessous*'),
+    file: 'https://www.draftman.fr/images/draftbot/exemple_rank_message.jpg'
+  })
+  .then(question => {
+    question.react(emojis[0]);
+    question.react(emojis[1]);
+
+    function eventListenLevelSystemReactions(messageReaction,user){
+        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
+        if(!emojis.includes(messageReaction.emoji.name)){
+          messageReaction.users.remove(user)
+          return;
+        }
+        msg.client.removeListener('messageReactionAdd', arguments.callee);
+        messageReaction.message.delete();
+    
+        return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
+    }
+  
+    msg.client.on('messageReactionAdd',eventListenLevelSystemReactions)
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenLevelSystemReactions)
       return reject('cancelled')
     })
   })
