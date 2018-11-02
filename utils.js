@@ -1,32 +1,108 @@
 const Jimp = require('jimp');
 const path = require('path');
+const sqlite = require('sqlite');
+const pixelWidth = require('string-pixel-width');
 const { stripIndents } = require('common-tags')
 const {MessageEmbed,MessageAttachment,Util} = require('discord.js');
+
+const levelImage = async (msg,user,xp,place) => {
+  try {
+    const canvas = new Jimp(500,150,'#2E3133');
+
+    // Datas
+    const level = getLevelFromXp(xp)
+
+    const levelXp = getLevelXp(level)
+    const currentLevelXp = getCurrentLevelXp(xp)
+
+    const pr = Math.round(currentLevelXp*330/levelXp);
+
+    // Elements
+    const barreBackground = await Jimp.read(path.join(__dirname, './images/barreBackground.png'));
+    const avatar = await Jimp.read(user.displayAvatarURL({format: 'png'}));
+    const barre = await Jimp.read(pr,17,'#cd6e57');
+
+    // Masks
+    const avatarMask = await Jimp.read(path.join(__dirname, './images/avatarMask.png'));
+    const levelMask = await Jimp.read(path.join(__dirname, './images/levelMask.png'));
+    
+    // Fonts
+    const Quantify_26_draft = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_26_draft.fnt'));
+    const Quantify_16_draft = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_16_draft.fnt'));
+    const Quantify_16_grey = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_16_grey.fnt'));
+    const Quantify_14_draft = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_14_draft.fnt'));
+    const Quantify_14_grey = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_14_grey.fnt'));
+
+    // Stats
+    const discriminatorPlace = Number(158) + Number(pixelWidth(user.username, { font: 'Open sans', size: 24 }));
+    const levelPlace = Number(500) - (Number(30) + Number(pixelWidth(`Niveau ${level}`, { font: 'Open sans', size: 14 })));
+    const placePlace = levelPlace - (Number(30) + Number(pixelWidth(`Place ${place}`, { font: 'Open sans', size: 14 })));
+    const rxpPlace = Number(500) - (Number(30) + Number(pixelWidth(`/${levelXp}xp`, { font: 'Open sans', size: 14 })));
+    const xpPlace = rxpPlace - Number(pixelWidth(currentLevelXp, { font: 'Open sans', size: 14 }));
+
+    //Generated Elements
+    avatar.resize(110, Jimp.AUTO);
+    avatar.mask(avatarMask, 0, 0);
+
+    barre.mask(levelMask, 0, 0);
+
+    // barreBackground.composite(barre, 150, 90)
+    canvas.composite(barreBackground, 150,90);
+    canvas.composite(barre, 150,90);
+    canvas.composite(avatar, 20, 20);
+    
+    //Generated Texts
+    canvas.print(Quantify_26_draft, 158, 53, user.username);
+    canvas.print(Quantify_16_draft, levelPlace, 111, `Niveau ${level}`);
+    canvas.print(Quantify_16_grey, discriminatorPlace, 61, `#${user.discriminator}`);
+    canvas.print(Quantify_16_grey, placePlace, 111, `Place ${place}`);
+    
+    canvas.print(Quantify_14_grey, rxpPlace, 63,  `/${levelXp}xp`);
+    canvas.print(Quantify_14_draft, xpPlace, 63, `${currentLevelXp}`);
+
+    // Embed
+    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
+    const embedAttachment = new MessageAttachment(buffer, 'testImage.png');
+
+    const newMemberEmbed = new MessageEmbed()
+    .attachFiles([embedAttachment])
+    .setColor(0xcd6e57)
+    .setImage('attachment://testImage.png');
+
+    return msg.embed(newMemberEmbed)
+
+  } catch (error) {
+    return console.log(error);
+  }
+}
 
 const makeWelcomeImage = async (member) => {
   if (member.guild.settings.get('welcomeMessage') !== false && !member.user.bot) {
     const channel = member.guild.settings.get('welcomeChannel') ? member.guild.settings.get('welcomeChannel') : member.guild.channels.find(c => c.name === 'general' || c.name === 'général');
     try {
+
+      const canvas = new Jimp(500, 150);
       const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'}));
-      const canvas = await Jimp.read(500, 150);
-      const newMemberEmbed = new MessageEmbed();
-      const quantify = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify.fnt'));
-      const quantify_small = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify2.fnt'));
-      const opensans = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans.fnt'));
+      
+      const Quantify_55_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_55_white.fnt'));
+      const Quantify_25_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_25_white.fnt'));
+      const OpenSans_22_white = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans_22_white.fnt'));
       const mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
     
       avatar.resize(136, Jimp.AUTO);
       mask.resize(136, Jimp.AUTO);
       avatar.mask(mask, 0, 0);
+
       canvas.blit(avatar, 5, 5);
-      canvas.print(quantify, 158, 20, 'Bienvenue');
-      canvas.print(opensans, 158, 70, 'sur le serveur discord');
-      canvas.print(quantify_small, 158, 105, member.guild.name);
+
+      canvas.print(Quantify_55_white, 158, 20, 'Bienvenue');
+      canvas.print(OpenSans_22_white, 158, 70, 'sur le serveur discord');
+      canvas.print(Quantify_25_white, 158, 105, member.guild.name);
     
-      const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG),
-        embedAttachment = new MessageAttachment(buffer, 'joinimg.png');
+      const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
+      const embedAttachment = new MessageAttachment(buffer, 'joinimg.png');
     
-      newMemberEmbed
+      const newMemberEmbed = new MessageEmbed()
         .attachFiles([embedAttachment])
         .setColor('#cd6e57')
         .setTitle('Ho ! Un nouveau membre !')
@@ -106,15 +182,13 @@ const newUser = (member,type) => {
     const channel = member.guild.settings.get('logsChannel') ? member.guild.settings.get('logsChannel').id : null;
 
       const newMemberEmbed = new MessageEmbed()
-      .setTitle(':banana: Nouveau membre')
-      .setAuthor(`${member.user.tag} (${member.id})`, member.user.displayAvatarURL({format: 'png'}))
+      .setAuthor(member.user.tag, member.user.displayAvatarURL({format: 'png'}))
       .setColor(0x39d600)
       .setDescription(member.user.tag + " est arrivé !")
       .setTimestamp();
 
       const oldMemberEmbed = new MessageEmbed()
-      .setTitle(':wastebasket: Membre parti')
-      .setAuthor(`${member.user.tag} (${member.id})`, member.user.displayAvatarURL({format: 'png'}))
+      .setAuthor(member.user.tag, member.user.displayAvatarURL({format: 'png'}))
       .setColor(0xce0000)
       .setDescription(member.user.tag + " viens de quitter le serveur !")
       .setTimestamp();
@@ -124,7 +198,7 @@ const newUser = (member,type) => {
       newMemberEmbed.setDescription(`${newMemberEmbed.description}\nLe role ${member.guild.roles.get(member.guild.settings.get('defaultRole')).name} lui à été automatiquement attribué !`);
     }
 
-    if (channel && member.guild.channels.get(channel) && member.guild.channels.get(channel).permissionsFor(this.client.user).has('SEND_MESSAGES')) {
+    if (channel && member.guild.channels.get(channel) && member.guild.channels.get(channel).permissionsFor(member.guild.client.user).has('SEND_MESSAGES')) {
       return member.guild.channels.get(channel).send('', {embed: type === true ? newMemberEmbed : oldMemberEmbed});
     }
   }else if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole')) && type === true) {
@@ -134,10 +208,6 @@ const newUser = (member,type) => {
 
 const error = (message) => {
   return `:no_entry_sign: | ${message}`
-}
-
-const createDataBases = () => {
-  
 }
 
 class Song {
@@ -240,6 +310,109 @@ const invites = function (msg, client) {
   return false;
 };
 
+const createTables = () => {
+  sqlite.open(path.join(__dirname, './storage.sqlite'))
+        .then(connection => connection.run(`CREATE TABLE IF NOT EXISTS "warnings"(guild TEXT, user TEXT, reason TEXT NOT NULL, date DATE, mod TEXT)`).then(() => connection))
+        .then(connection => connection.run(`CREATE TABLE IF NOT EXISTS "levels"(guild TEXT, user TEXT, xp INTEGER)`).then(() => connection))
+        .then(connection => connection.run(`CREATE TABLE IF NOT EXISTS "reacts"(guild TEXT, message TEXT, emoji TEXT, role TEXT)`).then(() => connection))
+        // .then(connection.run(`CREATE TABLE IF NOT EXISTS "guilds"(user TEXT, reason TEXT NOT NULL, date DATE, mod TEXT)`).then(() => connection))
+}
+
+const warnUser = (msg,member,reason) => {
+  sqlite.open(path.join(__dirname, './storage.sqlite'))
+  .then(connexion => connexion.run(`INSERT INTO "warnings"(guild, user, reason, date, mod) VALUES (?, ?, ?, ?, ?)`,[
+    msg.guild.id,
+    member.id,
+    reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur',
+    new Date(),
+    msg.member.id
+  ]).then(() => connexion))
+  .then(connexion => connexion.get(`SELECT count('user') AS 'count' FROM "warnings" WHERE user = ${member.id} AND guild = ${msg.guild.id}`))
+  .then(({count}) => {
+    const embed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
+    .setDescription(stripIndents`
+      **Membre:** ${member.user.tag}
+      **Action:** Avertissement
+      **Avertissements:** \`${count-1}\` => \`${count}\`
+      **Raison:** ${reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur'}`)
+    .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
+    .setTimestamp();
+    return msg.embed(embed);
+  })
+}
+
+const kickUser = (msg,member,reason) => {
+  if(!member.kickable) return msg.channel.send(error('Impossible de kick ce membre !'))
+  member.kick({ reason: reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur' }).then(member => {
+    const embed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
+    .setDescription(stripIndents`
+      **Membre:** ${member.user.tag}
+      **Action:** Kick
+      **Raison:** ${reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur'}`)
+    .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
+    .setTimestamp();
+    msg.embed(embed)
+  })
+}
+
+const banUser = (msg,member,reason) => {
+  if(!member.bannable) return msg.channel.send(error('Impossible de bannir ce membre !'))
+  member.ban({ reason: reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur' }).then(member => {
+    const embed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
+    .setDescription(stripIndents`
+      **Membre:** ${member.user.tag}
+      **Action:** Ban
+      **Raison:** ${reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur'}`)
+    .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
+    .setTimestamp();
+    msg.embed(embed)
+  })
+}
+
+const getWarnUser = (msg,member) => new Promise((resolve, reject) =>{
+  sqlite.open(path.join(__dirname, './storage.sqlite'))
+  .then(connexion => connexion.get(`SELECT count('user') AS 'count' FROM "warnings" WHERE user = ${member.id} AND guild = ${msg.guild.id}`))
+  .then(({count}) => {
+    return resolve(count)
+  })
+})
+
+const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
+  return sqlite.open(path.join(__dirname, './storage.sqlite'))
+  .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
+  .then(({connexion, xp}) => connexion.all(`SELECT user FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`).then(users => ({xp, users})))
+  .then(resolve)
+  .catch(err => reject(err))
+})
+
+const getLevelFromXp = (xp) => {
+  let level = 0
+  while (xp >= getLevelXp(level)) {
+    xp -= getLevelXp(level)
+    level += 1
+  }
+  return level
+}
+
+const getLevelXp = (level) => {
+  return 5*(level*level)+50*level+100
+}
+
+const getCurrentLevelXp = (xp) => {
+  const player_lvl = getLevelFromXp(xp)
+  let x = 0
+  for (let i = 0; i < player_lvl; i++) {
+    x += getLevelXp(i)
+  }
+  return xp - x;
+}
+
 module.exports = {
   makeWelcomeImage,
   addRole,
@@ -252,5 +425,12 @@ module.exports = {
   findChannel,
   findRole,
   guildAdd,
-  invites
+  invites,
+  createTables,
+  warnUser,
+  getWarnUser,
+  getUserXp,
+  levelImage,
+  kickUser,
+  banUser
 };
