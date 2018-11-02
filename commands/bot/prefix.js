@@ -45,7 +45,7 @@ module.exports = class PrefixCommand extends Command {
 			response = prefix ? `Prefix de commande définit sur \`\`${args.prefix}\`\`.` : 'Suppression du prefix de commande.';
 		}
 
-		await msg.reply(`${response} Pour executer une commande, veuillez utilisez ${msg.anyUsage('commande')}.`);
+		await msg.reply(`${response} \nA partir de maintenant, veuillez utilisez ${msg.anyUsage('commande')} pour executer une commande.`);
 		return null;
 	}
 };
