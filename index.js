@@ -1,7 +1,6 @@
 const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
 const path = require('path');
 const sqlite = require('sqlite');
-const { stripIndents } = require('common-tags')
 const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites,createTables} = require('./utils.js');
 const websocket = require('./websocket');
 
