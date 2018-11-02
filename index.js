@@ -2,7 +2,7 @@ const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
 const path = require('path');
 const sqlite = require('sqlite');
 const { stripIndents } = require('common-tags')
-const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites} = require('./utils.js');
+const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites,createTables} = require('./utils.js');
 const websocket = require('./websocket');
 
 require('dotenv').config();
@@ -11,13 +11,12 @@ const DraftBot = new CommandoClient({
     commandPrefix: '!',
     unknownCommandResponse: false,
     owner: '207190782673813504',
-    invite: 'https://www.draftman.fr/discord',
     disableEveryone: true
 });
 
 new websocket(process.env.token, 8000, DraftBot)
 
-sqlite.open(path.join(__dirname, "./databases/settings.sqlite")).then((db) => {
+sqlite.open(path.join(__dirname, "./settings.sqlite")).then((db) => {
     DraftBot.setProvider(new SQLiteProvider(db));
 });
 
@@ -27,6 +26,7 @@ DraftBot.on('ready', () => {
     DraftBot.user.setActivity('ses lignes', {
         type: 'WATCHING'
     })
+    createTables()
 });
 
 DraftBot.on('guildMemberAdd', member => {
@@ -40,11 +40,11 @@ DraftBot.on('roleCreate', role => sendSysLogs(role.guild,null, `Le role ${role.n
 
 DraftBot.on('roleUpdate', (oldRole,newRole) => {
     if(oldRole !== newRole){
-        sendSysLogs(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`, stripIndents`
-            ${oldRole.name !== newRole.name ? '- Le nom du role à été changé en '+newRole.name+'.':''}
-            ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été changé en '+newRole.hexColor +'.':''}
-            ${oldRole.hoist !== newRole.hoist ? (newRole.hoist === true ?'- Les membres ayant ce role seront affichés séparément des autres.':'- Les membres ayant ce role seront affichés dans la même temps.'):''}
-            ${oldRole.mentionable !== newRole.mentionable ? (newRole.mentionable === true ?'- Le role sera maintenant mentionnable.':'- Le role ne sera plus mentionnable.'):''}
+        sendSysLogs(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`,`
+            ${oldRole.name !== newRole.name ? '- Le nom du role à été changé en '+newRole.name+'.\n':''}
+            ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été changé en '+newRole.hexColor +'.\n':''}
+            ${oldRole.hoist !== newRole.hoist ? (newRole.hoist === true ?'- Les membres ayant ce role seront affichés séparément des autres.':'- Les membres ayant ce role seront affichés dans la même temps.\n'):''}
+            ${oldRole.mentionable !== newRole.mentionable ? (newRole.mentionable === true ?'- Le role sera maintenant mentionnable.\n':'- Le role ne sera plus mentionnable.\n'):''}
             ${oldRole.permissions !== newRole.permissions ? '- Les permissions du role ont été modifiés.':''}
         `)
     }
@@ -66,51 +66,25 @@ DraftBot.on('channelCreate', channel => {
 DraftBot.on('channelDelete', channel => sendSysLogs(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
 
 DraftBot.on('message', message => {
-    if(!message.guild) return;
-    if (message.guild && message.guild.settings.get('invites', false) && invites(message, message.client)) message.delete();
+    if(!message.guild || message.author.bot) return;
+    if (message.guild && message.guild.settings.get('invites') === false && invites(message, message.client)) message.delete();
 
+    if(message.guild.settings.get('levelSystem') === false) return;
     //level system
     const xp = Math.floor(Math.random()*11)+15;
-
-    //ouverture de la bdd
-    const testdb = sqlite.open(path.join(__dirname, "./databases/levels.sqlite"))
-    sqlite.open(path.join(__dirname, "./databases/settings.sqlite")).then((db) => {
-        db.run(`CREATE TABLE IF NOT EXISTS "${message.guild.id}"(user TEXT, level TEXT, xp TEXT)`)
-    });
-    //création de la table guild
-    // const test = testdb.prepare(`CREATE TABLE IF NOT EXISTS "${message.guild.id}"(user TEXT, level TEXT, xp TEXT)`).run()
-    // console.log(test,testdb)
-
-    //est ce que la ligne existe pour l'user ?
-
-    // si elle existe on update
-
-    //sinon on l'insert
-
-    // sqlite.open(path.join(__dirname, "./databases/levels.sqlite")).then((db) => {
-    //     db.run(`CREATE TABLE IF NOT EXISTS "${message.guild.id}"(user TEXT, level TEXT, xp TEXT)`)
-    // }
-    // db.serialize(() => {
-    //   db.run(`CREATE TABLE IF NOT EXISTS "${message.guild.id}"(user TEXT, level TEXT, xp TEXT)`)
-    //     .run(`INSERT INTO "${msg.guild.id}"(user, reason, date, mod) VALUES (?, ?, ?, ?)`,[
-    //       member.id,
-    //       reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur',
-    //       new Date(),
-    //       msg.member.id
-    //     ])
-    //     .each(`SELECT count('user') AS 'count' FROM "${msg.guild.id}" WHERE user = ?`,[member.id],(err, {count}) => {
-    //       const embed = new MessageEmbed()
-    //       .setColor(0xcd6e57)
-    //       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-    //       .setDescription(stripIndents`
-    //         **Membre:** ${member.user.tag}
-    //         **Action:** Avertissement
-    //         **Avertissements:** \`${count-1}\` => \`${count}\`
-    //         **Raison:** ${reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur'}`)
-    //       .setTimestamp();
-    //       return msg.embed(embed);
-    //     })
-    // })
+    const selectUser = connexion => {
+        return connexion.get(`SELECT xp FROM "levels" WHERE user=${message.author.id} AND guild=${message.guild.id}`)
+          .then(result => ({ connexion, result }))
+    }
+    return sqlite.open(path.join(__dirname, './storage.sqlite'))
+    .then(selectUser)
+    .then(({ connexion, result }) => {
+      if (result) {
+        return connexion.run(`UPDATE "levels" SET xp= ${Number(result.xp) + Number(xp)} WHERE user= ? AND guild= ?`, [message.author.id, message.guild.id])
+      } else {
+        return connexion.run(`INSERT INTO "levels" (guild, user, xp) VALUES (?, ?, ?)`,[message.guild.id, message.author.id, xp])
+      }
+    })
 });
 
 DraftBot.on('raw', event => {
@@ -118,7 +92,7 @@ DraftBot.on('raw', event => {
     if (event.t === 'MESSAGE_REACTION_ADD' || event.t == "MESSAGE_REACTION_REMOVE"){
         const channel = DraftBot.channels.get(event.d.channel_id);
         channel.messages.fetch(event.d.message_id).then(msg=> {
-            if(msg.author.id === DraftBot.user.id){
+            if(msg.author.id === DraftBot.user.id){c
                 let user = msg.guild.member(data.user_id);
                 if (msg.guild.settings.get(`react-${msg.id}:${data.emoji.id||data.emoji.name}`)){
                     if (user.id != DraftBot.user.id){
@@ -147,7 +121,7 @@ DraftBot.registry
         ['musique', 'Musique - Commandes permettant de mettre de la musique'],
         ['utils', 'Utils - Différents outils permettant différentes choses sur le serveur'],
         ['fun', 'Fun - Commandes fun'],
-        ['leaderboards', 'Leaderboards - Regardez vos statistiques de différents jeux'],
+        ['levels', 'Levels - Consultez votre activité sur une guild'],
         ['moderation', 'Moderation - Commandes de modération'],
         ['admin', 'Admin - Commandes d\'administateur']
     ])
