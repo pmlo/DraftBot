@@ -15,13 +15,14 @@ module.exports = class AvatarCommand extends Command {
         {
           key: 'message',
           prompt: 'Quel message voulez vous envoyer ?',
-          type: 'message',
+          type: 'string',
         }
       ]
     });
   }
 
   run (msg, {message}) {
-    return msg.say(message)
+    msg.say(message)
+    return msg.delete()
   }
 };
