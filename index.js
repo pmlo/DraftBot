@@ -1,7 +1,7 @@
 const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
 const path = require('path');
 const sqlite = require('sqlite');
-const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites,createTables} = require('./utils.js');
+const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites,createTables,error} = require('./utils.js');
 const websocket = require('./websocket');
 
 require('dotenv').config();
@@ -91,18 +91,30 @@ DraftBot.on('raw', event => {
     if (event.t === 'MESSAGE_REACTION_ADD' || event.t == "MESSAGE_REACTION_REMOVE"){
         const channel = DraftBot.channels.get(event.d.channel_id);
         channel.messages.fetch(event.d.message_id).then(msg=> {
-            if(msg.author.id === DraftBot.user.id){c
+            if(msg.author.id === DraftBot.user.id){
                 let user = msg.guild.member(data.user_id);
-                if (msg.guild.settings.get(`react-${msg.id}:${data.emoji.id||data.emoji.name}`)){
-                    if (user.id != DraftBot.user.id){
-                        const role = msg.guild.roles.find(r => r.id === msg.guild.settings.get(`react-${msg.id}:${data.emoji.id||data.emoji.name}`));
+
+                const selectEmoji = connexion => {
+                    return connexion.get(`SELECT role FROM "reacts" WHERE message='${msg.id}' AND emoji='${data.emoji.id||data.emoji.name}' AND guild='${msg.guild.id}'`)
+                    .then(result => ({ connexion, result }))
+                }
+                sqlite.open(path.join(__dirname, './storage.sqlite'))
+                .then(selectEmoji)
+                .then(({ connexion, result }) => {
+                    if(result && !user.bot){
+                        const role = msg.guild.roles.find(r => r.id === result.role);
+                        const testErr = err => {
+                            if(err.message === 'Missing Permissions'){
+                                return msg.channel.send(error(`Je n'ai pas la permission de modifier les roles d'une personne ayant une hiérachie plus élevé que la miene.`))
+                            }
+                        }
                         if (event.t === "MESSAGE_REACTION_ADD"){
-                            user.roles.add(role);
+                            user.roles.add(role).catch(testErr)
                         } else {
-                            user.roles.remove(role)
+                            user.roles.remove(role).catch(testErr)
                         }
                     }
-                }
+                })
             }
         }).catch(()=> null)
     }

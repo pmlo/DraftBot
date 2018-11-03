@@ -56,7 +56,7 @@ module.exports = class QuoteCommand extends Command {
         } else {
           message.react(newEmoji.id||newEmoji.name)
           embed.setDescription(embed.description ? `${embed.description} | ${role.name}` : role.name);
-          connexion.then(connexion => connexion.run(`INSERT INTO "reacts" (guild, message, emoji, role) VALUES (?, ?, ?, ?)`,[msg.guild.id, message.id, newEmoji.id||newEmoji.name, role.id]))
+          connexion.run(`INSERT INTO "reacts" (guild, message, emoji, role) VALUES (?, ?, ?, ?)`,[msg.guild.id, message.id, newEmoji.id||newEmoji.name, role.id])
         }
         focusMsg.edit('', {embed});
       })
