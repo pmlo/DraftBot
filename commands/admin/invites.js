@@ -26,6 +26,15 @@ module.exports = class InvitesCommand extends Command {
       description = `Les invitations vers d\'autres serveurs seront maintenant **autorisés** !`;
     }
 
+    const embed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setAuthor(msg.author.username, msg.author.displayAvatarURL())
+    .setDescription(stripIndents`**Action:** ${description}`)
+    .setFooter(msg.guild.name)
+    .setTimestamp();
+
+    msg.say(embed).then(message => message.delete({timeout: 2000}))
+
     return sendLogs(msg, description)
   }
 };

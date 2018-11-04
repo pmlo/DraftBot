@@ -33,7 +33,17 @@ module.exports = class autoroleCommand extends Command {
       description = 'Le role par défaut à été supprimé';
     } else {
       msg.guild.settings.set('defaultRole', role.id);
+      description = `Le role \`${role.name}\` sera maintenant ajouté automatiquement aux nouveaux membres !`;
     }
+
+    const embed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setAuthor(msg.author.username, msg.author.displayAvatarURL())
+    .setDescription(stripIndents`**Action:** ${description}`)
+    .setFooter(msg.guild.name)
+    .setTimestamp();
+
+    msg.say(embed).then(message => message.delete({timeout: 2000}))
 
     return sendLogs(msg, description)
   }
