@@ -1,5 +1,5 @@
-const {Command} = require('discord.js-commando'),
-      {MessageEmbed} = require('discord.js')
+const {Command} = require('discord.js-commando');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
@@ -25,7 +25,7 @@ module.exports = class QuoteCommand extends Command {
 
     const emojis = ['✅','❌']
 
-    const embed = new Discord.RichEmbed()
+    const embed = new MessageEmbed()
     .setDescription(":newspaper: Sondage")
     .addField(message,'Veuillez voter avec :white_check_mark: et :x:')
     .setColor(0xcd6e57)
