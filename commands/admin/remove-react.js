@@ -50,8 +50,18 @@ module.exports = class QuoteCommand extends Command {
           else if(embed.description.includes(`${currentRole.name} |`)) embed.setDescription(embed.description.replace(`${currentRole.name} |`, ''))
 
           else if(embed.description.includes(currentRole.name)) embed.setDescription(embed.description.replace(currentRole.name, ''))
-          newEmoji.id ? focusMsg.reactions.sweep(react => react.emoji.id === newEmoji.id) : focusMsg.reactions.sweep(react => react.emoji.name === newEmoji.name)
-          connexion.run(`DELETE FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`)
+          if(newEmoji.id){ 
+            focusMsg.reactions.sweep(react => react.emoji.id === newEmoji.id)
+            console.log(1)
+          }else{
+            console.log(2)
+            const users = focusMsg.reactions.find(react => react.emoji.name === newEmoji.name).users;
+            const test = users.each(user => users.remove(user))
+
+            console.log(test)
+            // focusMsg.reactions.sweep(react => react.emoji.name === newEmoji.name)
+          }
+            connexion.run(`DELETE FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`)
         } else {
           console.log('react non trouvé')
         }
