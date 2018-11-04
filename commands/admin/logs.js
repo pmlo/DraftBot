@@ -1,6 +1,7 @@
 const {Command} = require('discord.js-commando');
 const {sendLogs} = require('../../utils.js');
 const { MessageEmbed } = require('discord.js')
+const { stripIndents } = require('common-tags')
 
 module.exports = class LogsCommand extends Command {
   constructor (client) {
