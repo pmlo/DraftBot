@@ -6,11 +6,11 @@ const path = require('path');
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'react',
-      memberName: 'react',
+      name: 'remove-react',
+      memberName: 'remove-react',
       group: 'admin',
-      aliases: ['ra'],
-      description: 'Ajouter des roles à un message avec des réactions',
+      aliases: ['rr'],
+      description: 'Retirer un role à un message react',
       examples: ['remove-react 5554845515145714 🖊 '],
       guildOnly: true,
       args: [
