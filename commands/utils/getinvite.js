@@ -28,9 +28,8 @@ module.exports = class InviteCommandCommand extends Command {
 			const embed = new MessageEmbed()
 			.setTitle(newGuild.name)
 			.setThumbnail(newGuild.iconURL({format: 'png'}))
-			.setURL(invites[0].url)
 			.setColor(0xcd6e57)
-			.setDescription(`Voici une invitation pour rejoindre **${newGuild.name}**\n${invites[0].url}`)
+			.setDescription(`Voici une invitation pour rejoindre **${newGuild.name}**\n${invites.map(invite => invite.url).join('\n')}`)
 			.setTimestamp()
 
 			msg.embed(embed)
