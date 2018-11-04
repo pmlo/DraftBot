@@ -59,7 +59,7 @@ const clearChannel = (msg,type = true) => new Promise((resolve, reject) => {
     question.react(emojis[1]);
 
     function eventListenClearChannelReactions(messageReaction,user){
-        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
+        if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
           return;

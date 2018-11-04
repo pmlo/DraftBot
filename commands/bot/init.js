@@ -200,7 +200,7 @@ const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
     question.react(emojis[1]);
 
     function eventListenRoleAutoAskReactions(messageReaction,user){
-        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
+        if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
           return;
@@ -257,7 +257,7 @@ const logsMessages = (msg) => new Promise((resolve, reject) => {
     question.react(emojis[1]);
 
     function eventListenLogsMessagesReactions(messageReaction,user){
-        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
+        if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
           return;
@@ -312,7 +312,7 @@ const authorizeInvites = (msg) => new Promise((resolve, reject) => {
     question.react(emojis[1]);
 
     function eventListenInvitesReactions(messageReaction,user){
-        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
+        if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
           return;
