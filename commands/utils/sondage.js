@@ -22,6 +22,7 @@ module.exports = class QuoteCommand extends Command {
   }
 
   async run (msg, {message}) {
+    msg.delete();
 
     const emojis = ['✅','❌']
 
@@ -31,8 +32,7 @@ module.exports = class QuoteCommand extends Command {
     .setColor(0xcd6e57)
     .setTimestamp()
 
-    await msg.embed(embed)
-    await msg.delete();
+    const question = msg.embed(embed)
     await Promise.all(emojis.map(emoji => question.react(emoji)));
   }
 }
