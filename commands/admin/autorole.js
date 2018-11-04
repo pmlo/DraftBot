@@ -1,7 +1,5 @@
 const {Command} = require('discord.js-commando');
 const {sendLogs} = require('../../utils.js');
-const { MessageEmbed } = require('discord.js')
-const { stripIndents } = require('common-tags')
 
 module.exports = class autoroleCommand extends Command {
   constructor (client) {
@@ -37,16 +35,6 @@ module.exports = class autoroleCommand extends Command {
       msg.guild.settings.set('defaultRole', role.id);
       description = `Le role \`${role.name}\` sera maintenant ajouté automatiquement aux nouveaux membres !`;
     }
-
-    const embed = new MessageEmbed()
-    .setColor(0xcd6e57)
-    .setAuthor(msg.author.username, msg.author.displayAvatarURL())
-    .setDescription(stripIndents`**Action:** ${description}`)
-    .setFooter(msg.guild.name)
-    .setTimestamp();
-
-    msg.say(embed).then(message => message.delete({timeout: 2000}))
-
     return sendLogs(msg, description)
   }
 };

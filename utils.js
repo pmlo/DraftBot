@@ -155,9 +155,13 @@ const sendLogs = (msg, message) => {
     .setFooter(`Logs du serveur ${msg.guild.name}`)
     .setTimestamp();
 
-  if (msg.guild.settings.get('logsMessage') !== false) {
+  if (msg.guild.settings.get('logsMessage') === true) {
       const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
-      return msg.guild.channels.find(c => c.id === channel.id).send('',embed);
+      if(channel !== undefined){
+        msg.guild.channels.find(c => c.id === channel.id).send('',embed)
+        return;
+      }
+    return msg.reply(error('impossible de trouver de channel de logs !'))
   }
   return msg.embed(embed);
 }
@@ -171,10 +175,15 @@ const sendSysLogs = (guild,title, message) => {
   if(title !== null) embed.setTitle(title)
   if(message !== null) embed.setDescription(message)
 
-  if (guild.settings.get('logsMessage') !== false) {
-      const channel = guild.settings.get('logsChannel') ? guild.settings.get('logsChannel') : guild.channels.find(c => c.name === 'logs');
-      return guild.channels.find(c => c.id === channel.id).send('',embed);
+  if (msg.guild.settings.get('logsMessage') === true) {
+      const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
+      if(channel !== undefined){
+        msg.guild.channels.find(c => c.id === channel.id).send('',embed)
+        return;
+      }
+    return msg.reply(error('impossible de trouver de channel de logs !'))
   }
+  return msg.embed(embed);
 }
 
 const newUser = (member,type) => {

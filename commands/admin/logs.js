@@ -1,7 +1,5 @@
 const {Command} = require('discord.js-commando');
 const {sendLogs} = require('../../utils.js');
-const { MessageEmbed } = require('discord.js')
-const { stripIndents } = require('common-tags')
 
 module.exports = class LogsCommand extends Command {
   constructor (client) {
@@ -39,15 +37,6 @@ module.exports = class LogsCommand extends Command {
       }
     }
 
-    const embed = new MessageEmbed()
-    .setColor(0xcd6e57)
-    .setAuthor(msg.author.username, msg.author.displayAvatarURL())
-    .setDescription(stripIndents`**Action:** ${description}`)
-    .setFooter(msg.guild.name)
-    .setTimestamp();
-
-    msg.say(embed).then(message => message.delete({timeout: 2000}))
-
-    return sendLogs(msg,description)
+    sendLogs(msg,description)
   }
 };
