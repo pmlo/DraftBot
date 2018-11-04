@@ -11,18 +11,13 @@ module.exports = class QuoteCommand extends Command {
       group: 'admin',
       aliases: ['ra'],
       description: 'Ajouter des roles à un message avec des réactions',
-      examples: ['react 5554845515145714 Graphiste 🖊'],
+      examples: ['remove-react 5554845515145714 🖊 '],
       guildOnly: true,
       args: [
         {
           key: 'message',
           prompt: 'A quel message souhaitez vous ajouter un role ?',
           type: 'message'
-        },
-        {
-          key: 'role',
-          prompt: 'Quel role doit être ajouté lors d\'une interaction avec une réaction',
-          type: 'role'
         },
         {
           key: 'emoji',
@@ -33,7 +28,7 @@ module.exports = class QuoteCommand extends Command {
     });
   }
 
-  async run (msg, {emoji,role,message}) {
+  async run (msg, {emoji,message}) {
 
     const newEmoji = Util.parseEmoji(emoji)
 
@@ -51,12 +46,15 @@ module.exports = class QuoteCommand extends Command {
 
         if (result) {
           const currentRole = msg.guild.roles.find(r => r.id === result.role)
-          embed.setDescription(embed.description.replace(currentRole.name, role.name))
-          connexion.run(`UPDATE "reacts" SET role= ${role.id} WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`)
+          if(embed.description.includes(`| ${currentRole.name}`)) embed.setDescription(embed.description.replace(`| ${currentRole.name}`, ''))
+          
+          else if(embed.description.includes(`${currentRole.name} |`)) embed.setDescription(embed.description.replace(`${currentRole.name} |`, ''))
+
+          else if(embed.description.includes(currentRole.name)) embed.setDescription(embed.description.replace(currentRole.name, ''))
+          newEmoji.id ? focusMsg.reactions.sweep(react => react.emoji.id === newEmoji.id) : focusMsg.reactions.sweep(react => react.emoji.name === newEmoji.name)
+          connexion.run(`DELETE FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`)
         } else {
-          message.react(newEmoji.id||newEmoji.name)
-          embed.setDescription(embed.description ? `${embed.description} | ${role.name}` : role.name);
-          connexion.run(`INSERT INTO "reacts" (guild, message, emoji, role) VALUES (?, ?, ?, ?)`,[msg.guild.id, message.id, newEmoji.id||newEmoji.name, role.id])
+          console.log('react non trouvé')
         }
         focusMsg.edit('', {embed});
       })
@@ -65,7 +63,7 @@ module.exports = class QuoteCommand extends Command {
     const reactEmbed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
-    .setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} à été attributé au role ${role.name} sur le selectionneur de roles !`)
+    .setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} à été supprimé sur le selectionneur de roles !`)
     .setTimestamp();
 
     return msg.embed(reactEmbed).then(actionMessage => actionMessage.delete({timeout: 8000}))
