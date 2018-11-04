@@ -8,6 +8,8 @@ class WebSocket {
         this.client = client
         this.app = express()
 
+        this.app.use(express.static('static'));
+
         this.app.get('/api/commands', (req, res) => res.json({ commands: this.client.registry.groups.map(grp => grp.commands) }))
 
         this.server = this.app.listen(port, () => {
