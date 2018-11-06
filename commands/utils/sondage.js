@@ -22,17 +22,17 @@ module.exports = class QuoteCommand extends Command {
   }
 
   async run (msg, {message}) {
-    msg.delete();
-
     const emojis = ['✅','❌']
 
     const embed = new MessageEmbed()
-    .setDescription(":newspaper: Sondage")
-    .addField(message,'Veuillez voter avec :white_check_mark: et :x:')
+    .setTitle(":newspaper: Sondage")
+    .addField(message,`Ceci est un sondage proposé par ${msg.author}`)
     .setColor(0xcd6e57)
+    .setFooter(msg.guild.name)
     .setTimestamp()
 
-    const question = msg.embed(embed)
-    await Promise.all(emojis.map(emoji => question.react(emoji)));
+    msg.embed(embed)
+    .then(question => emojis.reduce((acc, emoji) => acc.then(() => question.react(emoji)),Promise.resolve()))
+    msg.delete();
   }
 }
