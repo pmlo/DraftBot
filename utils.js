@@ -406,6 +406,10 @@ const getUsersXpByGuild = (guild) => new Promise((resolve, reject) =>{
   .catch(err => reject(err))
 })
 
+const getUser = (user, client) = new Promise((resolve, reject) =>{
+  client.users.fetch(user).then(resolve)
+})
+
 const getLevelFromXp = (xp) => {
   let level = 0
   while (xp >= getLevelXp(level)) {
@@ -448,5 +452,6 @@ module.exports = {
   levelImage,
   kickUser,
   banUser,
-  getUsersXpByGuild
+  getUsersXpByGuild,
+  getUser
 };

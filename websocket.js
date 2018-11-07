@@ -1,5 +1,5 @@
 const express = require('express')
-const {getUsersXpByGuild} = require('./utils.js');
+const {getUsersXpByGuild,getUser} = require('./utils.js');
 
 class WebSocket {
 
@@ -18,6 +18,13 @@ class WebSocket {
             getUsersXpByGuild(guild).then(response => {
                 
                 res.status(200).send({ users: response.map(userS => this.client.users.fetch(userS.user).then(user => userS.user = user))})
+            })
+        })
+
+        this.app.get('/api/getuser/:user', (req, res) => {
+            const user = req.params.user;
+            getUser(user).then(response => {
+                res.status(200).send({ user: response})
             })
         })
 
