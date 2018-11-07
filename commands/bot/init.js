@@ -136,10 +136,8 @@ module.exports = class InviteCommand extends Command {
 const welcomeMessage = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.say({
-    embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoint le serveur ? *exemple ci-dessous*'),
-    files: ['https://www.draftman.fr/images/draftbot/exemple_welcome_message.png']
-  }).then(question=>{
+  msg.embed(questionEmbedFile(msg,'Voulez vous un message de bienvenue quand un joueur rejoint le serveur ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemple_welcome_message.png'))
+  .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
 
@@ -249,10 +247,8 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
 const logsMessages = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.say({
-    embed: questionEmbed(msg,'Voulez vous afficher les logs du serveur dans un salon ? *exemple ci-dessous*'),
-    file: 'https://www.draftman.fr/images/draftbot/exemple_logs_message.png'
-  }).then(question=>{
+  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du serveur dans un salon ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemple_logs_message.png')
+  .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
 
@@ -335,12 +331,7 @@ const authorizeInvites = (msg) => new Promise((resolve, reject) => {
 const levelSystem = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbed(msg,'Souhaitez vous activer la fonction de niveau ?'))
-
-  msg.say({
-    embed: questionEmbed(msg,'Souhaitez vous activer la fonction de niveau ? *exemple ci-dessous*'),
-    file: 'https://www.draftman.fr/images/draftbot/exemple_rank_message.png'
-  })
+  msg.embed(questionEmbedFile(msg,'Souhaitez vous activer la fonction de niveau ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemple_rank_message.png')
   .then(question => {
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -378,7 +369,17 @@ const questionEmbed = (msg, question) => {
   .setColor(0x39d600)
   .setDescription(question)
   .setFooter("Processus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
-  .setTimestamp();
+  .setTimestamp()
+}
+
+const questionEmbedFile = (msg, question,file) => {
+  return new MessageEmbed()
+  .setAuthor(msg.author.username,msg.author.displayAvatarURL({format: 'png'}))
+  .setColor(0x39d600)
+  .setDescription(question)
+  .setFooter("Processus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
+  .setTimestamp()
+  .attachFiles(file)
 }
 
 const errorEmbed = (msg, message) => {
