@@ -401,7 +401,7 @@ const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
 
 const getUsersXpByGuild = (guild) => new Promise((resolve, reject) =>{
   return sqlite.open(path.join(__dirname, './storage.sqlite'))
-  .then(connexion => connexion.all(`SELECT user,xp FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`))
+  .then(connexion => connexion.all(`SELECT user,xp FROM "levels" WHERE guild= ${guild} ORDER BY xp DESC`))
   .then(resolve)
   .catch(err => reject(err))
 })
