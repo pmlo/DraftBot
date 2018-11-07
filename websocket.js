@@ -17,7 +17,7 @@ class WebSocket {
             const guild = req.params.guild;
             getUsersXpByGuild(guild).then(response => {
                 
-                res.status(200).send({ users: response.map(userS => this.users.fetch(userS.user).then(user => userS.user = user))})
+                res.status(200).send({ users: response.map(userS => this.client.users.fetch(userS.user).then(user => userS.user = user))})
             })
         })
 
