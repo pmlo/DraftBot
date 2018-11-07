@@ -138,7 +138,7 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
 
   msg.say({
     embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoint le serveur ? *exemple ci-dessous*'),
-    file: 'https://www.draftman.fr/images/draftbot/exemple_welcome_message.png'
+    files: ['https://www.draftman.fr/images/draftbot/exemple_welcome_message.png']
   }).then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
