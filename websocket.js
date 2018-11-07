@@ -16,6 +16,7 @@ class WebSocket {
         this.app.get('/api/levels/:guild', (req, res) => {
             const guild = req.params.guild;
             getUsersXpByGuild(guild).then(response => {
+                const users = response.map(user => user.user = this.users.fetch(user.user))
                 res.status(200).send({ users: response})
             })
         })
