@@ -379,7 +379,7 @@ const questionEmbedFile = (msg, question,file) => {
   .setDescription(question)
   .setFooter("Processus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
   .setTimestamp()
-  .attachFiles(file)
+  .setImage(file)
 }
 
 const errorEmbed = (msg, message) => {
