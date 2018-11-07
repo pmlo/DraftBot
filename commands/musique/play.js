@@ -49,7 +49,7 @@ const run = (current) => async (msg, { url }) =>  {
 
             current.queue.set(msg.guild.id, listQueue);
 
-            statusMsg.edit(`${msg.author}, je rejoinds votre salon vocal...`);
+            statusMsg.edit(`${msg.author}, je rejoins votre salon vocal...`);
             try {
                 const connection = await listQueue.voiceChannel.join();
 
@@ -144,7 +144,7 @@ const handleVideo = (current) => async (video, queue, voiceChannel, msg, statusM
             return null;
         }
 
-        statusMsg.edit(`${msg.author}, je rejoinds votre salon vocal...`);
+        statusMsg.edit(`${msg.author}, je rejoins votre salon vocal...`);
         try {
             const connection = await queue.voiceChannel.join();
 

@@ -8,7 +8,7 @@ module.exports = class autoroleCommand extends Command {
       memberName: 'autorole',
       group: 'admin',
       aliases: ['defaultrole'],
-      description: 'Mettre un role par défaut à ajouter quand un membre rejoinds la guild',
+      description: 'Mettre un role par défaut à ajouter quand un membre rejoint la guild',
       format: 'RoleID|RoleName(partial or full)',
       examples: ['autorole Member'],
       guildOnly: true,

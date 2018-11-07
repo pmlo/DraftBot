@@ -137,7 +137,7 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
   msg.say({
-    embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoinds le serveur ? *exemple ci dessous*'),
+    embed: questionEmbed(msg,'Voulez vous un message de bienvenue quand un joueur rejoint le serveur ? *exemple ci-dessous*'),
     file: 'https://www.draftman.fr/images/draftbot/exemple_welcome_message.png'
   }).then(question=>{
     question.react(emojis[0]);
@@ -250,7 +250,7 @@ const logsMessages = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
   msg.say({
-    embed: questionEmbed(msg,'Voulez vous afficher les logs du serveur dans un salon ? *exemple ci dessous*'),
+    embed: questionEmbed(msg,'Voulez vous afficher les logs du serveur dans un salon ? *exemple ci-dessous*'),
     file: 'https://www.draftman.fr/images/draftbot/exemple_logs_message.jpg'
   }).then(question=>{
     question.react(emojis[0]);
@@ -338,7 +338,7 @@ const levelSystem = (msg) => new Promise((resolve, reject) => {
   msg.embed(questionEmbed(msg,'Souhaitez vous activer la fonction de niveau ?'))
 
   msg.say({
-    embed: questionEmbed(msg,'Souhaitez vous activer la fonction de niveau ? *exemple ci dessous*'),
+    embed: questionEmbed(msg,'Souhaitez vous activer la fonction de niveau ? *exemple ci-dessous*'),
     file: 'https://www.draftman.fr/images/draftbot/exemple_rank_message.jpg'
   })
   .then(question => {
@@ -346,7 +346,7 @@ const levelSystem = (msg) => new Promise((resolve, reject) => {
     question.react(emojis[1]);
 
     function eventListenLevelSystemReactions(messageReaction,user){
-        if(user.bot && messageReaction.message.id !== question.id && user.id !== msg.author.id) return;
+      if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
           return;

@@ -122,7 +122,7 @@ DraftBot.on('raw', event => {
 
 DraftBot.on('unknownCommand', msg => {
     const {guild} = msg;
-    msg.reply(`cette commande est inconnu !\nVeuillez utiliser \`${guild ? guild.commandPrefix : msg.client.commandPrefix}help\` ou ${DraftBot.user} help\npour afficher la liste des commandes disponibles.`)
+    msg.reply(`cette commande est inconnue !\nVeuillez utiliser \`${guild ? guild.commandPrefix : msg.client.commandPrefix}help\` ou ${DraftBot.user} help\npour afficher la liste des commandes disponibles.`)
 })
 
 DraftBot.registry
