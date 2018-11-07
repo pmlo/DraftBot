@@ -247,7 +247,7 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
 const logsMessages = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du serveur dans un salon ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemple_logs_message.png')
+  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du serveur dans un salon ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemple_logs_message.png'))
   .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -331,7 +331,7 @@ const authorizeInvites = (msg) => new Promise((resolve, reject) => {
 const levelSystem = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Souhaitez vous activer la fonction de niveau ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemple_rank_message.png')
+  msg.embed(questionEmbedFile(msg,'Souhaitez vous activer la fonction de niveau ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemple_rank_message.png'))
   .then(question => {
     question.react(emojis[0]);
     question.react(emojis[1]);
