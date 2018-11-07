@@ -406,7 +406,7 @@ const getUsersXpByGuild = (guild) => new Promise((resolve, reject) =>{
   .catch(err => reject(err))
 })
 
-const getUser = (user, client) = new Promise((resolve, reject) =>{
+const getUser = (user, client) => new Promise((resolve, reject) =>{
   client.users.fetch(user).then(resolve)
 })
 
