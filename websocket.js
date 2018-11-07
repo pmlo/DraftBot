@@ -23,7 +23,7 @@ class WebSocket {
 
         this.app.get('/api/getuser/:user', (req, res) => {
             const user = req.params.user;
-            getUser(user).then(response => {
+            getUser(user,this.client).then(response => {
                 res.status(200).send({ user: response})
             })
         })
