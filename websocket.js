@@ -15,7 +15,7 @@ class WebSocket {
 
         const commands = this.client.registry.groups.map(grp => grp.commands)
 
-        this.app.get('/api/commands', (req, res) => res.status(200).send({ commands: lodash.flatten(commands)}))
+        this.app.get('/api/commands', (req, res) => res.status(200).send({ commands }))
 
         this.server = this.app.listen(port, () => {
             console.log("Websocket API set up at port " + this.server.address().port)
