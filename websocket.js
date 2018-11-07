@@ -1,7 +1,5 @@
 const express = require('express')
-const lodash = require('lodash');
-const https = require ('https'); 
-const fs = require ('fs'); 
+const {getUsersXpByGuild} = require('./utils.js');
 
 class WebSocket {
 
@@ -14,6 +12,13 @@ class WebSocket {
         this.app.use(express.static('static'));
 
         this.app.get('/api/commands', (req, res) => res.status(200).send({ commands : this.client.registry.groups.map(grp => grp.commands)}))
+
+        this.app.get('/api/levels/:guild', (req, res) => {
+            const guild = req.params.guild;
+            getUsersXpByGuild(guild).then(response => {
+                res.status(200).send({ users: response.users})
+            })
+        })
 
         this.server = this.app.listen(port, () => {
             console.log("Websocket API set up at port " + this.server.address().port)

@@ -399,6 +399,13 @@ const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
   .catch(err => reject(err))
 })
 
+const getUsersXpByGuild = (guild) => new Promise((resolve, reject) =>{
+  return sqlite.open(path.join(__dirname, './storage.sqlite'))
+  .then(connexion => connexion.all(`SELECT user,xp FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`))
+  .then(resolve)
+  .catch(err => reject(err))
+})
+
 const getLevelFromXp = (xp) => {
   let level = 0
   while (xp >= getLevelXp(level)) {
@@ -440,5 +447,6 @@ module.exports = {
   getUserXp,
   levelImage,
   kickUser,
-  banUser
+  banUser,
+  getUsersXpByGuild
 };
