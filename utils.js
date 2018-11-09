@@ -34,11 +34,11 @@ const levelImage = async (msg,user,xp,place) => {
     const Quantify_14_grey = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_14_grey.fnt'));
 
     // Stats
-    const discriminatorPlace = Number(158) + Number(pixelWidth(user.username, { font: 'Open sans', size: 24 }));
-    const levelPlace = Number(500) - (Number(30) + Number(pixelWidth(`Niveau ${level}`, { font: 'Open sans', size: 14 })));
-    const placePlace = levelPlace - (Number(30) + Number(pixelWidth(`Place ${place}`, { font: 'Open sans', size: 14 })));
-    const rxpPlace = Number(500) - (Number(30) + Number(pixelWidth(`/${levelXp}xp`, { font: 'Open sans', size: 14 })));
-    const xpPlace = rxpPlace - Number(pixelWidth(currentLevelXp, { font: 'Open sans', size: 14 }));
+    const discriminatorPlace = Number(158) + Number(pixelWidth(user.username.sansAccents(), { font: 'Quantify', size: 26 }));
+    const levelPlace = Number(500) - (Number(30) + Number(pixelWidth(`Niveau ${level}`, { font: 'Quantify', size: 16 })));
+    const placePlace = levelPlace - (Number(30) + Number(pixelWidth(`Place ${place}`, { font: 'Quantify', size: 16 })));
+    const rxpPlace = Number(500) - (Number(30) + Number(pixelWidth(`/${levelXp}xp`, { font: 'Quantify', size: 14 })));
+    const xpPlace = rxpPlace - Number(pixelWidth(currentLevelXp, { font: 'Quantify', size: 14 }));
 
     //Generated Elements
     avatar.resize(110, Jimp.AUTO);
@@ -52,7 +52,7 @@ const levelImage = async (msg,user,xp,place) => {
     canvas.composite(avatar, 20, 20);
     
     //Generated Texts
-    canvas.print(Quantify_26_draft, 158, 53, user.username);
+    canvas.print(Quantify_26_draft, 158, 53, user.username.sansAccents());
     canvas.print(Quantify_16_draft, levelPlace, 111, `Niveau ${level}`);
     canvas.print(Quantify_16_grey, discriminatorPlace, 61, `#${user.discriminator}`);
     canvas.print(Quantify_16_grey, placePlace, 111, `Place ${place}`);
@@ -430,6 +430,10 @@ const getCurrentLevelXp = (xp) => {
     x += getLevelXp(i)
   }
   return xp - x;
+}
+
+String.prototype.sansAccents = function() {
+  return this.replace(/[ùûü]/g,"u").replace(/[îï]/g,"i").replace(/[àâä]/g,"a").replace(/[ôö]/g,"o").replace(/[éèêë]/g,"e").replace(/ç/g,"c");
 }
 
 module.exports = {
