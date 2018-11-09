@@ -28,7 +28,7 @@
     "simple-youtube-api": "^5.0.2",
     "snekfetch": "^4.0.4",
     "sqlite": "^3.0.0",
-    "string-pixel-width": "^1.7.0",
+    "string-pixel-width": "^1.8.0",
     "ytdl-core": "^0.25.2"
   },
   "devDependencies": {},
