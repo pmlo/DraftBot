@@ -302,7 +302,7 @@ const channelLogs = (msg) => new Promise((resolve, reject) => {
 const authorizeInvites = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbed(msg,'Autorisez vous les invitations d\'autres serveurs ?'))
+  msg.embed(questionEmbed(msg,'Autorisez vous que des gens envoient des invitations vers d\'autres serveurs ?'))
   .then(question => {
     question.react(emojis[0]);
     question.react(emojis[1]);
