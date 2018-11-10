@@ -285,7 +285,7 @@ const play = (current) => (guild, song) => {
 
 const startReactEvent =  (msg,videos,sendedEmbed,current,queue,voiceChannel,statusMsg) => {
     return async (messageReaction,user) => {
-        if (user.bot && sendedEmbed.id !== messageReaction.message.id && msg.author.id !== user.id) return;
+        if(user.bot || sendedEmbed.id !== messageReaction.message.id || user.id !== msg.author.id) return;
         const emoji = messageReaction.emoji.name;
         if (emojis.includes(emoji)) {
             sendedEmbed.delete();
