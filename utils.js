@@ -25,7 +25,7 @@ const levelImage = async (msg,user,xp,place) => {
     // Masks
     const avatarMask = await Jimp.read(path.join(__dirname, './images/avatarMask.png'));
     const levelMask = await Jimp.read(path.join(__dirname, './images/levelMask.png'));
-    
+
     // Fonts
     const Quantify_26_draft = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_26_draft.fnt'));
     const Quantify_16_draft = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_16_draft.fnt'));
@@ -50,13 +50,13 @@ const levelImage = async (msg,user,xp,place) => {
     canvas.composite(barreBackground, 150,90);
     canvas.composite(barre, 150,90);
     canvas.composite(avatar, 20, 20);
-    
+
     //Generated Texts
     canvas.print(Quantify_26_draft, 158, 53, user.username.sansAccents());
     canvas.print(Quantify_16_draft, levelPlace, 111, `Niveau ${level}`);
     canvas.print(Quantify_16_grey, discriminatorPlace, 61, `#${user.discriminator}`);
     canvas.print(Quantify_16_grey, placePlace, 111, `Place ${place}`);
-    
+
     canvas.print(Quantify_14_grey, rxpPlace, 63,  `/${levelXp}xp`);
     canvas.print(Quantify_14_draft, xpPlace, 63, `${currentLevelXp}`);
 
@@ -83,12 +83,12 @@ const makeWelcomeImage = async (member) => {
 
       const canvas = new Jimp(500, 150);
       const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'}));
-      
+
       const Quantify_55_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_55_white.fnt'));
       const Quantify_25_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_25_white.fnt'));
       const OpenSans_22_white = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans_22_white.fnt'));
       const mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
-    
+
       avatar.resize(136, Jimp.AUTO);
       mask.resize(136, Jimp.AUTO);
       avatar.mask(mask, 0, 0);
@@ -98,17 +98,17 @@ const makeWelcomeImage = async (member) => {
       canvas.print(Quantify_55_white, 158, 20, 'Bienvenue');
       canvas.print(OpenSans_22_white, 158, 70, 'sur le serveur discord');
       canvas.print(Quantify_25_white, 158, 105, member.guild.name);
-    
+
       const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
       const embedAttachment = new MessageAttachment(buffer, 'joinimg.png');
-    
+
       const newMemberEmbed = new MessageEmbed()
         .attachFiles([embedAttachment])
         .setColor('#cd6e57')
         .setTitle('Ho ! Un nouveau membre !')
         .setDescription(`Faites du bruit pour __**${member.displayName}**__ !`)
         .setImage('attachment://joinimg.png');
-        
+
         return member.guild.channels.find(c => c.id === channel.id).send(`🎉  Bienvenue <@${member.id}>  🎉!`, {embed: newMemberEmbed});
     } catch (error) {
       return console.log(error);
@@ -130,7 +130,7 @@ const guildAdd = async guild => {
 
     Vous n'apréciez pas mon prefix ? \`${guild.client.commandPrefix}prefix [nouveau prefix]\`
     Toutes mes commandes peuvent être lancés à partir de mon prefix \`${guild.client.commandPrefix}\` ou par mention \`@${guild.client.user.tag}\`
-    
+
     **Pour répondre au mieux à vos besoins vous pouvez me configurer facielement avec: \`${guild.client.commandPrefix}init\`**
     `)
 
@@ -201,7 +201,7 @@ const newUser = (member,type) => {
       .setDescription(member.user.tag + " viens de quitter le serveur !")
       .setTimestamp();
 
-    if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole') && type === true)) {
+    if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole')) && type === true) {
       member.roles.add(member.guild.settings.get('defaultRole'));
       newMemberEmbed.setDescription(`${newMemberEmbed.description}\nLe role ${member.guild.roles.get(member.guild.settings.get('defaultRole')).name} lui à été automatiquement attribué !`);
     }
@@ -210,7 +210,7 @@ const newUser = (member,type) => {
       return member.guild.channels.get(channel).send('', {embed: type === true ? newMemberEmbed : oldMemberEmbed});
     }
   }else if (member.guild.settings.get('defaultRole') && member.guild.roles.get(member.guild.settings.get('defaultRole')) && type === true) {
-      member.roles.add(member.guild.settings.get('defaultRole'));
+    member.roles.add(member.guild.settings.get('defaultRole'));
   }
 }
 
