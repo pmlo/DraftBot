@@ -38,7 +38,7 @@ DraftBot.on('guildMemberRemove', member => newUser(member, false))
 DraftBot.on('roleCreate', role => sendSysLogs(role.guild,null, `Le role ${role.name} a été crée.`))
 
 DraftBot.on('roleUpdate', (oldRole,newRole) => {
-    if(oldRole !== newRole){
+    if(oldRole != newRole){
         sendSysLogs(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`,`
             ${oldRole.name !== newRole.name ? '- Le nom du role à été changé en '+newRole.name+'.\n':''}
             ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été changé en '+newRole.hexColor +'.\n':''}
