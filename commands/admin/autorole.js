@@ -10,14 +10,13 @@ module.exports = class autoroleCommand extends Command {
       aliases: ['defaultrole'],
       description: 'Mettre un role par défaut à ajouter quand un membre rejoint la guild',
       format: 'RoleID|RoleName(partial or full)',
-      examples: ['autorole Member'],
+      examples: ['autorole Member','autorole delete'],
       guildOnly: true,
       args: [
         {
           key: 'role',
           prompt: 'Quel role voulez vous par défaut pour les membres ?',
-          type: 'role',
-          default: 'delete'
+          type: 'role'
         }
       ],
       clientPermissions: ['MANAGE_ROLES'],
@@ -26,9 +25,15 @@ module.exports = class autoroleCommand extends Command {
   }
 
   run (msg, {role}) {
-    let description = `🔓 \`${role.name}\` a été définit comme role par défaut sur cette guild et sera attribué aux membres à leur arrivé !`;
+    let description;
 
-    if (role === 'delete') {
+    if(!role){
+      if(msg.guild.settings.get('defaultRole')){
+        description = `🔓 Le role attribué aux nouveaux membres est \`${role.name}\` !`;
+      }else{
+        description = `🔓 Il n'y a aucun role attribué automatiquement aux nouveaux membres !`;
+      }
+    }else if (role === 'delete') {
       msg.guild.settings.remove('defaultRole');
       description = 'Le role par défaut à été supprimé';
     } else {
