@@ -6,7 +6,7 @@ module.exports = class AvatarCommand extends Command {
     super(client, {
       name: 'guildid',
       memberName: 'guildid',
-      group: 'utils',
+      group: 'dev',
       aliases: ['getguildid'],
       description: 'Récupérer l\'id d\'une guild',
       examples: ['guildid'],
