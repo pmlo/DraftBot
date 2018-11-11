@@ -133,6 +133,7 @@ DraftBot.registry
         ['utils', 'Utils - Différents outils permettant différentes choses sur le serveur'],
         ['fun', 'Fun - Commandes fun'],
         ['levels', 'Levels - Consultez votre activité sur une guild'],
+        ['dev', 'Développeurs - Outils pour développeurs'],
         ['moderation', 'Moderation - Commandes de modération'],
         ['admin', 'Admin - Commandes d\'administateur']
     ])
