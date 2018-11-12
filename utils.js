@@ -155,6 +155,8 @@ const sendLogs = (msg, message) => {
     .setFooter(`Logs du serveur ${msg.guild.name}`)
     .setTimestamp();
 
+  msg.embed(embed).delete({timeout: 2000})
+
   if (msg.guild.settings.get('logsMessage') === true) {
       const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
       if(channel !== undefined){
@@ -163,7 +165,6 @@ const sendLogs = (msg, message) => {
       }
     return msg.reply(error('impossible de trouver de channel de logs !'))
   }
-  return msg.embed(embed);
 }
 
 const sendSysLogs = (guild,title, message) => {
