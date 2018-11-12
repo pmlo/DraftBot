@@ -21,7 +21,7 @@ module.exports = class InviteCommandCommand extends Command {
 
 		
 
-		const newGuild = this.client.guilds.find(g => g.name.toLowerCase() === guild.toLowerCase())
+		const newGuild = this.client.guilds.find(g => g.name.toLowerCase().includes(guild.toLowerCase()))
 
 		newGuild.fetchInvites()
 		.then(invites => {
