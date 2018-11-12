@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const { MessageEmbed } = require('discord.js')
+const { error } = require('../../utils.js');
 
 module.exports = class InviteCommandCommand extends Command {
 	constructor(client) {
@@ -19,10 +20,8 @@ module.exports = class InviteCommandCommand extends Command {
 
 	run(msg, { guild }) {
 
-		
-
 		const newGuild = this.client.guilds.find(g => g.name.toLowerCase().includes(guild.toLowerCase()))
-
+		
 		newGuild.fetchInvites()
 		.then(invites => {
 			const embed = new MessageEmbed()
@@ -33,6 +32,10 @@ module.exports = class InviteCommandCommand extends Command {
 			.setTimestamp()
 
 			msg.embed(embed)
+		}).catch(err => {
+			if(err.message === "Missing Permissions"){
+				msg.say(error(`impossible d'obtenir l'invitation de \`${newGuild.name}\` car je n'ai pas la permission de gérer les invitations !`))
+			}
 		})
 	}
 };
