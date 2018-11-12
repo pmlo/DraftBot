@@ -16,7 +16,8 @@ module.exports = class autoroleCommand extends Command {
         {
           key: 'role',
           prompt: 'Quel role voulez vous par défaut pour les membres ?',
-          type: 'role'
+          type: 'role',
+          default: 'no'
         }
       ],
       clientPermissions: ['MANAGE_ROLES'],
@@ -27,18 +28,18 @@ module.exports = class autoroleCommand extends Command {
   run (msg, {role}) {
     let description;
 
-    if(!role){
+    if(role == 'no'){
       if(msg.guild.settings.get('defaultRole')){
-        description = `🔓 Le role attribué aux nouveaux membres est \`${role.name}\` !`;
+        description = `🔓 Le role attribué aux nouveaux membres est \`${msg.guild.roles.find(r => msg.guild.settings.get('defaultRole') === r.id).name}\` !`;
       }else{
         description = `🔓 Il n'y a aucun role attribué automatiquement aux nouveaux membres !`;
       }
-    }else if (role === 'delete') {
+    } else if (role.id === msg.guild.settings.get('defaultRole')){
       msg.guild.settings.remove('defaultRole');
-      description = 'Le role par défaut à été supprimé';
+      description = `Le role \`${role.name}\` qui était attribué automatiquement aux nouveaux membres est maintenant supprimé`;
     } else {
       msg.guild.settings.set('defaultRole', role.id);
-      description = `Le role \`${role.name}\` sera maintenant ajouté automatiquement aux nouveaux membres !`;
+      description = `Le role \`${role.name}\` sera maintenant attribué automatiquement aux nouveaux membres !`;
     }
     return sendLogs(msg, description)
   }
