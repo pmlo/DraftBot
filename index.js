@@ -3,6 +3,7 @@ const path = require('path');
 const sqlite = require('sqlite');
 const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites,createTables,error} = require('./utils.js');
 const websocket = require('./websocket');
+const {oneLine} = require('common-tags')
 
 require('dotenv').config();
 
@@ -35,16 +36,21 @@ DraftBot.on('guildMemberAdd', member => {
 
 DraftBot.on('guildMemberRemove', member => newUser(member, false))
 
-DraftBot.on('roleCreate', role => sendSysLogs(role.guild,null, `Le role ${role.name} a été crée.`))
-
 DraftBot.on('roleUpdate', (oldRole,newRole) => {
-    if(oldRole != newRole){
-        sendSysLogs(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`,`
-            ${oldRole.name !== newRole.name ? '- Le nom du role à été changé en '+newRole.name+'.\n':''}
-            ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été changé en '+newRole.hexColor +'.\n':''}
+    if(oldRole.name === 'new role') {
+        sendSysLogs(oldRole.guild,`Le role **${newRole.name}** a été crée.`,oneLine`
+            ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été défini sur \`'+newRole.hexColor +'\`.\n':''}
+            ${oldRole.hoist !== newRole.hoist ? (newRole.hoist === true ?'- Les membres ayant ce role seront affichés séparément des autres.':'- Les membres ayant ce role seront affichés dans la même temps.\n'):''}
+            ${oldRole.mentionable !== newRole.mentionable ? (newRole.mentionable === true ?'- Le role sera mentionnable.\n':'- Le role ne sera pas mentionnable.\n'):''}
+            ${oldRole.permissions.bitfield !== newRole.permissions.bitfield ? '- Les permissions du role ont été redéfinis.':''}
+        `)
+    } else if(oldRole.name != newRole.name || oldRole.hexColor  != newRole.hexColor || oldRole.hoist != newRole.hoist || oldRole.mentionable != newRole.mentionable || oldRole.permissions.bitfield !== newRole.permissions.bitfield){
+        sendSysLogs(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`,oneLine`
+            ${oldRole.name !== newRole.name && newR === ''? '- Le nom du role à été changé en \`'+newRole.name+'\`.\n':''}
+            ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été changé en \`'+newRole.hexColor +'\`.\n':''}
             ${oldRole.hoist !== newRole.hoist ? (newRole.hoist === true ?'- Les membres ayant ce role seront affichés séparément des autres.':'- Les membres ayant ce role seront affichés dans la même temps.\n'):''}
             ${oldRole.mentionable !== newRole.mentionable ? (newRole.mentionable === true ?'- Le role sera maintenant mentionnable.\n':'- Le role ne sera plus mentionnable.\n'):''}
-            ${oldRole.permissions !== newRole.permissions ? '- Les permissions du role ont été modifiés.':''}
+            ${oldRole.permissions.bitfield !== newRole.permissions.bitfield ? '- Les permissions du role ont été modifiés.':''}
         `)
     }
 })
