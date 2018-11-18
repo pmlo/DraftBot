@@ -1,6 +1,4 @@
-const {Command} = require('discord.js-commando'), 
-  {stripIndents} = require('common-tags'), 
-  {Song} = require('../../utils.js');
+const {Command} = require('discord.js-commando')
 
 module.exports = class MusicStatusCommand extends Command {
   constructor (client) {
@@ -10,6 +8,7 @@ module.exports = class MusicStatusCommand extends Command {
       group: 'musique',
       aliases: ['encore','duplicate','repeat'],
       description: 'Relancer la musique en cours.',
+      examples: ['duplique'],
       guildOnly: true,
       args: [{
         key: 'nombre',

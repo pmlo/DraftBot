@@ -305,6 +305,7 @@ module.exports = class PlaySongCommand extends Command {
             memberName: 'play',
             group: 'musique',
             description: 'Pemret de lancer une musique',
+            aliases: ['jouer','lancer','musqiue','music'],
             examples: ['play {youtube video to play}'],
             guildOnly: true,
             args: [

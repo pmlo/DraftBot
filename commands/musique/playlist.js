@@ -9,6 +9,8 @@ module.exports = class MusicStatusCommand extends Command {
       memberName: 'playlist',
       group: 'musique',
       description: 'Relancer la musique en cours.',
+      aliases: ['startlist','play-list'],
+      exemples: ['playlist <lien>'],
       guildOnly: true,
       args: [{
         key: 'argument',

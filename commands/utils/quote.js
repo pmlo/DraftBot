@@ -20,7 +20,8 @@ module.exports = class QuoteCommand extends Command {
         {
           key: 'member',
           prompt: 'A quel membre voulez vous citerle message ?',
-          type: 'member'
+          type: 'member',
+          default: ''
         }
       ]
     });

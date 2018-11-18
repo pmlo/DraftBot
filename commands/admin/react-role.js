@@ -7,9 +7,9 @@ module.exports = class QuoteCommand extends Command {
       name: 'react-role',
       memberName: 'react-role',
       group: 'admin',
-      aliases: ['rr'],
+      aliases: ['rr','role-react'],
       description: 'Créer un message avec des réactions',
-      examples: ['quote 5554845515145714'],
+      examples: ['react-role Titre'],
       guildOnly: true,
       args: [
         {

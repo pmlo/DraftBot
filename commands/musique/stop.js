@@ -8,6 +8,7 @@ module.exports = class StopMusicCommand extends Command {
       memberName: 'stop',
       group: 'musique',
       aliases: ['kill', 'stfu', 'quit', 'leave', 'disconnect'],
+      examples: ['stop'],
       description: 'Stopper la musique et vider la file d\'attente.',
       details: 'Si il y a plus de 3 personnes un vote sera lancé pour valider la décision! Le staff peut forcer l\'arrêt avec ajoutant `force` à la commande.',
       guildOnly: true,

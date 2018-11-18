@@ -8,7 +8,7 @@ module.exports = class InviteCommandCommand extends Command {
 			name: 'getinvite',
 			group: 'utils',
 			memberName: 'getinvite',
-			description: 'Get a invite.',
+			description: 'Récupérer l\'invitation d\'un serveur à partir de son nom.',
 			ownerOnly: true,
 			args: [{
 				key: 'guild',

@@ -8,6 +8,7 @@ module.exports = class MusicStatusCommand extends Command {
       name: 'status',
       memberName: 'status',
       group: 'musique',
+      examples: ['status'],
       aliases: ['song', 'playing', 'current-song', 'now-playing', 'current'],
       description: 'Afficher le status de la musique en cours.',
       guildOnly: true

@@ -8,6 +8,7 @@ module.exports = class KickCommand extends Command {
       memberName: 'kick',
       group: 'moderation',
       description: 'Permet de kick un membre',
+      aliases: ['kicker','renvoyer'],
       examples: ['kick DraftMan'],
       guildOnly: true,
       args: [
