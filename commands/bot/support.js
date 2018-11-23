@@ -7,7 +7,7 @@ module.exports = class InviteCommand extends Command {
       name: 'support',
       memberName: 'support',
       group: 'bot',
-      aliases: ['probleme', 'erreur'],
+      aliases: ['probleme', 'erreur','aide'],
       description: 'Recevoir une invitation pour rejoindre le support',
       examples: ['support'],
       guildOnly: false
