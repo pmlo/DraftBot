@@ -15,6 +15,8 @@ module.exports = class InviteCommand extends Command {
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR']
     });
+    
+    this.timer = 0;
   }
 
   run (msg) {
@@ -28,7 +30,7 @@ module.exports = class InviteCommand extends Command {
         Bienvenue sur mon procéssus de configuration !
         Je vais vous posez une série de question me permettant de répondre aux mieux à vos besoins.
         
-        Vous pouvez arêter cette configuration à tout moment en envoyant \`cancel\`.
+        Vous pouvez arêter cette configuration à tout moment en envoyant \`cancel\` ou en dépassant 30 secondes par question.
       `)
       .setFooter("Processus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
       .setTimestamp()
@@ -44,11 +46,16 @@ module.exports = class InviteCommand extends Command {
         msg.client.emit('cancel')
         msg.client.removeListener('message', eventCancel)
       }
+
+      msg.client.once('cancelCancel', () => {
+        msg.client.removeListener('message', eventCancel)
+      })
     }
     this.runProcess(msg, 1);
   }
 
   runProcess (msg,process) {
+    startNewTimer(msg)
     if(process === 1){
       return welcomeMessage(msg).then(response => {
         const value = response.response
@@ -122,7 +129,7 @@ module.exports = class InviteCommand extends Command {
     }
 
     // Il n'y pas plus de process
-    msg.embed(questionEmbed(msg,'Félicitation la configuration est terminé, merci !'))
+    msg.embed(questionEmbed(msg,'Félicitations, la configuration est terminée, merci !'))
     msg.client.emit('cancel')
   }
 };
@@ -356,6 +363,15 @@ const levelSystem = (msg) => new Promise((resolve, reject) => {
     })
   })
 });
+
+const startNewTimer = (msg) => {
+  clearTimeout(this.timer);
+  this.timer = setTimeout(() => {
+    msg.reply('les 30 secondes sont écoulés !')
+    msg.client.emit('cancelCancel');
+    msg.client.emit('cancel');
+  },30000);
+}
 
 /* 
 * Embeds 
