@@ -6,10 +6,10 @@ const {MessageEmbed} = require('discord.js');
 module.exports = class DdocsCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'ddocs',
-      memberName: 'ddocs',
+      name: 'djs',
+      memberName: 'djs',
       group: 'dev',
-      aliases: ['discordjs', 'discord.js', 'djs','docs'],
+      aliases: ['discordjs', 'discord.js', 'ddjs',],
       description: 'Afficher la documentation de Discord.js',
       format: 'Version à trouver [master|stable|commando]',
       examples: ['docs User'],
@@ -41,9 +41,9 @@ module.exports = class DdocsCommand extends Command {
 
     const link = version === 'commando'
         ? 'https://raw.githubusercontent.com/Gawdl3y/discord.js-commando/docs/master.json'
-        : `https://raw.githubusercontent.com/discordjs/discord.js/docs/${version}.json`,
-      res = await fetch(link),
-      json = res.json();
+        : `https://raw.githubusercontent.com/discordjs/discord.js/docs/${version}.json`
+    const res = await fetch(link)
+    const json = res.json();
 
     this.docs[version] = json;
 
@@ -105,7 +105,9 @@ module.exports = class DdocsCommand extends Command {
 
       const docsEmbed = new MessageEmbed()
         .setColor(0xcd6e57)
-        .setAuthor(version === 'commando' ? 'Documentation Commando' : `Documentation Discord.JS (${version})`, 'https://github.com/discordjs.png');
+        .setAuthor(version === 'commando' ? 'Documentation Commando' : `Documentation Discord.JS (${version})`, 'https://github.com/discordjs.png')
+        .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
+        .setTimestamp()
 
       if (input.sub) {
         const subopts = {
