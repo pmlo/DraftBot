@@ -32,9 +32,10 @@ module.exports = class ClearCommand extends Command {
         return clearChannel(msg).then(response => {
           const value = response.response;
           if(value === true){
-            return msg.channel.clone(undefined, true, true, 'Messages supprimés').then(clone => {
-              msg.channel.delete();
-              clone.send(`${msg.author.tag}, la tache est maintenant terminé. Tous les messages ont été supprimés !`)
+            return msg.channel.clone(undefined, true, true, 'Messages supprimés').then(async clone => {
+              await msg.channel.delete();
+              await clone.setPosition(msg.channel.calculatedPosition)
+              await clone.send(`${msg.author}, la tache est maintenant terminé. Tous les messages ont été supprimés !`)
             })
           }
         }).catch(error => console.log(error))
@@ -43,13 +44,13 @@ module.exports = class ClearCommand extends Command {
   }
 };
 
-const clearChannel = (msg,type = true) => new Promise((resolve, reject) => {
+const clearChannel = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
   const embed = new MessageEmbed()
   .setColor(0xcd6e57)
   .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-  .setDescription(`Je ne peux pas supprimer des messages dattant de plus de 14 jours mais je peux vider entièrement le salon si vous le souhaitez !\nApprouvez vous cette action ?`)
+  .setDescription(`Je ne peux pas supprimer des messages dattant de plus de 14 jours mais je peux vider entièrement le salon si vous le souhaitez !\nLe souhaitez vous ?`)
   .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
   .setTimestamp()
 
