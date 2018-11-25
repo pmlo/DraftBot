@@ -22,7 +22,7 @@ module.exports = class AvatarCommand extends Command {
     });
   }
 
-  run (msg, {equation}) {
+  async run (msg, {equation}) {
 
     const calculator = await fetch('http://api.mathjs.org/v4/', {
       body: JSON.stringify({ expr: equation }),
