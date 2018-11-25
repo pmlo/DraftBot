@@ -78,41 +78,42 @@ const levelImage = async (msg,user,xp,place) => {
 
 const makeWelcomeImage = async (member) => {
   if (member.guild.settings.get('welcomeMessage') !== false && !member.user.bot) {
-    const channel = member.guild.settings.get('welcomeChannel') ? member.guild.settings.get('welcomeChannel') : member.guild.channels.find(c => c.name === 'general' || c.name === 'général');
-    try {
+    let channel = member.guild.settings.get('welcomeChannel') ? member.guild.settings.get('welcomeChannel') : member.guild.channels.find(c => c.name === 'general' || c.name === 'général');
+    if(channel !== undefined) channel = member.guild.systemChannel
+      try {
 
-      const canvas = new Jimp(500, 150);
-      const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'}));
+        const canvas = new Jimp(500, 150);
+        const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'}));
 
-      const Quantify_55_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_55_white.fnt'));
-      const Quantify_25_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_25_white.fnt'));
-      const OpenSans_22_white = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans_22_white.fnt'));
-      const mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
+        const Quantify_55_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_55_white.fnt'));
+        const Quantify_25_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_25_white.fnt'));
+        const OpenSans_22_white = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans_22_white.fnt'));
+        const mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
 
-      avatar.resize(136, Jimp.AUTO);
-      mask.resize(136, Jimp.AUTO);
-      avatar.mask(mask, 0, 0);
+        avatar.resize(136, Jimp.AUTO);
+        mask.resize(136, Jimp.AUTO);
+        avatar.mask(mask, 0, 0);
 
-      canvas.blit(avatar, 5, 5);
+        canvas.blit(avatar, 5, 5);
 
-      canvas.print(Quantify_55_white, 158, 20, 'Bienvenue');
-      canvas.print(OpenSans_22_white, 158, 70, 'sur le serveur discord');
-      canvas.print(Quantify_25_white, 158, 105, member.guild.name);
+        canvas.print(Quantify_55_white, 158, 20, 'Bienvenue');
+        canvas.print(OpenSans_22_white, 158, 70, 'sur le serveur discord');
+        canvas.print(Quantify_25_white, 158, 105, member.guild.name);
 
-      const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
-      const embedAttachment = new MessageAttachment(buffer, 'joinimg.png');
+        const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
+        const embedAttachment = new MessageAttachment(buffer, 'joinimg.png');
 
-      const newMemberEmbed = new MessageEmbed()
-        .attachFiles([embedAttachment])
-        .setColor('#cd6e57')
-        .setTitle('Ho ! Un nouveau membre !')
-        .setDescription(`Faites du bruit pour __**${member.displayName}**__ !`)
-        .setImage('attachment://joinimg.png');
-
+        const newMemberEmbed = new MessageEmbed()
+          .attachFiles([embedAttachment])
+          .setColor('#cd6e57')
+          .setTitle('Ho ! Un nouveau membre !')
+          .setDescription(`Faites du bruit pour __**${member.displayName}**__ !`)
+          .setImage('attachment://joinimg.png');
+        
         return member.guild.channels.find(c => c.id === channel.id).send(`🎉  Bienvenue <@${member.id}>  🎉!`, {embed: newMemberEmbed});
-    } catch (error) {
-      return console.log(error);
-    }
+      } catch (error) {
+        return console.log(error);
+      }
   }
 };
 
