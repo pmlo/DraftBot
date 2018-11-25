@@ -9,7 +9,6 @@ module.exports = class AvatarCommand extends Command {
       group: 'utils',
       aliases: ['image'],
       description: 'Récupérer l\'avatar d\'un membre',
-      format: 'userid|username [Size]',
       examples: ['avatar DraftMan 256'],
       guildOnly: true,
       args: [

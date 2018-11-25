@@ -61,7 +61,7 @@ module.exports = class DdocsCommand extends Command {
       .setColor(0xcd6e57)
       .setDescription(DOM.window.document.querySelector("section").textContent.replace(/\n\n/g, "\n").slice(0, 2042))
       .setURL(data.AbstractURL)
-      .setFooter(msg.guild ? msg.guild.name : '',msg.guild.iconURL({format: 'png'}))
+      .setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.guild.client.user.avatarURL({format: 'png'}))
       .setTimestamp()
       .setAuthor(`MDN Docs`, "https://developer.cdn.mozilla.net/static/img/favicon32.png", "https://developer.mozilla.org/en-US/");
 

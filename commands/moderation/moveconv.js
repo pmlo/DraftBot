@@ -36,7 +36,6 @@ module.exports = class MoveConvCommand extends Command {
       let hook = webhooks.find(hook => hook.name === 'DraftBot')
       if(!hook){
        hook = await channel.createWebhook('DraftBot')
-       console.log('je l\'ai crée')
       }
 
       channel.send('',{embed: new MessageEmbed()
