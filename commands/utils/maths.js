@@ -1,6 +1,7 @@
 const {Command} = require('discord.js-commando')
 const {MessageEmbed} = require('discord.js')
 const fetch = require('node-fetch')
+const {oneLine} = require('common-tags')
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
