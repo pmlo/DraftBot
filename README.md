@@ -11,9 +11,10 @@
     <a href="https://twitter.com/DraftMan_Dev"><img src="https://img.shields.io/twitter/follow/draftman_dev.svg?style=flat-square&label=Follow" alt="Twitter Follow"></a>
     <a href="https://www.paypal.me/draftproducts"><img src="https://img.shields.io/badge/Donate-PayPal-547ab8.svg?style=flat-square" alt="donate" title="Donate with PayPal" /></a>
   </p>
+  <p>
+  [![Discord Bots](https://discordbots.org/api/widget/318312854816161792.svg)](https://discordbots.org/bot/318312854816161792)  
+  </p>
 </div>
-
-[![Discord Bots](https://discordbots.org/api/widget/318312854816161792.svg)](https://discordbots.org/bot/318312854816161792)
 
 ## A Propos
 DraftBot est un bot polivalent et 100% français à l'écoute des communautés afin de répondre le mieux à leurs besoins Il est développé en NodeJS avec la librairie DiscordJs et le framework Discord Commando
