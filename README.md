@@ -12,7 +12,7 @@
     <a href="https://www.paypal.me/draftproducts"><img src="https://img.shields.io/badge/Donate-PayPal-547ab8.svg?style=flat-square" alt="donate" title="Donate with PayPal" /></a>
   </p>
   <p>
-  [![Discord Bots](https://discordbots.org/api/widget/318312854816161792.svg)](https://discordbots.org/bot/318312854816161792)  
+    <a href="https://discordbots.org/bot/318312854816161792"><img src="https://discordbots.org/api/widget/318312854816161792.svg" title="Discord Bots" /></a>
   </p>
 </div>
 
