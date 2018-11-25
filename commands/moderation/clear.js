@@ -51,7 +51,7 @@ const clearChannel = (msg) => new Promise((resolve, reject) => {
   .setColor(0xcd6e57)
   .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
   .setDescription(`Je ne peux pas supprimer des messages dattant de plus de 14 jours mais je peux vider entièrement le salon si vous le souhaitez !\nLe souhaitez vous ?`)
-  .setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.guild.client.user.avatarURL({format: 'png'}))
+  .setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.client.user.avatarURL({format: 'png'}))
   .setTimestamp()
 
   msg.embed(embed).then(question=>{

@@ -1,37 +1,80 @@
-const Fuse = require('fuse.js');
-const fetch = require('node-fetch');
 const {Command} = require('discord.js-commando');
+const Fuse = require('fuse.js');
 const {MessageEmbed} = require('discord.js');
+const toMarkdown = require("to-markdown");
+const fetch = require('node-fetch');
+const {JSDOM} = require("jsdom");
+
+//getSimilarObjects
 
 module.exports = class DdocsCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'djs',
-      memberName: 'djs',
+      name: 'nodejs',
+      memberName: 'nodejs',
       group: 'dev',
-      aliases: ['discordjs', 'discord.js', 'ddjs',],
-      description: 'Afficher la documentation de Discord.js',
-      format: 'Version à trouver [master|stable|commando]',
-      examples: ['docs User'],
+      aliases: ['node'],
+      description: 'Afficher la documentation de NodeJs',
+      examples: ['nodejs addEventListener'],
       args: [
         {
           key: 'query',
           prompt: 'Que souhaitez vous trouver ?\n',
           type: 'string',
-          parse: p => p.split(/[\#\.]/)
+          parse: p => p.replace(/\.prototype\./g, " ").replace(/\./g, " ")
         },
         {
           key: 'version',
-          prompt: 'Quelle version de la documentation voulez vous (stable, master, commando)?',
+          prompt: 'Quelle version de la documentation voulez vous (`v4`, `v5`, `v6`, `v7`, `v8`, `v9`, `v10`, `v11`)?',
           type: 'string',
           parse: value => value.toLowerCase(),
-          validate: value => ['master', 'stable', 'commando'].includes(value),
-          default: 'stable'
+          validate: value => ['v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11'].includes(value),
+          default: 'v11'
         }
       ]
     });
 
     this.docs = {};
+
+    this.sources = [
+      `https://nodejs.org/api/assert.json`,
+      `https://nodejs.org/api/buffer.json`,
+      `https://nodejs.org/api/addons.json`,
+      `https://nodejs.org/api/child_process.json`,
+      `https://nodejs.org/api/cluster.json`,
+      `https://nodejs.org/api/cli.json`,
+      `https://nodejs.org/api/console.json`,
+      `https://nodejs.org/api/crypto.json`,
+      `https://nodejs.org/api/debugger.json`,
+      `https://nodejs.org/api/dns.json`,
+      `https://nodejs.org/api/domain.json`,
+      `https://nodejs.org/api/errors.json`,
+      `https://nodejs.org/api/events.json`,
+      `https://nodejs.org/api/fs.json`,
+      `https://nodejs.org/api/globals.json`,
+      `https://nodejs.org/api/http.json`,
+      `https://nodejs.org/api/https.json`,
+      `https://nodejs.org/api/modules.json`,
+      `https://nodejs.org/api/net.json`,
+      `https://nodejs.org/api/os.json`,
+      `https://nodejs.org/api/path.json`,
+      `https://nodejs.org/api/process.json`,
+      `https://nodejs.org/api/punycode.json`,
+      `https://nodejs.org/api/querystring.json`,
+      `https://nodejs.org/api/readline.json`,
+      `https://nodejs.org/api/repl.json`,
+      `https://nodejs.org/api/stream.json`,
+      `https://nodejs.org/api/string_decoder.json`,
+      `https://nodejs.org/api/timers.json`,
+      `https://nodejs.org/api/tls.json`,
+      `https://nodejs.org/api/tty.json`,
+      `https://nodejs.org/api/dgram.json`,
+      `https://nodejs.org/api/url.json`,
+      `https://nodejs.org/api/util.json`,
+      `https://nodejs.org/api/v8.json`,
+      `https://nodejs.org/api/vm.json`,
+      `https://nodejs.org/api/zlib.json`,
+    ];
   }
 
   async getDocs (version) {
@@ -39,9 +82,8 @@ module.exports = class DdocsCommand extends Command {
       return this.docs[version];
     }
 
-    const link = version === 'commando'
-        ? 'https://raw.githubusercontent.com/Gawdl3y/discord.js-commando/docs/master.json'
-        : `https://raw.githubusercontent.com/discordjs/discord.js/docs/${version}.json`
+    const link = `https://nodejs.org/dist/latest-${version}.x/docs/api/all.json`
+    
     const res = await fetch(link)
     const json = res.json();
 
@@ -50,40 +92,11 @@ module.exports = class DdocsCommand extends Command {
     return json;
   }
 
-  clean (text) {
-    return text.replace(/\n/g, ' ')
-      .replace(/<\/?(?:info|warn)>/g, '')
-      .replace(/\{@link (.+?)\}/g, '`$1`');
-  }
-
-  addType (types, version, docs) {
-    return types.map(type => type.map((t) => {
-      if (t.length === 1) {
-        return `[${t[0]}](${this.getLink(t[0], version, docs)})`;
-      } else if (t[1] === '>') {
-        return `[<${t[0]}>](${this.getLink(t[0], version, docs)})`;
-      }
-
-      return `[${t[0]}](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/${t[0]})`;
-    }));
-  }
-
-  getLink (prop, version, docs) {
-    let section = 'classes';
-    const baseURL = `https://discord.js.org/#/docs/${version === 'commando' ? 'commando/master' : `main/${version}`}`;
-    const match = docs[section].find(el => el.name === prop);
-
-    if (!match || match.name !== prop) {
-      section = 'typedefs';
-    }
-
-    return `${baseURL}/${section === 'classes' ? 'class' : 'typedef'}/${prop}`;
-  }
-
-  async run (msg, {query, version}) {
+  async run (msg, {query,version}) {
     try {
+  
+      const docs = await this.getDocs(version)
 
-      const docs = await this.getDocs(version);
       const sourceBaseURL = `https://github.com/discordjs/${version === 'commando' ? 'commando/blob/master' : `discord.js/blob/${version}`}`;
       const hitOpts = {
         shouldSort: true,
@@ -99,10 +112,12 @@ module.exports = class DdocsCommand extends Command {
         sub: query[1] ? query[1].replace(/(\(.*\))/gm, '') : null
       }
       
-      const docsSearch = new Fuse(docs.classes.concat(docs.typedefs), hitOpts).search(input.main);
+      const docsSearch = new Fuse(docs.methods.concat(docs.classes).concat(docs.globals).concat(docs.modules), hitOpts).search(input.main);
 
       const hit = docsSearch[0];
 
+      console.log(hit)
+/* 
       const docsEmbed = new MessageEmbed()
         .setColor(0xcd6e57)
         .setAuthor(version === 'commando' ? 'Documentation Commando' : `Documentation Discord.JS (${version})`, 'https://github.com/discordjs.png')
@@ -177,9 +192,10 @@ module.exports = class DdocsCommand extends Command {
         docsEmbed.addField('\u200b', `[View Source](${sourceBaseURL}/${hit.meta.path}/${hit.meta.file}#L${hit.meta.line})`);
       }
 
-      return msg.embed(docsEmbed);
+      return msg.embed(docsEmbed); */
     } catch (err) {
-      return msg.reply(`could not find an item for \`${query.join('.')}\` in the ${version === 'commando' ? 'Commando' : `Discord.JS ${version}`} docs.`);
+      console.log(err)
+      return msg.reply(`could not find an item for \`${query}\` in mdn docs.`);
     }
   }
 };

@@ -35,7 +35,7 @@ module.exports = class AvatarCommand extends Command {
     .setTitle('Calculatrice')
     .setColor(0xcd6e57)
     .setDescription(oneLine`La réponse à \`${equation.toString()}\` est \`${maths.result}\``)
-    .setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.guild.client.user.avatarURL({format: 'png'}))
+    .setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.client.user.avatarURL({format: 'png'}))
     .setTimestamp()
 
     return msg.embed(mathEmbed);

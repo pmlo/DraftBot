@@ -1,6 +1,6 @@
-const {Command, util} = require('discord.js-commando'),
-  {oneLine, stripIndents} = require('common-tags'),
-  {Song} = require('../../utils.js');
+const {Command, util} = require('discord.js-commando')
+const {oneLine, stripIndents} = require('common-tags')
+const {Song} = require('../../utils.js');
 
 module.exports = class ViewQueueCommand extends Command {
   constructor (client) {
