@@ -24,8 +24,8 @@ module.exports = class LogsCommand extends Command {
 
     let description;
 
-    if(args.channel) {
-      msg.guild.settings.set('logsChannel', args.channel);
+    if(channel) {
+      msg.guild.settings.set('logsChannel', channel);
       description = `🎉 Les logs du serveurs seront maintenant envoyés dans \`#${channel.name}\` !`;
 		}else{
       if (msg.guild.settings.get('logsMessage') !== true) {
