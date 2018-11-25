@@ -6,9 +6,9 @@ module.exports = class AvatarCommand extends Command {
     super(client, {
       name: 'guilds',
       memberName: 'guilds',
-      group: 'utils',
+      group: 'bot',
       aliases: ['guildslist'],
-      description: 'Afficher la liste de mes serveurs',
+      description: 'Afficher la liste des serveurs du DraftBot',
       examples: ['guilds']
     });
   }
