@@ -24,7 +24,7 @@ module.exports = class InviteCommand extends Command {
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .setColor(0xcd6e57)
       .setDescription(suggest)
-      .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
+      .setFooter(msg.guild ? msg.guild.name : '',msg.guild.iconURL({format: 'png'}))
       .setTimestamp()
 
     return this.client.channels.get('506585964672581632').send(embed)

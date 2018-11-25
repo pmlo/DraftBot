@@ -106,7 +106,7 @@ module.exports = class DdocsCommand extends Command {
       const docsEmbed = new MessageEmbed()
         .setColor(0xcd6e57)
         .setAuthor(version === 'commando' ? 'Documentation Commando' : `Documentation Discord.JS (${version})`, 'https://github.com/discordjs.png')
-        .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
+        .setFooter(msg.guild ? msg.guild.name : '',msg.guild.iconURL({format: 'png'}))
         .setTimestamp()
 
       if (input.sub) {

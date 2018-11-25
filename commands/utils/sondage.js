@@ -28,7 +28,7 @@ module.exports = class QuoteCommand extends Command {
     .setTitle(":newspaper: Sondage")
     .addField(message,`Ceci est un sondage proposé par ${msg.author}`)
     .setColor(0xcd6e57)
-    .setFooter(msg.guild.name)
+    .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
     .setTimestamp()
 
     msg.embed(embed)
