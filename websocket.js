@@ -1,5 +1,7 @@
 const express = require('express')
 const {getUsersXpByGuild,getUser} = require('./utils.js');
+const http = require('http');
+const DBL = require("dblapi.js");
 
 class WebSocket {
 
@@ -8,8 +10,24 @@ class WebSocket {
         this.port = port
         this.client = client
         this.app = express()
-
+        this.server = http.createServer(this.app);
         this.app.use(express.static('static'));
+
+        this.dbl = new DBL(process.env.discordbots, { webhookAuth: process.env.webhookpass, webhookServer: this.server }, this.client);
+
+        this.dbl.on('posted', () => {
+            console.log('Server count posted!');
+        })
+
+        this.dbl.webhook.on('ready', hook => {
+            console.log(`Webhook running with path ${hook.path}`);
+        });
+
+        this.dbl.webhook.on('vote', vote => {
+            getUser(vote.user,this.client).then(response => {
+                console.log(`${response} just voted!`);
+            })
+        });
 
         this.app.get('/api/commands', (req, res) => res.status(200).send({ commands : this.client.registry.groups.map(grp => grp.commands)}))
 

@@ -3,7 +3,7 @@ const path = require('path');
 const sqlite = require('sqlite');
 const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites,createTables,error} = require('./utils.js');
 const websocket = require('./websocket');
-const {oneLine} = require('common-tags')
+const {oneLine} = require('common-tags');
 
 require('dotenv').config();
 
