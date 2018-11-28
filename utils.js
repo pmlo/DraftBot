@@ -412,7 +412,7 @@ const addUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
 const removeUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
   return sqlite.open(path.join(__dirname, './storage.sqlite'))
   .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
-  .then(({connexion, xp}) => console.log(xp - newXp) /*connexion.post(`UPDATE user FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id} SET xp= ${xp - newXp}`)*/)
+  .then(({connexion, xp}) => console.log(xp.xp - newXp) /*connexion.post(`UPDATE user FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id} SET xp= ${xp - newXp}`)*/)
   .then(resolve(true))
   .catch(() => reject(false))
 })
