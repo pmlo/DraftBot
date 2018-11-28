@@ -37,12 +37,12 @@ module.exports = class PrefixCommand extends Command {
 		if(argument === 'add' || argument === 'ajouter'){
 			addUserXp(msg,member.user,nombre).then(response => {
 				console.log(response)
-				if(response) msg.reply(`${nombre} xp ont été retirés au compte de ${member.user} !`)
+				if(response) msg.reply(`${nombre} xp ont été ajoutés au compte de ${member.user} !`)
 			})
 		}else if(argument === 'remove' || argument === 'enlever' || argument === 'retirer'){
 			removeUserXp(msg,member.user,nombre).then(response => {
 				console.log(response)
-				if(response) msg.reply(`${nombre} xp ont été ajoutés au compte de ${member.user} !`)
+				if(response) msg.reply(`${nombre} xp ont été retirés au compte de ${member.user} !`)
 			})
 		}else return null;
 	}
