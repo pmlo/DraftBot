@@ -46,7 +46,7 @@ DraftBot.on('roleUpdate', (oldRole,newRole) => {
         `)
     } else if(oldRole.name != newRole.name || oldRole.hexColor  != newRole.hexColor || oldRole.hoist != newRole.hoist || oldRole.mentionable != newRole.mentionable || oldRole.permissions.bitfield !== newRole.permissions.bitfield){
         sendSysLogs(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`,oneLine`
-            ${oldRole.name !== newRole.name && newR === ''? '- Le nom du role à été changé en \`'+newRole.name+'\`.\n':''}
+            ${oldRole.name !== newRole.name ? '- Le nom du role à été changé en \`'+newRole.name+'\`.\n':''}
             ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été changé en \`'+newRole.hexColor +'\`.\n':''}
             ${oldRole.hoist !== newRole.hoist ? (newRole.hoist === true ?'- Les membres ayant ce role seront affichés séparément des autres.':'- Les membres ayant ce role seront affichés dans la même temps.\n'):''}
             ${oldRole.mentionable !== newRole.mentionable ? (newRole.mentionable === true ?'- Le role sera maintenant mentionnable.\n':'- Le role ne sera plus mentionnable.\n'):''}
