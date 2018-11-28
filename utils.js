@@ -401,6 +401,22 @@ const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
   .catch(err => reject(err))
 })
 
+const addUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
+  return sqlite.open(path.join(__dirname, './storage.sqlite'))
+  .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
+  .then(({connexion, xp}) => connexion.post(`UPDATE user FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id} SET xp= ${xp + newXp}`))
+  .then(resolve(true))
+  .catch(() => reject(false))
+})
+
+const removeUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
+  return sqlite.open(path.join(__dirname, './storage.sqlite'))
+  .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
+  .then(({connexion, xp}) => connexion.post(`UPDATE user FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id} SET xp= ${xp - newXp}`))
+  .then(resolve(true))
+  .catch(() => reject(false))
+})
+
 const getUsersXpByGuild = (guild) => new Promise((resolve, reject) =>{
   return sqlite.open(path.join(__dirname, './storage.sqlite'))
   .then(connexion => connexion.all(`SELECT user,xp FROM "levels" WHERE guild= ${guild} ORDER BY xp DESC`))
@@ -455,6 +471,8 @@ module.exports = {
   warnUser,
   getWarnUser,
   getUserXp,
+  removeUserXp,
+  addUserXp,
   levelImage,
   kickUser,
   banUser,
