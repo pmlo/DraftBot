@@ -4,12 +4,12 @@ const {removeUserXp,addUserXp} = require('../../utils.js');
 module.exports = class PrefixCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'rank',
-			memberName: 'rank',
+			name: 'xp',
+			memberName: 'xp',
 			group: 'levels',
-			aliases: ['level','my-level','my-levels','xp','my-xp'],
-			description: 'Afficher votre niveau ou celui d\'un membre du serveur.',
-			examples: ['rank', 'rank DraftMan'],
+			aliases: ['change-xp'],
+			description: 'Faire des modifications sur le nombre d\'xp d\'un membre',
+			examples: ['xp ajouter DraftMan 3000'],
 			args: [{
 				key: 'argument',
 				prompt: 'Que souhaitez vous faire ? `ajouter`,`add`/`enlever`,`retirer`,`remove`',
