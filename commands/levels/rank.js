@@ -7,7 +7,7 @@ module.exports = class PrefixCommand extends Command {
 			name: 'rank',
 			memberName: 'rank',
 			group: 'levels',
-			aliases: ['level','my-level','my-levels','xp','my-xp'],
+			aliases: ['level','my-level','my-levels','my-xp'],
 			description: 'Afficher votre niveau ou celui d\'un membre du serveur.',
 			examples: ['rank', 'rank DraftMan'],
 			args: [{
