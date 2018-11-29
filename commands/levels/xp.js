@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando')
-const {removeUserXp,addUserXp} = require('../../utils.js');
+const {removeUserXp,addUserXp,levelImage,getUserXp} = require('../../utils.js');
 
 module.exports = class PrefixCommand extends Command {
 	constructor(client) {
@@ -44,6 +44,11 @@ module.exports = class PrefixCommand extends Command {
 				console.log(response)
 				if(response) msg.reply(`${nombre} xp ont été retirés au compte de ${member.user} !`)
 			})
-		}else return null;
+		}
+		getUserXp(msg,member.user).then(({xp,users}) => {
+			const exp = xp === undefined ? 0 : xp.xp
+			const place = users.map(u => u.user).indexOf(user.id)+1;
+			levelImage(msg,user,exp,place)
+		})
 	}
 };
