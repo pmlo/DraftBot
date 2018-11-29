@@ -36,19 +36,12 @@ module.exports = class PrefixCommand extends Command {
 		if(msg.guild.settings.get('levelSystem') === false) return msg.reply('impossible de modifier l\'xp d\'un membre, les levels ont été désactivés sur ce serveur.')
 		if(argument === 'add' || argument === 'ajouter'){
 			addUserXp(msg,member.user,nombre).then(response => {
-				console.log(response)
 				if(response) msg.reply(`${nombre} xp ont été ajoutés au compte de ${member.user} !`)
 			})
 		}else if(argument === 'remove' || argument === 'enlever' || argument === 'retirer'){
 			removeUserXp(msg,member.user,nombre).then(response => {
-				console.log(response)
 				if(response) msg.reply(`${nombre} xp ont été retirés au compte de ${member.user} !`)
 			})
 		}
-		getUserXp(msg,member.user).then(({xp,users}) => {
-			const exp = xp === undefined ? 0 : xp.xp
-			const place = users.map(u => u.user).indexOf(user.id)+1;
-			levelImage(msg,user,exp,place)
-		})
 	}
 };
