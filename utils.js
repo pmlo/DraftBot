@@ -398,7 +398,7 @@ const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
   .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
   .then(({connexion, xp}) => connexion.all(`SELECT user FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`).then(users => ({xp, users})))
   .then(resolve)
-  .catch(err => reject(err))
+  .catch(err => console.log(err))
 })
 
 const addUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
