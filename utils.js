@@ -398,7 +398,7 @@ const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
   .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
   .then(({connexion, xp}) => connexion.all(`SELECT user FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`).then(users => ({xp, users})))
   .then(resolve)
-  .catch(err => console.log(err))
+  .catch(err => reject(err))
 })
 
 const addUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
@@ -406,7 +406,7 @@ const addUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
   .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
   .then(({connexion, xp}) => connexion.post(`UPDATE user FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id} SET xp= ${xp.xp + newXp}`))
   .then(resolve(true))
-  .catch(() => reject(false))
+  .catch(err => console.log(err))
 })
 
 const removeUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
