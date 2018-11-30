@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {sendLogs} = require('../../utils.js');
+const {sendLogsBot} = require('../../utils.js');
 
 module.exports = class LogsCommand extends Command {
   constructor (client) {
@@ -37,6 +37,6 @@ module.exports = class LogsCommand extends Command {
       }
     }
 
-    sendLogs(msg,description)
+    sendLogsBot(msg,description)
   }
 };

@@ -1,7 +1,7 @@
 const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
 const path = require('path');
 const sqlite = require('sqlite');
-const {makeWelcomeImage,newUser,guildAdd,sendSysLogs,invites,createTables,error} = require('./utils.js');
+const {makeWelcomeImage,newUser,guildAdd,sendLogsServ,invites,createTables,error} = require('./utils.js');
 const websocket = require('./websocket');
 const {oneLine} = require('common-tags');
 
@@ -38,14 +38,14 @@ DraftBot.on('guildMemberRemove', member => newUser(member, false))
 
 DraftBot.on('roleUpdate', (oldRole,newRole) => {
     if(oldRole.name === 'new role') {
-        sendSysLogs(oldRole.guild,`Le role **${newRole.name}** a été crée.`,oneLine`
+        sendLogsServ(oldRole.guild,`Le role **${newRole.name}** a été crée.`,oneLine`
             ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été défini sur \`'+newRole.hexColor +'\`.\n':''}
             ${oldRole.hoist !== newRole.hoist ? (newRole.hoist === true ?'- Les membres ayant ce role seront affichés séparément des autres.':'- Les membres ayant ce role seront affichés dans la même temps.\n'):''}
             ${oldRole.mentionable !== newRole.mentionable ? (newRole.mentionable === true ?'- Le role sera mentionnable.\n':'- Le role ne sera pas mentionnable.\n'):''}
             ${oldRole.permissions.bitfield !== newRole.permissions.bitfield ? '- Les permissions du role ont été redéfinis.':''}
         `)
     } else if(oldRole.name != newRole.name || oldRole.hexColor  != newRole.hexColor || oldRole.hoist != newRole.hoist || oldRole.mentionable != newRole.mentionable || oldRole.permissions.bitfield !== newRole.permissions.bitfield){
-        sendSysLogs(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`,oneLine`
+        sendLogsServ(oldRole.guild,`Le role **${oldRole.name}** a été mis à jour.`,oneLine`
             ${oldRole.name !== newRole.name ? '- Le nom du role à été changé en \`'+newRole.name+'\`.\n':''}
             ${oldRole.hexColor  !== newRole.hexColor  ? '- La couleur du role à été changé en \`'+newRole.hexColor +'\`.\n':''}
             ${oldRole.hoist !== newRole.hoist ? (newRole.hoist === true ?'- Les membres ayant ce role seront affichés séparément des autres.':'- Les membres ayant ce role seront affichés dans la même temps.\n'):''}
@@ -55,20 +55,20 @@ DraftBot.on('roleUpdate', (oldRole,newRole) => {
     }
 })
 
-DraftBot.on('roleDelete', role => sendSysLogs(role.guild,`Le role ${role.name} a été supprimé.`,null))
+DraftBot.on('roleDelete', role => sendLogsServ(role.guild,`Le role ${role.name} a été supprimé.`,null))
 
-DraftBot.on('emojiCreate', emoji => sendSysLogs(emoji.guild, `L'émoji ${emoji.name} a été crée.`,null))
+DraftBot.on('emojiCreate', emoji => sendLogsServ(emoji.guild, `L'émoji ${emoji.name} a été crée.`,null))
 
-DraftBot.on('emojiDelete', emoji => sendSysLogs(emoji.guild, `L'émoji ${emoji.name} a été supprimé.`,null))
+DraftBot.on('emojiDelete', emoji => sendLogsServ(emoji.guild, `L'émoji ${emoji.name} a été supprimé.`,null))
 
 DraftBot.on('guildCreate', guild => guildAdd(guild))
 
 DraftBot.on('channelCreate', channel => {
     if(!channel.guild) return;
-    sendSysLogs(channel.guild, `Le salon ${channel.name} a été crée.`,null)
+    sendLogsServ(channel.guild, `Le salon ${channel.name} a été crée.`,null)
 })
 
-DraftBot.on('channelDelete', channel => sendSysLogs(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
+DraftBot.on('channelDelete', channel => sendLogsServ(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
 
 DraftBot.on('message', message => {
     if(!message.guild || message.author.bot) return;

@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {kickUser,banUser,warnUser,sendLogs,error} = require('../../utils.js')
+const {kickUser,banUser,warnUser,sendLogsBot,error} = require('../../utils.js')
 const {MessageEmbed} = require('discord.js');
 
 module.exports = class BanCommand extends Command {
@@ -37,15 +37,15 @@ module.exports = class BanCommand extends Command {
         const emoji = response.response;
         if(emoji.name === 'kick'){
           kickUser(msg,member,'')
-          return sendLogs(msg, `Le membre ${member.user.tag} a été kick.`)
+          return sendLogsBot(msg, `Le membre ${member.user.tag} a été kick.`)
         }
         if(emoji.name === 'ban'){
           banUser(msg,member,'')
-          return sendLogs(msg, `Le membre ${member.user.tag} a été ban.`)
+          return sendLogsBot(msg, `Le membre ${member.user.tag} a été ban.`)
         }
         if(emoji.name === '⚠'){
           warnUser(msg,member,'')
-          return sendLogs(msg, `Le membre ${member.user.tag} a été ban.`)
+          return sendLogsBot(msg, `Le membre ${member.user.tag} a été ban.`)
         }
         if(emoji.name === '❌'){
           msg.client.emit('cancel')

@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {sendLogs} = require('../../utils.js')
+const {sendLogsBot} = require('../../utils.js')
 
 module.exports = class BanCommand extends Command {
   constructor (client) {
@@ -36,6 +36,6 @@ module.exports = class BanCommand extends Command {
 
   async run (msg, {user,reason,jours}) {
     user.ban({ days: jours, reason: reason })
-    return sendLogs(msg, `Le membre ${user.tag} a été bannis\n**Raison:** ${reason}`)
+    return sendLogsBot(msg, `Le membre ${user.tag} a été bannis\n**Raison:** ${reason}`)
   }
 };

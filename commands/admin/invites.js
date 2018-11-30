@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {sendLogs} = require('../../utils.js');
+const {sendLogsBot} = require('../../utils.js');
 
 module.exports = class InvitesCommand extends Command {
   constructor (client) {
@@ -26,6 +26,6 @@ module.exports = class InvitesCommand extends Command {
       description = `Les invitations vers d\'autres serveurs seront maintenant **autorisés** !`;
     }
 
-    return sendLogs(msg, description)
+    return sendLogsBot(msg, description)
   }
 };

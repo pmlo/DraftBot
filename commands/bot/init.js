@@ -56,6 +56,7 @@ module.exports = class InviteCommand extends Command {
 
   runProcess (msg,process) {
     startNewTimer(msg)
+    let logschannel = false;
     if(process === 1){
       return welcomeMessage(msg).then(response => {
         const value = response.response
@@ -70,7 +71,7 @@ module.exports = class InviteCommand extends Command {
         const value = response.response;
         msg.guild.settings.set('welcomeChannel', value);
     
-        msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon #${value.name} !`))
+        msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon \`#${value.name}\` !`))
         this.runProcess(msg,3)
       }).catch(error => console.log(error))
     }
@@ -91,34 +92,44 @@ module.exports = class InviteCommand extends Command {
         this.runProcess(msg,5)
       }).catch(error => console.log(error))
     }
-    if(process === 5){
-      return logsMessages(msg).then(response => {
+    if(process === 5){ //bot
+      return logsMessagesBot(msg).then(response => {
         const value = response.response
-        msg.guild.settings.set('logsMessage',value);
+        msg.guild.settings.set('logsMessageBot',value);
     
-        msg.embed(resultEmbed(msg,`Les messages de logs sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
-        this.runProcess(msg, value === true ? 6 : 7)
+        msg.embed(resultEmbed(msg,`Les messages de logs du bot sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
+        logschannel = value;
+        this.runProcess(msg, 6)
       }).catch(error => console.log(error))
     }
-    if(process === 6){
+    if(process === 6){ //serv
+      return logsMessagesServ(msg).then(response => {
+        const value = response.response
+        msg.guild.settings.set('logsMessageServ',value);
+    
+        msg.embed(resultEmbed(msg,`Les messages de logs du serveur sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
+        this.runProcess(msg, value === true || logschannel === true ? 7 : 8)
+      }).catch(error => console.log(error))
+    }
+    if(process === 7){
       return channelLogs(msg).then(response => {
         const value = response.response;
         msg.guild.settings.set('logsChannel', value);
     
-        msg.embed(resultEmbed(msg,`Les messages de logs seront maintenant envoyés dans le salon #${value.name} !`))
-        this.runProcess(msg,7)
+        msg.embed(resultEmbed(msg,`Les messages de logs seront maintenant envoyés dans le salon \`#${value.name}\` !`))
+        this.runProcess(msg,8)
       }).catch(error => console.log(error))
     }
-    if(process === 7){
+    if(process === 8){
       return levelSystem(msg).then(response => {
         const value = response.response;
         msg.guild.settings.set('levelSystem', value);
     
         msg.embed(resultEmbed(msg,`Le système de niveau est maintenant **${value === true ? 'activé' : 'désactivé'}** !`))
-        this.runProcess(msg,8)
+        this.runProcess(msg,9)
       }).catch(error => console.log(error))
     }
-    if(process === 8){
+    if(process === 9){
       return authorizeInvites(msg).then(response => {
         const value = response.response;
         msg.guild.settings.set('invites', value);
@@ -130,6 +141,7 @@ module.exports = class InviteCommand extends Command {
 
     // Il n'y pas plus de process
     msg.embed(questionEmbed(msg,'Félicitations, la configuration est terminée, merci !'))
+    clearTimeout(this.timer);
     msg.client.emit('cancel')
   }
 };
@@ -171,7 +183,7 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
 });
 
 const channelWelcome = (msg) => new Promise((resolve, reject) => {
-  msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
+  const question = msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
 
   function eventListenChannelWelcomeChannel(message) {
     const func = arguments.callee
@@ -179,6 +191,8 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
     findChannel(message.content, msg).then(response => {
       const channel = response.channel;
       msg.client.removeListener('message', func);
+      message.delete()
+      question.delete()
       return resolve({ response: channel });
     }).catch(error => {
       message.delete({timeout: 2000})
@@ -226,7 +240,7 @@ const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
 });
 
 const roleAuto = (msg) => new Promise((resolve, reject) => {
-  msg.embed(questionEmbed(msg,'Quel est le role que vous souhaitez ajouter automatiquement aux nouveaux membres ?'));
+  const question = msg.embed(questionEmbed(msg,'Quel est le role que vous souhaitez ajouter automatiquement aux nouveaux membres ?'));
 
   function eventListenRoleAutoRole(message) {
     const func = arguments.callee
@@ -234,6 +248,8 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
     findRole(message.content, msg).then(response => {
       const role = response.role;
       msg.client.removeListener('message', func);
+      message.delete()
+      question.delete()
       return resolve({ response: role });
     }).catch(error => {
       message.delete({timeout: 2000})
@@ -251,15 +267,15 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
   })
 });
 
-const logsMessages = (msg) => new Promise((resolve, reject) => {
+const logsMessagesBot = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du serveur dans un salon ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/logs_message.png'))
+  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du **bot** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/logs_message.png'))
   .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
 
-    function eventListenLogsMessagesReactions(messageReaction,user){
+    function eventListenLogsMessagesBotReactions(messageReaction,user){
         if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
         if(!emojis.includes(messageReaction.emoji.name)){
           messageReaction.users.remove(user)
@@ -271,17 +287,46 @@ const logsMessages = (msg) => new Promise((resolve, reject) => {
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }
   
-    msg.client.on('messageReactionAdd',eventListenLogsMessagesReactions)
+    msg.client.on('messageReactionAdd',eventListenLogsMessagesBotReactions)
   
     msg.client.once('cancel', () => {
-      msg.client.removeListener('message', eventListenLogsMessagesReactions)
+      msg.client.removeListener('message', eventListenLogsMessagesBotReactions)
+      return reject('cancelled')
+    })
+  })
+});
+
+const logsMessagesServ = (msg) => new Promise((resolve, reject) => {
+  const emojis = ['✅','❎']
+
+  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du **serveur** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/logs_message.png'))
+  .then(question=>{
+    question.react(emojis[0]);
+    question.react(emojis[1]);
+
+    function eventListenLogsMessagesServReactions(messageReaction,user){
+        if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
+        if(!emojis.includes(messageReaction.emoji.name)){
+          messageReaction.users.remove(user)
+          return;
+        }
+        msg.client.removeListener('messageReactionAdd', arguments.callee);
+        messageReaction.message.delete();
+    
+        return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
+    }
+  
+    msg.client.on('messageReactionAdd',eventListenLogsMessagesServReactions)
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenLogsMessagesServReactions)
       return reject('cancelled')
     })
   })
 });
 
 const channelLogs = (msg) => new Promise((resolve, reject) => {
-  msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de logs ?'));
+  const question = msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de logs ?'));
 
   function eventListenChannelLogsChannel(message) {
     const func = arguments.callee
@@ -293,6 +338,8 @@ const channelLogs = (msg) => new Promise((resolve, reject) => {
         msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
         return;
       }
+      message.delete()
+      question.delete()
       msg.client.removeListener('message', func);
       return resolve({ response: channel });
     })

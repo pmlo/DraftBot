@@ -148,7 +148,7 @@ const addRole = (role, member) => {
   }
 }
 
-const sendLogs = (msg, message) => {
+const sendLogsBot = (msg, message) => {
   const embed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
@@ -158,7 +158,7 @@ const sendLogs = (msg, message) => {
 
   msg.embed(embed).then(msg => msg.delete({timeout: 2000}))
 
-  if (msg.guild.settings.get('logsMessage') === true) {
+  if (msg.guild.settings.get('logsMessageBot') === true) {
       const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
       if(channel !== undefined){
         msg.guild.channels.find(c => c.id === channel.id).send('',embed)
@@ -168,7 +168,7 @@ const sendLogs = (msg, message) => {
   }
 }
 
-const sendSysLogs = (guild,title, message) => {
+const sendLogsServ = (guild,title, message) => {
   const embed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setTimestamp()
@@ -177,7 +177,7 @@ const sendSysLogs = (guild,title, message) => {
   if(title !== null) embed.setTitle(title)
   if(message !== null) embed.setDescription(message)
 
-  if (guild.settings.get('logsMessage') === true) {
+  if (guild.settings.get('logsMessageServ') === true) {
       const channel = guild.settings.get('logsChannel') ? guild.settings.get('logsChannel') : guild.channels.find(c => c.name === 'logs');
       if(channel !== undefined){
         guild.channels.find(c => c.id === channel.id).send('',embed)
@@ -460,8 +460,8 @@ module.exports = {
   Song,
   roundNumber,
   error,
-  sendLogs,
-  sendSysLogs,
+  sendLogsBot,
+  sendLogsServ,
   newUser,
   findChannel,
   findRole,
