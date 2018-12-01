@@ -108,6 +108,8 @@ module.exports = class InviteCommand extends Command {
       return logsMessagesServ(msg).then(response => {
         const value = response.response
         msg.guild.settings.set('logsMessageServ',value);
+
+        console.log(value === true || logschannel === true,value,logschannel)
     
         msg.embed(resultEmbed(msg,`Les messages de logs du serveur sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
         this.runProcess(msg, value === true || logschannel === true ? 7 : 8)
