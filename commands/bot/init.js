@@ -183,32 +183,33 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
   })
 });
 
-const channelWelcome = async (msg) => new Promise((resolve, reject) => {
-  const question = await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
-
-  function eventListenChannelWelcomeChannel(message) {
-    const func = arguments.callee
-    if(msg.author.id !== message.author.id) return;
-    findChannel(message.content, msg).then(response => {
-      const channel = response.channel;
-      msg.client.removeListener('message', func);
-      message.delete()
-      await question.delete()
-      return resolve({ response: channel });
-    }).catch(error => {
-      message.delete({timeout: 2000})
-      msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
-      console.log(error)
-      return;
+const channelWelcome = (msg) => new Promise((resolve, reject) => {
+  msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'))
+  .then(question => {
+    function eventListenChannelWelcomeChannel(message) {
+      const func = arguments.callee
+      if(msg.author.id !== message.author.id) return;
+      findChannel(message.content, msg).then(response => {
+        const channel = response.channel;
+        msg.client.removeListener('message', func);
+        message.delete()
+        question.delete({timeout: 2000})
+        return resolve({ response: channel });
+      }).catch(error => {
+        message.delete({timeout: 2000})
+        msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
+        console.log(error)
+        return;
+      })
+    }
+  
+    msg.client.on('message',eventListenChannelWelcomeChannel);
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenChannelWelcomeChannel)
+      return reject('cancelled')
     })
-  }
-
-  msg.client.on('message',eventListenChannelWelcomeChannel);
-
-  msg.client.once('cancel', () => {
-    msg.client.removeListener('message', eventListenChannelWelcomeChannel)
-    return reject('cancelled')
-  })
+  })  
 });
 
 const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
