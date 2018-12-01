@@ -183,8 +183,8 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
   })
 });
 
-const channelWelcome = (msg) => new Promise((resolve, reject) => {
-  const question = msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
+const channelWelcome = (msg) => new Promise(async (resolve, reject) => {
+  const question = await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
 
   function eventListenChannelWelcomeChannel(message) {
     const func = arguments.callee
@@ -193,7 +193,7 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
       const channel = response.channel;
       msg.client.removeListener('message', func);
       message.delete()
-      question.delete({timeout: 2000})
+      await question.delete()
       return resolve({ response: channel });
     }).catch(error => {
       message.delete({timeout: 2000})
