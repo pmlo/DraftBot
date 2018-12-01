@@ -45,6 +45,7 @@ module.exports = class InviteCommand extends Command {
         message.reply('configuration annulé !')
         msg.client.emit('cancel')
         msg.client.removeListener('message', eventCancel)
+        clearTimeout(this.timer);
       }
 
       msg.client.once('cancelCancel', () => {
@@ -190,10 +191,9 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
     if(msg.author.id !== message.author.id) return;
     findChannel(message.content, msg).then(response => {
       const channel = response.channel;
-      console.log(channel)
       msg.client.removeListener('message', func);
       message.delete()
-      question.delete()
+      question.delete({timeout: 2000})
       return resolve({ response: channel });
     }).catch(error => {
       message.delete({timeout: 2000})
