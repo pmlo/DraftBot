@@ -242,30 +242,31 @@ const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
 });
 
 const roleAuto = (msg) => new Promise((resolve, reject) => {
-  const question = msg.embed(questionEmbed(msg,'Quel est le role que vous souhaitez ajouter automatiquement aux nouveaux membres ?'));
-
-  function eventListenRoleAutoRole(message) {
-    const func = arguments.callee
-    if(msg.author.id !== message.author.id) return;
-    findRole(message.content, msg).then(response => {
-      const role = response.role;
-      msg.client.removeListener('message', func);
-      message.delete()
-      question.delete()
-      return resolve({ response: role });
-    }).catch(error => {
-      message.delete({timeout: 2000})
-      msg.embed(errorEmbed(msg,`Impossible de trouver le role \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
-      console.log(error)
-      return;
+  msg.embed(questionEmbed(msg,'Quel est le role que vous souhaitez ajouter automatiquement aux nouveaux membres ?'))
+  .then(question => {
+    function eventListenRoleAutoRole(message) {
+      const func = arguments.callee
+      if(msg.author.id !== message.author.id) return;
+      findRole(message.content, msg).then(response => {
+        const role = response.role;
+        msg.client.removeListener('message', func);
+        message.delete()
+        question.delete()
+        return resolve({ response: role });
+      }).catch(error => {
+        message.delete({timeout: 2000})
+        msg.embed(errorEmbed(msg,`Impossible de trouver le role \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
+        console.log(error)
+        return;
+      })
+    }
+  
+    msg.client.on('message',eventListenRoleAutoRole);
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenRoleAutoRole)
+      return reject('cancelled')
     })
-  }
-
-  msg.client.on('message',eventListenRoleAutoRole);
-
-  msg.client.once('cancel', () => {
-    msg.client.removeListener('message', eventListenRoleAutoRole)
-    return reject('cancelled')
   })
 });
 
@@ -328,30 +329,31 @@ const logsMessagesServ = (msg) => new Promise((resolve, reject) => {
 });
 
 const channelLogs = (msg) => new Promise((resolve, reject) => {
-  const question = msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de logs ?'));
-
-  function eventListenChannelLogsChannel(message) {
-    const func = arguments.callee
-    if(msg.author.id !== message.author.id) return;
-    findChannel(message.content, msg).then(response => {
-      const channel = response.channel;
-      if(channel === null) {
-        message.delete({timeout: 2000})
-        msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
-        return;
-      }
-      message.delete()
-      question.delete()
-      msg.client.removeListener('message', func);
-      return resolve({ response: channel });
+  msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de logs ?'))
+  .then(question => {
+    function eventListenChannelLogsChannel(message) {
+      const func = arguments.callee
+      if(msg.author.id !== message.author.id) return;
+      findChannel(message.content, msg).then(response => {
+        const channel = response.channel;
+        if(channel === null) {
+          message.delete({timeout: 2000})
+          msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
+          return;
+        }
+        message.delete()
+        question.delete()
+        msg.client.removeListener('message', func);
+        return resolve({ response: channel });
+      })
+    }
+  
+    msg.client.on('message',eventListenChannelLogsChannel);
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenChannelLogsChannel)
+      return reject('cancelled')
     })
-  }
-
-  msg.client.on('message',eventListenChannelLogsChannel);
-
-  msg.client.once('cancel', () => {
-    msg.client.removeListener('message', eventListenChannelLogsChannel)
-    return reject('cancelled')
   })
 });
 
