@@ -89,20 +89,20 @@ module.exports = class InviteCommand extends Command {
         msg.guild.settings.set('defaultRole', value.id);
     
         msg.embed(resultEmbed(msg,`Le role \`${value.name}\` sera maintenant ajouté automatiquement aux nouveaux membres !`))
-        this.runProcess(msg,5)
+        this.runProcess(msg,5);
       }).catch(error => console.log(error))
     }
-    if(process === 5){ //bot
+    if(process === 5){
       return logsMessagesBot(msg).then(response => {
-        const value = response.response
+        const value = response.response;
         msg.guild.settings.set('logsMessageBot',value);
     
         msg.embed(resultEmbed(msg,`Les messages de logs du bot sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
         logschannel = value;
-        this.runProcess(msg, 6)
+        this.runProcess(msg, 6);
       }).catch(error => console.log(error))
     }
-    if(process === 6){ //serv
+    if(process === 6){
       return logsMessagesServ(msg).then(response => {
         const value = response.response
         msg.guild.settings.set('logsMessageServ',value);
@@ -190,6 +190,7 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
     if(msg.author.id !== message.author.id) return;
     findChannel(message.content, msg).then(response => {
       const channel = response.channel;
+      console.log(channel)
       msg.client.removeListener('message', func);
       message.delete()
       question.delete()
