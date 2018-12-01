@@ -101,6 +101,7 @@ module.exports = class InviteCommand extends Command {
     
         msg.embed(resultEmbed(msg,`Les messages de logs du bot sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
         logschannel = value;
+        console.log(value)
         this.runProcess(msg, 6);
       }).catch(error => console.log(error))
     }
