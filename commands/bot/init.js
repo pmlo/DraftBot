@@ -43,13 +43,14 @@ module.exports = class InviteCommand extends Command {
 
       if(message.content.toLowerCase() === 'cancel'){
         message.reply('configuration annulé !')
+        clearTimeout(this.timer);
         msg.client.emit('cancel')
         msg.client.removeListener('message', eventCancel)
       }
 
       msg.client.once('cancelCancel', () => {
         msg.client.removeListener('message', eventCancel)
-        clearTimeout(this.timer);
+        
       })
     }
     this.runProcess(msg, 1);
