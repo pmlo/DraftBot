@@ -183,7 +183,7 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
   })
 });
 
-const channelWelcome = (msg) => new Promise(async (resolve, reject) => {
+const channelWelcome = async (msg) => new Promise((resolve, reject) => {
   const question = await msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'));
 
   function eventListenChannelWelcomeChannel(message) {
