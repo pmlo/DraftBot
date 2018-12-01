@@ -17,6 +17,7 @@ module.exports = class InviteCommand extends Command {
     });
     
     this.timer = 0;
+    this.logschannel = false;
   }
 
   run (msg) {
@@ -43,7 +44,7 @@ module.exports = class InviteCommand extends Command {
 
       if(message.content.toLowerCase() === 'cancel'){
         message.reply('configuration annulé !')
-        clearTimeout(this.timer);
+        stopTimer()
         msg.client.emit('cancel')
         msg.client.removeListener('message', eventCancel)
       }
@@ -58,7 +59,6 @@ module.exports = class InviteCommand extends Command {
 
   runProcess (msg,process) {
     startNewTimer(msg)
-    let logschannel = false;
     if(process === 1){
       return welcomeMessage(msg).then(response => {
         const value = response.response
@@ -100,8 +100,7 @@ module.exports = class InviteCommand extends Command {
         msg.guild.settings.set('logsMessageBot',value);
     
         msg.embed(resultEmbed(msg,`Les messages de logs du bot sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
-        logschannel = value;
-        console.log(value)
+        this.logschannel = value;
         this.runProcess(msg, 6);
       }).catch(error => console.log(error))
     }
@@ -109,11 +108,9 @@ module.exports = class InviteCommand extends Command {
       return logsMessagesServ(msg).then(response => {
         const value = response.response
         msg.guild.settings.set('logsMessageServ',value);
-
-        console.log(value === true || logschannel === true,value,logschannel)
     
         msg.embed(resultEmbed(msg,`Les messages de logs du serveur sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
-        this.runProcess(msg, value === true || logschannel === true ? 7 : 8)
+        this.runProcess(msg, value === true || this.logschannel === true ? 7 : 8)
       }).catch(error => console.log(error))
     }
     if(process === 7){
@@ -146,7 +143,7 @@ module.exports = class InviteCommand extends Command {
 
     // Il n'y pas plus de process
     msg.embed(questionEmbed(msg,'Félicitations, la configuration est terminée, merci !'))
-    clearTimeout(this.timer);
+    stopTimer()
     msg.client.emit('cancel')
   }
 };
@@ -420,13 +417,18 @@ const levelSystem = (msg) => new Promise((resolve, reject) => {
 });
 
 const startNewTimer = (msg) => {
-  clearTimeout(this.timer);
+  stopTimer()
   this.timer = setTimeout(() => {
     msg.reply('les 30 secondes sont écoulés !')
     msg.client.emit('cancelCancel');
     msg.client.emit('cancel');
   },30000);
 }
+
+
+const stopTimer = () => this.timer = 0
+
+
 
 /* 
 * Embeds 
