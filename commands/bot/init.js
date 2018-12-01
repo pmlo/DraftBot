@@ -45,11 +45,11 @@ module.exports = class InviteCommand extends Command {
         message.reply('configuration annulé !')
         msg.client.emit('cancel')
         msg.client.removeListener('message', eventCancel)
-        clearTimeout(this.timer);
       }
 
       msg.client.once('cancelCancel', () => {
         msg.client.removeListener('message', eventCancel)
+        clearTimeout(this.timer);
       })
     }
     this.runProcess(msg, 1);
@@ -136,7 +136,7 @@ module.exports = class InviteCommand extends Command {
         msg.guild.settings.set('invites', value);
     
         msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisés' : 'interdites donc supprimés'}** !`))
-        this.runProcess(msg,9)
+        this.runProcess(msg,10)
       }).catch(error => console.log(error))
     }
 
