@@ -188,7 +188,7 @@ const sendLogsServ = (guild,title, message) => {
 }
 
 const newUser = (member,type) => {
-  if (member.guild.settings.get('logsMessage') === true) {
+  if (member.guild.settings.get('logsMessageBot') === true) {
     const channel = member.guild.settings.get('logsChannel') ? member.guild.settings.get('logsChannel').id : null;
 
       const newMemberEmbed = new MessageEmbed()

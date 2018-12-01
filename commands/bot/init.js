@@ -194,10 +194,10 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
         const channel = response.channel;
         msg.client.removeListener('message', func);
         message.delete()
-        question.delete({timeout: 2000})
+        question.delete()
         return resolve({ response: channel });
       }).catch(error => {
-        message.delete({timeout: 2000})
+        message.delete()
         msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
         console.log(error)
         return;
@@ -274,7 +274,7 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
 const logsMessagesBot = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du **bot** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/logs_message.png'))
+  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du **bot** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftimagesbot/exemples/logsbot_message.png'))
   .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -303,7 +303,7 @@ const logsMessagesBot = (msg) => new Promise((resolve, reject) => {
 const logsMessagesServ = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du **serveur** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/logs_message.png'))
+  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du **serveur** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/logsserv_message.png'))
   .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -338,7 +338,7 @@ const channelLogs = (msg) => new Promise((resolve, reject) => {
       findChannel(message.content, msg).then(response => {
         const channel = response.channel;
         if(channel === null) {
-          message.delete({timeout: 2000})
+          message.delete()
           msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
           return;
         }
@@ -426,7 +426,7 @@ const startNewTimer = (msg) => {
 }
 
 
-const stopTimer = () => this.timer = 0
+const stopTimer = () => clearTimeout(this.timer);
 
 
 
