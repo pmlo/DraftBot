@@ -33,6 +33,7 @@ module.exports = class QuoteCommand extends Command {
 
     msg.embed(embed)
     .then(question => emojis.reduce((acc, emoji) => acc.then(() => question.react(emoji)),Promise.resolve()))
+    
     msg.delete();
   }
 }

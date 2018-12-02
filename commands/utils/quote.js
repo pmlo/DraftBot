@@ -34,7 +34,9 @@ module.exports = class QuoteCommand extends Command {
     .setDescription(message)
     .setTimestamp()
     .setFooter(`Dans #${message.channel.name}`, message.author.displayAvatarURL())
+
     msg.delete()
+    
     return msg.say(member ? member.user: '',embed)
   }
 };

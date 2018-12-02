@@ -1,5 +1,5 @@
-const {Command} = require('discord.js-commando'), 
-  {MessageEmbed} = require('discord.js')
+const {Command} = require('discord.js-commando');
+const {MessageEmbed} = require('discord.js');
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
@@ -38,16 +38,16 @@ module.exports = class AvatarCommand extends Command {
 
   run (msg, {member, size}) {
 
-    const avatar = member.user.displayAvatarURL({size}),
-          embed = new MessageEmbed(),
-          ext = avatar.substring(avatar.length - 14, avatar.length - 8);
+    const avatar = member.user.displayAvatarURL({size});
+    
+    const ext = avatar.substring(avatar.length - 14, avatar.length - 8);
 
-    embed
-      .setColor('#cd6e57')
-      .setImage(ext.includes('gif') ? `${avatar}&f=.gif` : avatar)
-      .setTitle(member.displayName)
-      .setURL(avatar)
-      .setDescription(`[Lien direct](${avatar})`);
+    const embed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setImage(ext.includes('gif') ? `${avatar}&f=.gif` : avatar)
+    .setTitle(member.displayName)
+    .setURL(avatar)
+    .setDescription(`[Lien direct](${avatar})`);
 
     msg.delete()
 
