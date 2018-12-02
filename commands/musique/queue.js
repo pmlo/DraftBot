@@ -31,19 +31,19 @@ module.exports = class ViewQueueCommand extends Command {
       return msg.reply('il n\'y a aucune musique dans la file d\'attente. Pourquoi ne pas y ajouter quelques titres? 😎');
     }
 
-    const currentSong = queue.songs[0],
-      currentTime = currentSong.dispatcher ? currentSong.dispatcher.streamTime / 1000 : 0,
-      paginated = util.paginate(queue.songs, page, Math.floor(process.env.PAGINATED_ITEMS)),
-      totalLength = queue.songs.reduce((prev, song) => prev + song.length, 0);
+    const currentSong = queue.songs[0];
+    const currentTime = currentSong.dispatcher ? currentSong.dispatcher.streamTime / 1000 : 0;
+    const paginated = util.paginate(queue.songs, page, 10);
+    const totalLength = queue.songs.reduce((prev, song) => prev + song.length, 0);
 
     return msg.embed({
       color: 0xcd6e57,
+      title: `File d'attente (page ${paginated.page})`,
       author: {
-        name: `${msg.author.tag} (${msg.author.id})`,
+        name: `${msg.author.tag}`,
         iconURL: msg.author.displayAvatarURL({format: 'png'})
       },
       description: stripIndents`
-            __**File d'attente, page ${paginated.page}**__
             ${paginated.items.map(song => `**-** ${!isNaN(song.id) ? `${song.name} (${song.lengthString})` : `[${song.name}](${`https://www.youtube.com/watch?v=${song.id}`})`} (${song.lengthString})`).join('\n')}
             ${paginated.maxPage > 1 ? `\nVeuillez utiliser ${msg.usage()} pour voir une page en particulier.\n` : ''}
             **En cours:** ${!isNaN(currentSong.id) ? `${currentSong.name}` : `[${currentSong.name}](${`https://www.youtube.com/watch?v=${currentSong.id}`})`}

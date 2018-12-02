@@ -46,7 +46,7 @@ const levelImage = async (msg,user,xp,place) => {
 
     barre.mask(levelMask, 0, 0);
 
-    // barreBackground.composite(barre, 150, 90)
+    // Composites
     canvas.composite(barreBackground, 150,90);
     canvas.composite(barre, 150,90);
     canvas.composite(avatar, 20, 20);
