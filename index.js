@@ -1,9 +1,9 @@
-const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
+const { CommandoClient, SyncSQLiteProvider } = require('discord.js-commando');
 const path = require('path');
-const sqlite = require('sqlite');
-const {makeWelcomeImage,newUser,guildAdd,sendLogsServ,invites,createTables,error} = require('./utils.js');
+const {makeWelcomeImage,newUser,guildAdd,sendLogsServ,invites,createTables,error,getLevelFromXp,getLastUserReward} = require('./utils.js');
 const websocket = require('./websocket');
 const {oneLine} = require('common-tags');
+const Database = require('better-sqlite3');
 
 require('dotenv').config();
 
@@ -16,16 +16,14 @@ const DraftBot = new CommandoClient({
 
 new websocket(process.env.token, 8000, DraftBot)
 
-sqlite.open(path.join(__dirname, "./settings.sqlite")).then((db) => {
-    DraftBot.setProvider(new SQLiteProvider(db));
-});
+const settings = new Database(path.join(__dirname, './settings.sqlite'));
+const db = new Database(path.join(__dirname, './storage.sqlite'));
+DraftBot.setProvider(new SyncSQLiteProvider(settings));
 
 DraftBot.on('ready', () => {
     console.log('DraftBot connecté !')
     console.log(`Actif sur ${DraftBot.guilds.size} serveurs.`);
-    DraftBot.user.setActivity('ses lignes', {
-        type: 'WATCHING'
-    })
+    DraftBot.user.setActivity('ses lignes', {type: 'WATCHING'})
     createTables()
 });
 
@@ -75,21 +73,40 @@ DraftBot.on('message', message => {
     if (message.guild && message.guild.settings.get('invites') === false && invites(message, message.client)) message.delete();
 
     if(message.guild.settings.get('levelSystem') === false) return;
-    //level system
+
     const xp = Math.floor(Math.random()*11)+15;
-    const selectUser = connexion => {
-        return connexion.get(`SELECT xp FROM "levels" WHERE user=${message.author.id} AND guild=${message.guild.id}`)
-          .then(result => ({ connexion, result }))
+
+    const result = db.prepare(`SELECT xp FROM "levels" WHERE user=${message.author.id} AND guild=${message.guild.id}`).get()
+
+    if (result) {
+        const level = getLevelFromXp(Number(result.xp) + Number(xp))
+        getLastUserReward(message.guild,level).then(response => {
+            if(response !== undefined){
+                const member = message.guild.member(message.author)
+                const role = message.guild.roles.get(response.role)
+                if(!member.roles.find(r => r.id === response.role)) {
+                    member.roles.add(role).catch(error => {
+                        if(error.message === 'Missing Permissions'){
+                            message.reply('Il y a un problème de permissions !')
+                        }
+                    }).then(() =>  message.reply(`Félicitation ! :tada:\nVous venez recevoir votre récompense car vous avez atteint le **niveau ${level}** !\nVous avez reçu le role **${role.name}** !`,{
+                        files: ['https://www.draftman.fr/images/draftbot/felicitation.jpg']
+                    }))
+                }
+            }
+        })
+        
+        return db.prepare(`UPDATE "levels" SET xp= ${Number(result.xp) + Number(xp)} WHERE user= $user AND guild= $guild`).run({
+            user: message.author.id, 
+            guild: message.guild.id
+        })
+    } else {
+        return db.prepare(`INSERT INTO "levels" (guild, user, xp) VALUES ($guild, $user, $xp)`).run({
+            guild: message.guild.id, 
+            user: message.author.id, 
+            xp
+        })
     }
-    return sqlite.open(path.join(__dirname, './storage.sqlite'))
-    .then(selectUser)
-    .then(({ connexion, result }) => {
-      if (result) {
-        return connexion.run(`UPDATE "levels" SET xp= ${Number(result.xp) + Number(xp)} WHERE user= ? AND guild= ?`, [message.author.id, message.guild.id])
-      } else {
-        return connexion.run(`INSERT INTO "levels" (guild, user, xp) VALUES (?, ?, ?)`,[message.guild.id, message.author.id, xp])
-      }
-    })
 });
 
 DraftBot.on('raw', event => {
@@ -100,29 +117,23 @@ DraftBot.on('raw', event => {
             if(msg.author.id === DraftBot.user.id){
                 let user = msg.guild.member(data.user_id);
 
-                const selectEmoji = connexion => {
-                    return connexion.get(`SELECT role FROM "reacts" WHERE message='${msg.id}' AND emoji='${data.emoji.id||data.emoji.name}' AND guild='${msg.guild.id}'`)
-                    .then(result => ({ connexion, result }))
-                }
-                sqlite.open(path.join(__dirname, './storage.sqlite'))
-                .then(selectEmoji)
-                .then(({ connexion, result }) => {
-                    if(result && !user.bot){
-                        const role = msg.guild.roles.find(r => r.id === result.role);
-                        const testErr = err => {
-                            if(err.message === 'Missing Permissions'){
-                                return msg.channel.send(error(`Je n'ai pas la permission de modifier les roles d'une personne ayant une hiérachie plus élevé que la miene.`))
-                            }
-                        }
-                        if (event.t === "MESSAGE_REACTION_ADD"){
-                            user.roles.add(role).catch(testErr)
-                        } else {
-                            user.roles.remove(role).catch(testErr)
+                const result = db.prepare(`SELECT role FROM "reacts" WHERE message='${msg.id}' AND emoji='${data.emoji.id||data.emoji.name}' AND guild='${msg.guild.id}'`).get()
+
+                if(result && !user.bot){
+                    const role = msg.guild.roles.find(r => r.id === result.role);
+                    const testErr = err => {
+                        if(err.message === 'Missing Permissions'){
+                            return msg.channel.send(error(`Je n'ai pas la permission de modifier les roles d'une personne ayant une hiérachie plus élevé que la miene.`))
                         }
                     }
-                })
+                    if (event.t === "MESSAGE_REACTION_ADD"){
+                        user.roles.add(role).catch(testErr)
+                    } else {
+                        user.roles.remove(role).catch(testErr)
+                    }
+                }
             }
-        }).catch(()=> null)
+        }).catch(console.log)
     }
 });
 

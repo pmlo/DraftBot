@@ -4,20 +4,19 @@ const {Command} = require('discord.js-commando'),
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'guilds',
-      memberName: 'guilds',
+      name: 'guildscount',
+      memberName: 'guildscount',
       group: 'bot',
-      aliases: ['guildslist'],
-      description: 'Afficher la liste des serveurs du DraftBot',
-      examples: ['guilds']
+      aliases: ['guilds','guildsnbr','serveurs','serveursnbr'],
+      description: 'Afficher le nombre de serveurs du DraftBot',
+      examples: ['guildscount']
     });
   }
 
   run (msg) {
     const embed = new MessageEmbed()
     .setColor('#cd6e57')
-    .setTitle(`${this.client.guilds.size} ${this.client.guilds.size > 1 ? 'serveurs' :'serveur'}`)
-    .setDescription(this.client.guilds.map(m => m.name).join('\n'))
+    .setDescription(`Le DraftBot se trouves sur ${this.client.guilds.size} ${this.client.guilds.size > 1 ? 'serveurs' :'serveur'}`)
     .setTimestamp(msg.createdAt);
 
     msg.delete()

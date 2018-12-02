@@ -1,9 +1,9 @@
 const Jimp = require('jimp');
 const path = require('path');
-const sqlite = require('sqlite');
 const pixelWidth = require('string-pixel-width');
 const { stripIndents } = require('common-tags')
 const {MessageEmbed,MessageAttachment,Util} = require('discord.js');
+const Database = require('better-sqlite3');
 
 const levelImage = async (msg,user,xp,place) => {
   try {
@@ -272,7 +272,7 @@ class Song {
   }
 }
 
-const roundNumber = function (num, scale = 0) {
+const roundNumber = (num, scale = 0) => {
   if (!String(num).includes('e')) {
     return Number(`${Math.round(`${num}e+${scale}`)}e-${scale}`);
   }
@@ -321,36 +321,35 @@ const invites = function (msg, client) {
 };
 
 const createTables = () => {
-  sqlite.open(path.join(__dirname, './storage.sqlite'))
-        .then(connection => connection.run(`CREATE TABLE IF NOT EXISTS "warnings"(guild TEXT, user TEXT, reason TEXT NOT NULL, date DATE, mod TEXT)`).then(() => connection))
-        .then(connection => connection.run(`CREATE TABLE IF NOT EXISTS "levels"(guild TEXT, user TEXT, xp INTEGER)`).then(() => connection))
-        .then(connection => connection.run(`CREATE TABLE IF NOT EXISTS "reacts"(guild TEXT, message TEXT, emoji TEXT, role TEXT)`).then(() => connection))
-        // .then(connection.run(`CREATE TABLE IF NOT EXISTS "guilds"(user TEXT, reason TEXT NOT NULL, date DATE, mod TEXT)`).then(() => connection))
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  db.prepare(`CREATE TABLE IF NOT EXISTS "warnings"(guild TEXT, user TEXT, reason TEXT NOT NULL, date DATE, mod TEXT)`).run()
+  db.prepare(`CREATE TABLE IF NOT EXISTS "levels"(guild TEXT, user TEXT, xp INTEGER)`).run()
+  db.prepare(`CREATE TABLE IF NOT EXISTS "reacts"(guild TEXT, message TEXT, emoji TEXT, role TEXT)`).run()
+  db.prepare(`CREATE TABLE IF NOT EXISTS "rewards"(guild TEXT, level INTEGER, role TEXT, date DATE)`).run()
 }
-
 const warnUser = (msg,member,reason) => {
-  sqlite.open(path.join(__dirname, './storage.sqlite'))
-  .then(connexion => connexion.run(`INSERT INTO "warnings"(guild, user, reason, date, mod) VALUES (?, ?, ?, ?, ?)`,[
-    msg.guild.id,
-    member.id,
-    reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur',
-    new Date(),
-    msg.member.id
-  ]).then(() => connexion))
-  .then(connexion => connexion.get(`SELECT count('user') AS 'count' FROM "warnings" WHERE user = ${member.id} AND guild = ${msg.guild.id}`))
-  .then(({count}) => {
-    const embed = new MessageEmbed()
-    .setColor(0xcd6e57)
-    .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-    .setDescription(stripIndents`
-      **Membre:** ${member.user.tag}
-      **Action:** Avertissement
-      **Avertissements:** \`${count-1}\` => \`${count}\`
-      **Raison:** ${reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur'}`)
-    .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
-    .setTimestamp();
-    return msg.embed(embed);
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  db.prepare(`INSERT INTO "warnings"(guild, user, reason, date, mod) VALUES ($guild, $user, $reason, $date, $mod)`).run({
+    guild: msg.guild.id,
+    user: member.id,
+    reason: reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur',
+    date: new Date(),
+    mod: msg.member.id
   })
+
+  const {count} = db.prepare(`SELECT count('user') AS 'count' FROM "warnings" WHERE user = ${member.id} AND guild = ${msg.guild.id}`).get()
+  
+  const embed = new MessageEmbed()
+  .setColor(0xcd6e57)
+  .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
+  .setDescription(stripIndents`
+    **Membre:** ${member.user.tag}
+    **Action:** Avertissement
+    **Avertissements:** \`${count-1}\` => \`${count}\`
+    **Raison:** ${reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur'}`)
+  .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
+  .setTimestamp();
+  return msg.embed(embed);
 }
 
 const kickUser = (msg,member,reason) => {
@@ -386,42 +385,40 @@ const banUser = (msg,member,reason) => {
 }
 
 const getWarnUser = (msg,member) => new Promise((resolve, reject) =>{
-  sqlite.open(path.join(__dirname, './storage.sqlite'))
-  .then(connexion => connexion.get(`SELECT count('user') AS 'count' FROM "warnings" WHERE user = ${member.id} AND guild = ${msg.guild.id}`))
-  .then(({count}) => {
-    return resolve(count)
-  })
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const {count} = db.prepare(`SELECT count('user') AS 'count' FROM "warnings" WHERE user = ${member.id} AND guild = ${msg.guild.id}`).get()
+  return resolve(count)
 })
 
 const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
-  return sqlite.open(path.join(__dirname, './storage.sqlite'))
-  .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
-  .then(({connexion, xp}) => connexion.all(`SELECT user FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`).then(users => ({xp, users})))
-  .then(resolve)
-  .catch(err => reject(err))
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
+  const users = db.prepare(`SELECT user FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`).all()
+  resolve({xp, users})
 })
 
-const addUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
-  return sqlite.open(path.join(__dirname, './storage.sqlite'))
-  .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
-  .then(({connexion, xp}) => connexion.run(`UPDATE "levels" SET xp= ${xp.xp + newXp} WHERE user= ${user.id} AND guild= ${msg.guild.id}`))
-  .then(resolve(true))
-  .catch(err => console.log(err))
+const addUserXp = (msg,user,newXp) => {
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
+  db.prepare(`UPDATE "levels" SET xp= ${xp.xp + newXp} WHERE user= ${user.id} AND guild= ${msg.guild.id}`).run()
+}
+
+const removeUserXp = (msg,user,newXp) => {
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
+  db.prepare(`UPDATE "levels" SET xp= ${xp.xp + newXp} WHERE user= ${user.id} AND guild= ${msg.guild.id}`).run()
+}
+
+const getUsersXpByGuild = (guild) => new Promise((resolve, reject) => {
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const users = db.prepare(`SELECT user,xp FROM "levels" WHERE guild= ${guild} ORDER BY xp DESC`).all()
+  resolve(users)
 })
 
-const removeUserXp = (msg,user,newXp) => new Promise((resolve, reject) =>{
-  return sqlite.open(path.join(__dirname, './storage.sqlite'))
-  .then(connexion => connexion.get(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).then(xp => ({connexion, xp})))
-  .then(({connexion, xp}) => connexion.run(`UPDATE "levels" SET xp= ${xp.xp - newXp} WHERE user= ${user.id} AND guild= ${msg.guild.id}`))
-  .then(resolve(true))
-  .catch(() => reject(false))
-})
-
-const getUsersXpByGuild = (guild) => new Promise((resolve, reject) =>{
-  return sqlite.open(path.join(__dirname, './storage.sqlite'))
-  .then(connexion => connexion.all(`SELECT user,xp FROM "levels" WHERE guild= ${guild} ORDER BY xp DESC`))
-  .then(resolve)
-  .catch(err => reject(err))
+const getLastUserReward = (guild,level) => new Promise((resolve, reject) =>{
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const reward = db.prepare(`SELECT role FROM "rewards" WHERE guild= ${guild.id} AND level <= ${level} ORDER BY level DESC LIMIT 1;`).get()
+  resolve(reward)
 })
 
 const getUser = (user, client) => new Promise((resolve, reject) =>{
@@ -436,6 +433,12 @@ const getLevelFromXp = (xp) => {
   }
   return level
 }
+
+const getRewards = (guild) => new Promise((resolve, reject) => {
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const result = db.prepare(`SELECT role,level FROM "rewards" WHERE guild= ${guild.id} ORDER BY level DESC`).get()
+  resolve(result)
+})
 
 const getLevelXp = (level) => {
   return 5*(level*level)+50*level+100
@@ -477,5 +480,8 @@ module.exports = {
   kickUser,
   banUser,
   getUsersXpByGuild,
-  getUser
+  getUser,
+  getLastUserReward,
+  getLevelFromXp,
+  getRewards
 };

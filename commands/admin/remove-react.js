@@ -2,6 +2,7 @@ const {Command} = require('discord.js-commando');
 const {MessageEmbed,Util} = require('discord.js');
 const sqlite = require('sqlite');
 const path = require('path');
+const Database = require('better-sqlite3');
 
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
@@ -14,7 +15,7 @@ module.exports = class QuoteCommand extends Command {
       guildOnly: true,
       args: [
         {
-          key: 'message',
+          key: 'message', 
           prompt: 'A quel message souhaitez vous ajouter un role ?',
           type: 'message'
         },
@@ -28,45 +29,39 @@ module.exports = class QuoteCommand extends Command {
   }
 
   async run (msg, {emoji,message}) {
-
+    const db = new Database(path.join(__dirname, '../../storage.sqlite'));
     const newEmoji = Util.parseEmoji(emoji)
 
     msg.delete()
 
-    const selectEmoji = connexion => {
-      return connexion.get(`SELECT * FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`)
-        .then(result => ({ connexion, result }))
-    }
-    sqlite.open(path.join(__dirname, '../../storage.sqlite'))
-    .then(selectEmoji)
-    .then(({ connexion, result }) => {
-      msg.channel.messages.fetch(message.id).then(focusMsg=> {
-        const embed = focusMsg.embeds[0];
+    const result = db.prepare(`SELECT * FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).get()
 
-        if (result) {
-          const currentRole = msg.guild.roles.find(r => r.id === result.role)
-          if(embed.description.includes(`| ${currentRole.name}`)) embed.setDescription(embed.description.replace(`| ${currentRole.name}`, ''))
-          
-          else if(embed.description.includes(`${currentRole.name} |`)) embed.setDescription(embed.description.replace(`${currentRole.name} |`, ''))
+    msg.channel.messages.fetch(message.id).then(focusMsg=> {
+      const embed = focusMsg.embeds[0];
 
-          else if(embed.description.includes(currentRole.name)) embed.setDescription(embed.description.replace(currentRole.name, ''))
-          if(newEmoji.id){ 
-            focusMsg.reactions.sweep(react => react.emoji.id === newEmoji.id)
-            console.log(1)
-          }else{
-            console.log(2)
-            const users = focusMsg.reactions.find(react => react.emoji.name === newEmoji.name).users;
-            const test = users.each(user => users.remove(user))
+      if (!result) {
+        return msg.reply('Impossible de trouver cette réaction !')
+      }
+      
+      const currentRole = msg.guild.roles.find(r => r.id === result.role)
+      if(embed.description.includes(`| ${currentRole.name}`)) embed.setDescription(embed.description.replace(`| ${currentRole.name}`, ''))
+      
+      else if(embed.description.includes(`${currentRole.name} |`)) embed.setDescription(embed.description.replace(`${currentRole.name} |`, ''))
 
-            console.log(test)
-            // focusMsg.reactions.sweep(react => react.emoji.name === newEmoji.name)
-          }
-            connexion.run(`DELETE FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`)
-        } else {
-          console.log('react non trouvé')
-        }
-        focusMsg.edit('', {embed});
-      })
+      else if(embed.description.includes(currentRole.name)) embed.setDescription(embed.description.replace(currentRole.name, ''))
+        // if(newEmoji.id){ 
+        //   focusMsg.reactions.sweep(react => react.emoji.id === newEmoji.id)
+        //   console.log(1)
+        // }else{
+        //   console.log(2)
+        //   const users = focusMsg.reactions.find(react => react.emoji.name === newEmoji.name).users;
+        //   const test = users.each(user => users.remove(user))
+
+        //   console.log(test)
+        //   // focusMsg.reactions.sweep(react => react.emoji.name === newEmoji.name)
+        // }
+      db.prepare(`DELETE FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).run()
+      focusMsg.edit('', {embed});
     })
   
     const reactEmbed = new MessageEmbed()

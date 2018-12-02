@@ -14,6 +14,7 @@
   "author": "DraftMan",
   "license": "GPL-3.0",
   "dependencies": {
+    "better-sqlite3": "^5.0.1",
     "common-tags": "^1.8.0",
     "dblapi.js": "^2.3.0",
     "discord.js": "git+https://github.com/Favna/discord.js.git",
@@ -30,7 +31,6 @@
     "node-opus": "^0.3.1",
     "simple-youtube-api": "^5.0.2",
     "snekfetch": "^4.0.4",
-    "sqlite": "^3.0.0",
     "string-pixel-width": "^1.8.0",
     "to-markdown": "^3.1.1",
     "ytdl-core": "^0.25.2"
