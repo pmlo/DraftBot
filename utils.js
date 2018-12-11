@@ -406,7 +406,7 @@ const addUserXp = (msg,user,newXp) => {
 const removeUserXp = (msg,user,newXp) => {
   const db = new Database(path.join(__dirname, './storage.sqlite'));
   const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
-  db.prepare(`UPDATE "levels" SET xp= ${xp.xp + newXp} WHERE user= ${user.id} AND guild= ${msg.guild.id}`).run()
+  db.prepare(`UPDATE "levels" SET xp= ${xp.xp - newXp} WHERE user= ${user.id} AND guild= ${msg.guild.id}`).run()
 }
 
 const getUsersXpByGuild = (guild) => new Promise((resolve, reject) => {
@@ -457,6 +457,37 @@ String.prototype.sansAccents = function() {
   return this.replace(/[ùûü]/g,"u").replace(/[îï]/g,"i").replace(/[àâä]/g,"a").replace(/[ôö]/g,"o").replace(/[éèêë]/g,"e").replace(/ç/g,"c");
 }
 
+const stringify = (obj,sep = '&',eq = '=') => {
+    if (obj === null) obj = undefined;
+    if (typeof obj === 'object') {
+      return Object.keys(obj)
+        .map(key => {
+          const ks = encodeURIComponent(stringifyPrimitive(key)) + eq;
+          if (obj[key] === undefined) return '';
+          if (obj[key] === null) return encodeURIComponent(key);
+          if (Array.isArray(obj[key])) {
+            return obj[key]
+              .map(v => ks + encodeURIComponent(stringifyPrimitive(v)))
+              .join(sep);
+          } else {
+              return (ks + encodeURIComponent(stringifyPrimitive(obj[key])));
+          }
+        })
+        .filter(Boolean)
+        .join(sep);
+  }
+  return encodeURIComponent(stringifyPrimitive(obj));
+};
+
+const stringifyPrimitive = v => {
+  switch (typeof v) {
+    case 'string': return v;
+    case 'boolean': return v ? 'true' : 'false';
+    case 'number': return isFinite(v) ? v.toString() : '';
+    default: return '';
+  }
+};
+
 module.exports = {
   makeWelcomeImage,
   addRole,
@@ -483,5 +514,6 @@ module.exports = {
   getUser,
   getLastUserReward,
   getLevelFromXp,
-  getRewards
+  getRewards,
+  stringify
 };
