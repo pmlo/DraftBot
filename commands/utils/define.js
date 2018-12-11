@@ -4,7 +4,7 @@ const fetch = ('node-fetch');
 
 const { stringify } =  require('../../utils.js');
 
-export default class DefineCommand extends Command {
+module.exports = class DefineCommand extends Command {
     constructor(client) {   
         super(client, {
             name: 'define',
