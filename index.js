@@ -27,6 +27,8 @@ DraftBot.on('ready', () => {
     createTables()
 });
 
+DraftBot.on('error', console.error);
+
 DraftBot.on('guildMemberAdd', member => {
     makeWelcomeImage(member);
     newUser(member, true)
