@@ -234,7 +234,7 @@ const play = (current) => (guild, song) => {
     }
 
     if (!song) {
-        queue.textChannel.send('Il n\'y a plus de musique ! Ajoutez quelques musiques à la file d\'attente pour lelancer la musique !');
+        queue.textChannel.send('Il n\'y a plus de musique ! Ajoutez quelques musiques à la file d\'attente pour relancer la musique !');
         queue.voiceChannel.leave();
         current.queue.delete(guild.id);
         return;
