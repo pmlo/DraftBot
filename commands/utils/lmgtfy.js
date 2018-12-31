@@ -9,13 +9,8 @@ module.exports = class AvatarCommand extends Command {
       group: 'utils',
       aliases: ['google','search','recherche'],
       description: 'Permet d\'envoyer un lien lmgtfy.',
-      examples: ['lmgtfy @DraftMan Comment trouver des réponses soit même'],
+      examples: ['lmgtfy Comment trouver des réponses soit même'],
       args: [
-        {
-          key: 'member',
-          prompt: 'Qui voulez vous notifier ?',
-          type: 'member'
-        },
         {
           key: 'search',
           prompt: 'Quelle recherche voulez vous ?',
@@ -35,7 +30,7 @@ module.exports = class AvatarCommand extends Command {
       .setColor('#cd6e57')
       .setTitle(member.user.username)
       .setURL(`https://www.lmgtfy.com/?q=${question}`)
-      .setDescription(`Hey ${member.user}, clique  [ici](https://www.lmgtfy.com/?q=${question}), c'est de la part de ${msg.author}, il pense que celà pourrais t'aider !`);
+      .setDescription(`voici la solution à [ta question](https://www.lmgtfy.com/?q=${question}), c'est de la part de ${msg.author}, il pense que celà pourrais t'aider !`);
 
     return msg.embed(embed);
   }
