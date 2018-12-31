@@ -1,6 +1,5 @@
 const {Command} = require('discord.js-commando');
 const {MessageEmbed,Util} = require('discord.js');
-const sqlite = require('sqlite');
 const path = require('path');
 const Database = require('better-sqlite3');
 
