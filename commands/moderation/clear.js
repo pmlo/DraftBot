@@ -24,9 +24,11 @@ module.exports = class ClearCommand extends Command {
   }
 
   async run (msg, {amount}) {
-    amount = amount === 100 ? 99 : amount;
-    msg.channel.bulkDelete(amount + 1).then(msgs => {
-      msg.say(`\`${msgs.size} messages supprimés\``).then(message => message.delete({timeout: 2000}))
+    let number = msg.channel.messages.array().reverse().findIndex(q => q.id === msg.id) 
+    number > 0 ? number-- : number
+    amount = amount + number >= 100 ? 99 : amount + number;
+    msg.channel.bulkDelete(amount + number + 1).then(msgs => {
+      msg.say(`\`${msgs.size - number - 1} messages supprimés\``).then(message => message.delete({timeout: 2000}))
     }).catch(err => {
       if(err.message === 'You can only bulk delete messages that are under 14 days old.'){
         return clearChannel(msg).then(response => {
