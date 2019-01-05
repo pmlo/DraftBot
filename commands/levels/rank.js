@@ -10,6 +10,7 @@ module.exports = class PrefixCommand extends Command {
 			aliases: ['level','my-level','my-levels','my-xp'],
 			description: 'Afficher votre niveau ou celui d\'un membre du serveur.',
 			examples: ['rank', 'rank DraftMan'],
+			guildOnly: true,
 			args: [{
 				key: 'member',
 				prompt: 'Quel membre visez vous ?',
