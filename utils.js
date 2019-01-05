@@ -399,6 +399,13 @@ const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
   resolve({xp, users})
 })
 
+const getUsersXp = (msg,user) => new Promise((resolve, reject) =>{
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
+  const users = db.prepare(`SELECT user,xp FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`).all()
+  resolve({xp, users})
+})
+
 const addUserXp = (msg,user,newXp) => {
   const db = new Database(path.join(__dirname, './storage.sqlite'));
   const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
@@ -438,7 +445,7 @@ const getLevelFromXp = (xp) => {
 
 const getRewards = (guild) => new Promise((resolve, reject) => {
   const db = new Database(path.join(__dirname, './storage.sqlite'));
-  const result = db.prepare(`SELECT role,level FROM "rewards" WHERE guild= ${guild.id} ORDER BY level DESC`).get()
+  const result = db.prepare(`SELECT role,level FROM "rewards" WHERE guild= ${guild.id} ORDER BY level DESC`).all()
   resolve(result)
 })
 
@@ -517,5 +524,6 @@ module.exports = {
   getLastUserReward,
   getLevelFromXp,
   getRewards,
-  stringify
+  stringify,
+  getUsersXp
 };
