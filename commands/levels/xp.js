@@ -10,6 +10,7 @@ module.exports = class PrefixCommand extends Command {
 			aliases: ['change-xp'],
 			description: 'Faire des modifications sur le nombre d\'xp d\'un membre',
 			examples: ['xp ajouter DraftMan 3000'],
+			guildOnly: true,
 			args: [{
 				key: 'argument',
 				prompt: 'Que souhaitez vous faire ? `ajouter`,`add`/`enlever`,`retirer`,`remove`',
