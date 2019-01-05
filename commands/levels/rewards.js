@@ -11,25 +11,27 @@ module.exports = class PrefixCommand extends Command {
 			aliases: ['recompense','recompenses','récompense','récompenses','rewards'],
 			description: 'Faire des modifications sur le nombre d\'xp d\'un membre',
 			examples: ['rewards'],
+			guildOnly: true,
 		});
 	}
 
 	async run(msg) {
-		getRewards(msg.guild).then(response => {
+		getRewards(msg.guild).then(async response => {
 			const embed = new MessageEmbed()
 			.setTitle("Récompenses")
-			.setDescription("Voici les récompenses sur ce serveur")
 			.setColor(0xcd6e57)
 			.setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.client.user.avatarURL({format: 'png'}))
 			.setTimestamp();
 
-			console.log(response);
+			let description = "Voici les récompenses sur ce serveur\n";
 
 			[].forEach.call(response,rec => {
-				embed.addField(`Niveau ${rec.level}`, `Role ${msg.guild.roles.get(rec.role).name}`)
+				description += `\n**${msg.guild.roles.get(rec.role).name}** (niveau ${rec.level})`
 			});
 
-			msg.embed(embed)
+			embed.setDescription(description)
+
+			await msg.embed(embed)
 		})
 	}
 };
