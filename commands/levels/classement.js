@@ -26,16 +26,22 @@ module.exports = class PrefixCommand extends Command {
 			.setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
 			.setTimestamp();
 
-			// const exp = xp === undefined ? 0 : xp.xp;
+			const exp = xp === undefined ? 0 : xp.xp;
 			let userlist = '', xplist = '';
 			let place = 0;
 			await [].forEach.call(users, user => {
 				this.client.users.fetch(user.user).then(u => {
 					place++
-					userlist += `\n#${place} **${u.username}**`
+					userlist += `\n#${place} **${u.username}**   `
 					xplist += `\nNiveau ${getLevelFromXp(user.xp)} (${user.xp}xp)`
 				})
 			})
+
+			const placeU = users.map(u => u.user).indexOf(msg.author.id)+1;
+			if(placeU > 5){
+				userlist += `\n\n#${placeU} **${msg.author.username}**   `
+				xplist += `\n\nNiveau ${getLevelFromXp(exp)} (${exp}xp)`
+			}
 			embed
 			.addField('Utilisateurs',userlist,true)
 			.addField('Niveau',xplist,true)
@@ -43,7 +49,6 @@ module.exports = class PrefixCommand extends Command {
 			msg.embed(embed)
 
 			// console.log(users)
-			// const place = users.map(u => u.user).indexOf(user.id)+1;
 			// levelImage(msg,user,exp,place)
 		})
 	}
