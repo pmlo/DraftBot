@@ -11,6 +11,7 @@ module.exports = class PrefixCommand extends Command {
 			aliases: ['addrecompense','addrécompense','addrewards'],
 			description: 'Ajouter des récompenses en fonction des niveaux',
 			examples: ['xp ajouter DraftMan 3000'],
+			guildOnly: true,
 			args: [
 			{
 				key: 'argument',
@@ -46,7 +47,7 @@ module.exports = class PrefixCommand extends Command {
 				guild: msg.guild.id, 
 				role: role.id, 
 				level, 
-				date: new Date()
+				date: `${new Date()}`
 			})
 			msg.reply('La récompense a bien été ajouté !')
 
