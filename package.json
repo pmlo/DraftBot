@@ -35,6 +35,7 @@
     "steamapi": "^2.0.4",
     "string-pixel-width": "^1.8.0",
     "to-markdown": "^3.1.1",
+    "weather-js": "git+https://github.com/DraftFiles/weather.git",
     "ytdl-core": "^0.25.2"
   },
   "devDependencies": {},
