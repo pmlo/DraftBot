@@ -80,8 +80,7 @@ const makeWelcomeImage = async (member) => {
   if (member.guild.settings.get('welcomeMessage') !== false && !member.user.bot) {
     let channel = member.guild.settings.get('welcomeChannel') ? member.guild.settings.get('welcomeChannel') : member.guild.channels.find(c => c.name === 'general' || c.name === 'général');
       if(channel === null) channel = member.guild.systemChannel
-
-      console.log(channel)
+      
       try {
 
         const canvas = new Jimp(500, 150);
