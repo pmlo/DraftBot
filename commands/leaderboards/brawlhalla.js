@@ -12,7 +12,7 @@ module.exports = class PubgCommand extends Command {
       name: 'brawlhalla',
       memberName: 'brawlhalla',
       group: 'leaderboards',
-      description: 'Récupérer les statistiques d\'un joueur PUBG',
+      description: 'Récupérer les statistiques d\'un joueur Brawlhalla',
       examples: ['brawlhalla DraftMan_Dev'],
       guildOnly: false,
       args: [
@@ -33,8 +33,6 @@ module.exports = class PubgCommand extends Command {
         if(id === undefined){
           return status.edit(`:x: Le profil \`${user}\` n'existe pas où est privé`)
         }
-
-        const profil = await steam.getUserSummary(id)
 
         status.edit(`Profil steam de \`${user}\` trouvé !`)
 
@@ -59,12 +57,10 @@ module.exports = class PubgCommand extends Command {
 
         const legendMW = result.legends.reduce((accumulator, legend) => (accumulator.wins/accumulator.games) < (legend.wins/legend.games) && legend.games > 20 ? legend : accumulator)
 
-        result.legends.forEach(legend => console.log(legend.legend_name_key,legend.games < 20))
-
         const BrawlEmbed = new MessageEmbed()
         .setTitle(`Statistiques Brawlhalla de ${result.name}`)
         .setURL(`https://brawldb.com/player/stats/${brawlhalla_id}`)
-        .setThumbnail(profil.avatar.large)
+        .setThumbnail(`https://yt3.ggpht.com/a-/AAuE7mCYWJr9lpy54QI2pTMAA8s-VWY-fOkuXTzQSQ=s900-mo-c-c0xffffffff-rj-k-no`)
         .addField(result.name, `[${result.clan.clan_name}](https://brawldb.com/clan/info/${result.clan.clan_id}) (${result.clan.personal_xp}/${result.clan.clan_xp}xp)`)
         .addField('Victoires', result.wins,true)
         .addField('Défaites', result.games - result.wins,true)
