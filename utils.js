@@ -136,10 +136,39 @@ const guildAdd = async guild => {
     **Pour répondre au mieux à vos besoins vous pouvez me configurer facielement avec: \`${guild.client.commandPrefix}init\`**
     `)
 
-    return channel ? channel.send('', {embed: newGuildEmbed}) : null;
+    if(channel !== null) channel.send(newGuildEmbed);
+
+    const canvas = new Jimp(500, 150);
+    const avatar = await Jimp.read(guild.iconURL({format: 'png'}));
+
+    const Quantify_55_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_55_white.fnt'));
+    const Quantify_25_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_25_white.fnt'));
+    const OpenSans_22_white = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans_22_white.fnt'));
+    const mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
+
+    avatar.resize(136, Jimp.AUTO);
+    mask.resize(136, Jimp.AUTO);
+    avatar.mask(mask, 0, 0);
+
+    canvas.blit(avatar, 5, 5);
+
+    canvas.print(Quantify_55_white, 158, 20, 'Bienvenue');
+    canvas.print(OpenSans_22_white, 158, 70, 'DraftBot à rejoint');
+    canvas.print(Quantify_25_white, 158, 105, guild.name);
+
+    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
+    const embedAttachment = new MessageAttachment(buffer, 'newserv.png');
+
+    const newBotEmbed = new MessageEmbed()
+      .attachFiles([embedAttachment])
+      .setColor(0xcd6e57)
+      .setTitle('Ho ! Je viens de rejoindre un nouveau serveur !')
+      .setDescription(`Je suis maintenant sur **${guild.client.guilds.size}** serveurs discord !`)
+      .setImage('attachment://newserv.png');
+    guild.client.channels.get('498406991891529728').send(newBotEmbed)
   } catch (err) {
-    console.log(err);
-    return null;
+    return console.log(err);
+    
   }
 };
 
@@ -327,6 +356,7 @@ const createTables = () => {
   db.prepare(`CREATE TABLE IF NOT EXISTS "levels"(guild TEXT, user TEXT, xp INTEGER)`).run()
   db.prepare(`CREATE TABLE IF NOT EXISTS "reacts"(guild TEXT, message TEXT, emoji TEXT, role TEXT)`).run()
   db.prepare(`CREATE TABLE IF NOT EXISTS "rewards"(guild TEXT, level INTEGER, role TEXT, date DATE)`).run()
+  db.prepare(`CREATE TABLE IF NOT EXISTS "access"(guild TEXT, channel TEXT, role TEXT, date DATE)`).run()
 }
 const warnUser = (msg,member,reason) => {
   const db = new Database(path.join(__dirname, './storage.sqlite'));
