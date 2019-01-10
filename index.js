@@ -119,15 +119,27 @@ DraftBot.on('raw', event => {
             if(msg.author.id === DraftBot.user.id){
                 let user = msg.guild.member(data.user_id);
 
-                const result = db.prepare(`SELECT role FROM "reacts" WHERE message='${msg.id}' AND emoji='${data.emoji.id||data.emoji.name}' AND guild='${msg.guild.id}'`).get()
+                const roleReact = db.prepare(`SELECT role FROM "reacts" WHERE message='${msg.id}' AND emoji='${data.emoji.id||data.emoji.name}' AND guild='${msg.guild.id}'`).get()
+                const access = db.prepare(`SELECT role FROM "access" WHERE channel='${msg.channel.id}' AND guild='${msg.guild.id}'`).get()
 
-                if(result && !user.bot){
-                    const role = msg.guild.roles.find(r => r.id === result.role);
-                    const testErr = err => {
-                        if(err.message === 'Missing Permissions'){
-                            return msg.channel.send(error(`Je n'ai pas la permission de modifier les roles d'une personne ayant une hiérachie plus élevé que la miene.`))
-                        }
+                const testErr = err => {
+                    if(err.message === 'Missing Permissions'){
+                        return msg.channel.send(error(`Je n'ai pas la permission de modifier vos roles.`))
                     }
+                }
+
+                if(roleReact && !user.bot){
+                    const role = msg.guild.roles.find(r => r.id === roleReact.role);
+
+                    if (event.t === "MESSAGE_REACTION_ADD"){
+                        user.roles.add(role).catch(testErr)
+                    } else {
+                        user.roles.remove(role).catch(testErr)
+                    }
+                }
+                if(access && !user.bot && data.emoji.name === '✅' && msg.embeds[0].title.startsWith('Acceptez')){
+                    const role = msg.guild.roles.find(r => r.id === access.role);
+                    
                     if (event.t === "MESSAGE_REACTION_ADD"){
                         user.roles.add(role).catch(testErr)
                     } else {
