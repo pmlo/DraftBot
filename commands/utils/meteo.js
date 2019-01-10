@@ -31,7 +31,7 @@ module.exports = class WeatherCommand extends Command {
             try {
                 if (err) throw 'weather bug';
                 if (result.length === 0) throw 'not found';
-
+                
                 const current = result[0].current;
                 const forecast = result[0].forecast;
 
