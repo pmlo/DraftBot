@@ -22,12 +22,13 @@ module.exports = class PrefixCommand extends Command {
 			.setColor(0xcd6e57)
 			.setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.client.user.avatarURL({format: 'png'}))
 			.setTimestamp();
-
-			let description = "Voici les récompenses sur ce serveur\n";
-
-			[].forEach.call(response,rec => {
-				description += `\n**${msg.guild.roles.get(rec.role).name}** (niveau ${rec.level})`
-			});
+			let description = "Il n'y a pas de récompense sur ce serveur !";
+			if(response.length > 0){
+				description = 'Voici les récompenses sur ce serveur:\n';
+				[].forEach.call(response,rec => {
+					description += `\n**${msg.guild.roles.get(rec.role).name}** (niveau ${rec.level})`
+				});
+			}
 
 			embed.setDescription(description)
 
