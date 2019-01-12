@@ -9,7 +9,7 @@ module.exports = class PubgCommand extends Command {
     super(client, {
       name: 'osu',
       memberName: 'osu',
-      group: 'leaderboards',
+      group: 'leadersboards',
       description: 'Récupérer les statistiques d\'un joueur OSU',
       examples: ['osu DraftMan_Dev'],
       guildOnly: false,
@@ -30,7 +30,7 @@ module.exports = class PubgCommand extends Command {
         const response = await osu_rq.json()
         
         if(response.length === 0){
-          return status.edit(`:x: Le profil \`${user}\` n'existe pas où est privé`)
+          return status.edit(`:x: Le profil \`${user}\` n'existe pas où est privé :pensive:`)
         }
 
         status.edit(`Statistiques de \`${response[0].username}\` trouvés !`)

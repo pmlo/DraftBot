@@ -11,7 +11,7 @@ module.exports = class PubgCommand extends Command {
     super(client, {
       name: 'brawlhalla',
       memberName: 'brawlhalla',
-      group: 'leaderboards',
+      group: 'leadersboards',
       description: 'Récupérer les statistiques d\'un joueur Brawlhalla',
       examples: ['brawlhalla DraftMan_Dev'],
       guildOnly: false,
@@ -31,7 +31,7 @@ module.exports = class PubgCommand extends Command {
         const id = await steam.resolve(user)
         
         if(id === undefined){
-          return status.edit(`:x: Le profil \`${user}\` n'existe pas où est privé`)
+          return status.edit(`:x: Le profil \`${user}\` n'existe pas où est privé :pensive:`)
         }
 
         status.edit(`Profil steam de \`${user}\` trouvé !`)
@@ -39,7 +39,7 @@ module.exports = class PubgCommand extends Command {
         const brawlhalla_rq = await get(`https://api.brawlhalla.com/search?api_key=${process.env.brawlhalla_api}&steamid=${id}`);
         const {brawlhalla_id} = brawlhalla_rq.body; 
         if(brawlhalla_id === undefined){
-          return status.edit(`:x: Impossible de trouver le joueur brawlhalla \`${user}\``)
+          return status.edit(`:x: Impossible de trouver le joueur brawlhalla \`${user}\` :pensive:`)
         }
 
         status.edit(`Profil brawlhalla de \`${user}\` trouvé !`)
@@ -48,7 +48,7 @@ module.exports = class PubgCommand extends Command {
         const result = req.body;
 
         if(result === undefined){
-          return status.edit(`:x: Impossible de trouver les statistiques brawlhalla de \`${user}\``)
+          return status.edit(`:x: Impossible de trouver les statistiques brawlhalla de \`${user}\` :pensive:`)
         }
 
         status.edit(`Statistiques brawlhalla de \`${user}\` trouvés !`)
