@@ -49,7 +49,7 @@ module.exports = class PrefixCommand extends Command {
 				level, 
 				date: `${new Date()}`
 			})
-			msg.reply('La récompense a bien été ajouté !')
+			msg.reply(`La récompense \`${role.name}\` a bien été ajouté pour le niveau ${level} !`)
 
 		}else if(argument === 'remove' || argument === 'enlever' || argument === 'retirer' || argument === 'supprimer'){
 			const result = db.prepare(`SELECT * FROM "rewards" WHERE role='${role.id}' AND guild='${msg.guild.id}'`).get()
@@ -58,6 +58,7 @@ module.exports = class PrefixCommand extends Command {
 				return msg.reply(`Il n'y a pas de récompense pour le niveau \`${level}\` !`)  
 			}
 			db.prepare(`DELETE FROM "rewards" WHERE role='${role.id}' AND guild='${msg.guild.id}'`).run()
+			msg.reply(`La récompense \`${role.name}\` a bien été supprimé du niveau ${level} !`)
 		}
 	}
 };
