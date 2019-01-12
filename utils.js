@@ -360,7 +360,7 @@ const createTables = () => {
   db.prepare(`CREATE TABLE IF NOT EXISTS "levels"(guild TEXT, user TEXT, xp INTEGER)`).run()
   db.prepare(`CREATE TABLE IF NOT EXISTS "reacts"(guild TEXT, message TEXT, emoji TEXT, role TEXT)`).run()
   db.prepare(`CREATE TABLE IF NOT EXISTS "rewards"(guild TEXT, level INTEGER, role TEXT, date DATE)`).run()
-  db.prepare(`CREATE TABLE IF NOT EXISTS "access"(guild TEXT, channel TEXT, role TEXT, date DATE)`).run()
+  db.prepare(`CREATE TABLE IF NOT EXISTS "access"(guild TEXT, message TEXT, role TEXT, date DATE)`).run()
 }
 const warnUser = (msg,member,reason) => {
   const db = new Database(path.join(__dirname, './storage.sqlite'));
