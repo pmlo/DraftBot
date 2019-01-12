@@ -29,7 +29,9 @@ module.exports = class PrefixCommand extends Command {
 			if(response.length > 0){
 				description = 'Voici les récompenses sur ce serveur:\n';
 				[].forEach.call(response,rec => {
-					description += `\n**${msg.guild.roles.get(rec.role).name}** (niveau ${rec.level})`
+					if(msg.guild.roles.get(rec.role)){
+						description += `\n**${msg.guild.roles.get(rec.role).name}** (niveau ${rec.level})`
+					}
 				});
 			}
 
