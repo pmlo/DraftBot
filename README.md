@@ -1,7 +1,7 @@
 <div align="center">
   <br />
   <p>
-    <a href="https://www.draftman.fr/discord"><img src="https://www.draftman.fr/images/headerlogo.png" width="546" alt="DraftMan Logo" /></a>
+    <a href="https://www.draftman.fr/draftbot"><img src="https://cdn.discordapp.com/attachments/498408873955164160/516200973967032340/welcome.png" width="546" alt="DraftMan Logo" /></a>
   </p>
   <br />
   <p>
@@ -44,3 +44,113 @@ DraftBot est un bot polivalent et 100% français à l'écoute des communautés a
 - Toutes les personnes m'ayant donné des idées pour de nouvelles fonctionnalités pour le bot discord
 
 - Tous les créateurs de packages nodejs que j'ai pu utiliser sur ce projet
+
+## Auto-Hébergement (fortement déconsillé)
+
+### #1 Téléchargement du bot
+```
+HTTPS: git clone https://github.com/DraftProducts/DraftBot.git 
+```
+ou
+```
+SSH: git clone git@github.com:DraftProducts/DraftBot.git
+```
+
+### #2 Installation des dépendances NPM
+```
+cd ./DraftBot/
+npm install
+```
+
+### #3 Mise en place du DotEnv
+Création du fichier
+```
+cp .env.exemple .env
+```
+Edition du fichier
+```
+nano .env
+```
+Output
+```
+token=
+youtube_api=
+discordbots=
+steam_api=
+brawlhalla_api=
+osu_api=
+lol_api=
+```
+
+### #4 Récupération des clés d'api
+Il faut dès à présent ajouter les clés d'api au fichier .env
+
+#### Discord Client
+```
+token=
+```
+C'est le token du bot discord, il permet au code de se connecter à la présence discord.  
+Obtensible ici: https://discordapp.com/developers/applications
+
+#### Youtube API
+```
+youtube_api=
+```
+Ce token permet au bot de récupérer les pistes audio sur youtube pour la musique, indispensable pour les commandes de musique.  
+Obtensible grace à ce guide: https://developers.google.com/youtube/v3/getting-started
+
+#### Youtube API
+```
+youtube_api=
+```
+Ce token permet au bot de récupérer les pistes audio sur youtube pour la musique, indispensable pour les commandes de musique.  
+Obtensible grace à ce guide: https://developers.google.com/youtube/v3/getting-started
+
+#### Discordbots API
+```
+discordbots=
+```
+Ce token devrait vous être inutile, il permet simplement au draftbot d'envoyer des informations au site de référencement de botsdiscord quelques informations concernants les statistiques du bot tel que le nombre de serveurs, le status du bot
+
+#### Steam API
+```
+steam_api=
+```
+Ce token permet au commandes de statistiques de jeux de récupérer le profil steam des joueurs, notament utilisé pour brawlhalla.  
+Obtensible ici: https://steamcommunity.com/dev/apikey
+
+#### Brawlhalla API
+```
+brawlhalla_api=
+```
+Bon courrage 😂
+Il faut envoyer un mail à l'adresse email ci dessous en expliquant précisément à quoi vous servira la clé et si votre projet les interesse vous aurez surement une réponse dans les **mois** à venir. (3 mois personnelement)  
+Elle permet d'avoir les statistiques des joueurs sur le jeu Brawlhalla.  
+Adresse email ici: [api@brawlhalla.com](mailto:api@brawlhalla.com)
+
+#### OSU! API
+```
+osu_api=
+```
+Ceci est la clé d'api du jeu OSU!  
+Elle permet d'avoir les statistiques des joueurs sur le jeu OSU!.  
+Obtensible ici: https://osu.ppy.sh/p/api
+
+#### Riot API (League Of Legends)
+```
+lol_api=
+```
+Ceci est la clé d'api pour le jeu League of Legends.  
+Elle permet d'avoir les statistiques des joueurs sur le jeu League of Legends.  
+Obtensible ici: https://developer.riotgames.com/
+
+### #5 Lancement du bot
+C'est maintenant terminé !  
+Il manque simplement à le lancer !
+```
+node index.js
+```
+ou
+```
+pm2 start index.js
+```
