@@ -120,7 +120,7 @@ DraftBot.on('raw', event => {
                 let user = msg.guild.member(data.user_id);
 
                 const roleReact = db.prepare(`SELECT role FROM "reacts" WHERE message='${msg.id}' AND emoji='${data.emoji.id||data.emoji.name}' AND guild='${msg.guild.id}'`).get()
-                const access = db.prepare(`SELECT role FROM "access" WHERE channel='${msg.channel.id}' AND guild='${msg.guild.id}'`).get()
+                const access = db.prepare(`SELECT role FROM "access" WHERE message='${msg.id}' AND guild='${msg.guild.id}'`).get()
 
                 const testErr = err => {
                     if(err.message === 'Missing Permissions'){
@@ -159,7 +159,7 @@ DraftBot.registry
         ['utils', 'Utils - Différents outils permettant différentes choses sur le serveur'],
         ['fun', 'Fun - Commandes fun'],
         ['levels', 'Levels - Consultez votre activité sur une guild'],
-        ['leaderboards','Leadersboards - Consultez les statistiques de vos jeux préférés'],
+        ['leadersboards','Leadersboards - Consultez les statistiques de vos jeux préférés'],
         ['dev', 'Développeurs - Outils pour développeurs'],
         ['moderation', 'Moderation - Commandes de modération'],
         ['admin', 'Admin - Commandes d\'administateur']

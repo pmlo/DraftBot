@@ -14,11 +14,6 @@ module.exports = class WelcomeCommand extends Command {
       examples: ['reglement'],
       guildOnly: true,
       args: [{
-        key: 'channel',
-        prompt: 'Quel salon est destiné au règlement ?',
-        type: 'channel'
-      },
-      {
         key: 'role',
         prompt: 'Quel role doit être ajouté lors de la validation du règlement ?',
         type: 'role'
@@ -27,23 +22,21 @@ module.exports = class WelcomeCommand extends Command {
     });
   }
 
-  async run (msg, {channel,role}) {
+  async run (msg, {role}) {
     const db = new Database(path.join(__dirname, '../../storage.sqlite'));
-    const result = db.prepare(`SELECT * FROM "access" WHERE channel='${channel.id}' AND role='${role.id}' AND guild='${msg.guild.id}'`).get()
-
-    if (result) return msg.reply('Un règlement est déjà disponible dans ce salon !')
   
-    db.prepare(`INSERT INTO "access" (guild, channel, role) VALUES ($guild, $channel, $role)`).run({
-      guild: msg.guild.id,
-      channel: channel.id,
-      role: role.id
-    })
-
     const embed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setTitle(`Acceptez le règlement de ${msg.guild.name} pour accéder à l'intégralité du serveur`)
     .setFooter(`Pour accpeter le règelement du serveur veuillez interagir avec la réaction ci-dessous !`)
 
-    channel.send(embed).then(message => message.react('✅'))
+    channel.send(embed).then(message => {
+      message.react('✅');
+      db.prepare(`INSERT INTO "access" (guild, message, role) VALUES ($guild, $message, $role)`).run({
+        guild: msg.guild.id,
+        message: message.id,
+        role: role.id
+      });
+    })
   }
 };
