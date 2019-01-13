@@ -41,32 +41,71 @@ module.exports = class QuoteCommand extends Command {
 
     const result = db.prepare(`SELECT * FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).get()
 
-    msg.channel.messages.fetch(message.id).then(focusMsg=> {
-      const embed = focusMsg.embeds[0];
-
-      if (result) {
-        const currentRole = msg.guild.roles.find(r => r.id === result.role)
-        embed.setDescription(embed.description.replace(currentRole.name, role.name))
-        db.prepare(`UPDATE "reacts" SET role= ${role.id} WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).run()
-      } else {
-        message.react(newEmoji.id||newEmoji.name)
-        embed.setDescription(embed.description ? `${embed.description} | ${role.name}` : role.name);
-        db.prepare(`INSERT INTO "reacts" (guild, message, emoji, role) VALUES ($guild, $message, $emoji, $role)`).run({
-          guild: msg.guild.id, 
-          message: message.id, 
-          emoji: newEmoji.id||newEmoji.name,
-          role: role.id
-        })
-      }
-      focusMsg.edit('', {embed});
-    })
-  
+    const focusMsg = await msg.channel.messages.fetch(message.id)
+    
+    const embedBoo = focusMsg.embeds.length > 0 ? true : false;
+    const embed = focusMsg.embeds[0];
     const reactEmbed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
-    .setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} à été attributé au role ${role.name} sur le selectionneur de roles !`)
     .setTimestamp();
 
+    if (result) {
+      const currentRole = msg.guild.roles.find(r => r.id === result.role)
+
+      if(currentRole.name === role.name){
+        //SUPPRIMER
+        db.prepare(`DELETE FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).run()
+
+        if(newEmoji.id){
+          const users = focusMsg.reactions.find(react => react.emoji.name === newEmoji.name).users;
+          users.each(user => users.remove(user))
+        }else{
+          const users = focusMsg.reactions.find(react => react.emoji.id === newEmoji.id).users;
+          users.each(user => users.remove(user))
+        }
+
+        if(embedBoo) {
+          const roles = embed.description ? embed.description.split('\n') : [];
+          const description = roles.filter(r => r.split(' | ')[1] !== currentRole.name).join('\n')
+          embed.setDescription(description);
+        }
+        reactEmbed.setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} viens d'être supprimé pour le role ${role.name} sur le selectionneur de roles !`)
+      }else{
+        //UPDATE
+        db.prepare(`UPDATE "reacts" SET role= ${role.id} WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).run()
+        
+
+        if(embedBoo) {
+          const roles = embed.description ? embed.description.split('\n') : [];
+          const description = roles.filter(r => r.split(' | ')[1] !== currentRole.name).join('\n')
+          roles.push(`${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} | ${role.name}\n`)
+          embed.setDescription(description);
+        }
+
+        if(embedBoo) embed.setDescription(embed.description.replace(currentRole.name, role.name))
+        reactEmbed.setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} viens de remplacer l'ancien pour le role ${role.name} sur le selectionneur de roles !`)
+      }
+    } else {
+      //AJOUTER
+      message.react(newEmoji.id||newEmoji.name)
+      
+      db.prepare(`INSERT INTO "reacts" (guild, message, emoji, role) VALUES ($guild, $message, $emoji, $role)`).run({
+        guild: msg.guild.id, 
+        message: message.id, 
+        emoji: newEmoji.id||newEmoji.name,
+        role: role.id
+      })
+
+      if(embedBoo) {
+        const roles = embed.description ? embed.description.split('\n') : [];
+        roles.push(`${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} | ${role.name}\n`)
+        embed.setDescription(`\n${roles.join('\n')}`);
+      }
+  
+      reactEmbed.setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} à été attributé au role ${role.name} sur le selectionneur de roles !`)
+    }
+    if(embedBoo) focusMsg.edit('', {embed});
     return msg.embed(reactEmbed).then(actionMessage => actionMessage.delete({timeout: 8000}))
   }
 };
