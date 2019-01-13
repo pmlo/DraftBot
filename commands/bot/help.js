@@ -1,6 +1,6 @@
-const { Command } = require('discord.js-commando'),
-	  { stripIndents } = require('common-tags'),
-	  { error } = require('../../utils.js')
+const { Command } = require('discord.js-commando');
+const { stripIndents } = require('common-tags');
+const { error ,deleteCommandMessages } = require('../../utils.js');
 
 module.exports = class HelpCommand extends Command {
 	constructor(client) {
@@ -24,6 +24,7 @@ module.exports = class HelpCommand extends Command {
 	}
 
 	async run(msg, args) {
+		deleteCommandMessages(msg);
 		const groups = this.client.registry.groups;
 		const commands = this.client.registry.findCommands(args.command, false, msg);
 		const showAll = args.command && args.command.toLowerCase() === 'all';

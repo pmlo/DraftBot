@@ -1,4 +1,5 @@
-const {Command} = require('discord.js-commando')
+const {Command} = require('discord.js-commando');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class PrefixCommand extends Command {
 	constructor(client) {
@@ -20,6 +21,7 @@ module.exports = class PrefixCommand extends Command {
 	}
 
 	async run(msg, args) {
+		deleteCommandMessages(msg);
 		if(!args.prefix) {
 			const prefix = msg.guild ? msg.guild.commandPrefix : this.client.commandPrefix;
 			return msg.reply(`${prefix ? `Le prefix des commandes est \`\`${prefix}\`\`.` : 'Il n\'y a aucun prefix.'}\nA partir de maintenant, veuillez utilisez ${msg.anyUsage('commande')} pour executer une commande.`);
@@ -45,7 +47,6 @@ module.exports = class PrefixCommand extends Command {
 			response = prefix ? `Prefix de commande définit sur \`\`${args.prefix}\`\`.` : 'Suppression du prefix de commande.';
 		}
 
-		await msg.reply(`${response} \nA partir de maintenant, veuillez utilisez ${msg.anyUsage('commande')} pour executer une commande.`);
-		return null;
+		return msg.reply(`${response} \nA partir de maintenant, veuillez utilisez ${msg.anyUsage('commande')} pour executer une commande.`);
 	}
 };

@@ -1,5 +1,6 @@
-const {MessageEmbed} = require('discord.js'), 
-  {Command} = require('discord.js-commando')
+const {MessageEmbed} = require('discord.js');
+const {Command} = require('discord.js-commando');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class InviteCommand extends Command {
   constructor (client) {
@@ -19,6 +20,7 @@ module.exports = class InviteCommand extends Command {
   }
 
   run (msg,{suggest}) {
+    deleteCommandMessages(msg);
     msg.reply('merci de votre suggestion, elle sera annalisé et si elle est pertinante, vous la vérez très prochainement dans la liste des commandes !')
     const embed = new MessageEmbed()
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())

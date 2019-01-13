@@ -1,5 +1,6 @@
-const {MessageEmbed} = require('discord.js'), 
-  {Command} = require('discord.js-commando')
+const {MessageEmbed} = require('discord.js'); 
+const {Command} = require('discord.js-commando');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class InviteCommand extends Command {
   constructor (client) {
@@ -15,6 +16,7 @@ module.exports = class InviteCommand extends Command {
   }
 
   run (msg) {
+    deleteCommandMessages(msg);
     const supportEmbed = new MessageEmbed()
       .setTitle('Support du DraftBot')
       .setThumbnail('https://www.draftman.fr/images/avatar.jpg')

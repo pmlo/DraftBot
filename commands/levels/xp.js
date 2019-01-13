@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando')
-const {removeUserXp,addUserXp} = require('../../utils.js');
+const {removeUserXp,addUserXp,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class PrefixCommand extends Command {
 	constructor(client) {
@@ -34,6 +34,7 @@ module.exports = class PrefixCommand extends Command {
 	}
 
 	async run(msg, {argument,member,nombre}) {
+		deleteCommandMessages(msg);
 		if(msg.guild.settings.get('levelSystem') === false) return msg.reply('impossible de modifier l\'xp d\'un membre, les levels ont été désactivés sur ce serveur.')
 		if(argument === 'add' || argument === 'ajouter'){
 			addUserXp(msg,member.user,nombre)

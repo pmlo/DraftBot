@@ -1,6 +1,6 @@
 const {Command, util} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
-const {Song} = require('../../utils.js');
+const {Song,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class ShuffleCommand extends Command {
   constructor (client) {
@@ -16,6 +16,7 @@ module.exports = class ShuffleCommand extends Command {
   }
 
   run (msg) {
+    deleteCommandMessages(msg);
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {

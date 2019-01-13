@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class StrawpollCommand extends Command {
   constructor (client) {
@@ -30,6 +31,7 @@ module.exports = class StrawpollCommand extends Command {
   }
 
   async run (msg, {title, options}) {
+    deleteCommandMessages(msg);
     if (options.length < 2) {
       return msg.reply('un sondage doit avoir au moins 2 réponses');
     }

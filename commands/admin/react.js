@@ -2,6 +2,7 @@ const {Command} = require('discord.js-commando');
 const {MessageEmbed,Util} = require('discord.js');
 const Database = require('better-sqlite3');
 const path = require('path');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
@@ -34,10 +35,9 @@ module.exports = class QuoteCommand extends Command {
   }
 
   async run (msg, {emoji,role,message}) {
+    deleteCommandMessages(msg);
     const db = new Database(path.join(__dirname, '../../storage.sqlite'));
     const newEmoji = Util.parseEmoji(emoji)
-
-    msg.delete()
 
     const result = db.prepare(`SELECT * FROM "reacts" WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).get()
 

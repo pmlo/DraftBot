@@ -1,5 +1,6 @@
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
@@ -22,8 +23,7 @@ module.exports = class QuoteCommand extends Command {
   }
 
   async run (msg, {titre}) {
-
-    msg.delete()
+    deleteCommandMessages(msg);
 
     const embed = new MessageEmbed()
     .setColor(0xcd6e57)

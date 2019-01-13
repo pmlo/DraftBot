@@ -1,7 +1,8 @@
-const {Command} = require('discord.js-commando')
-const {MessageEmbed} = require('discord.js')
-const fetch = require('node-fetch')
-const {oneLine} = require('common-tags')
+const {Command} = require('discord.js-commando');
+const {MessageEmbed} = require('discord.js');
+const fetch = require('node-fetch');
+const {oneLine} = require('common-tags');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
@@ -24,7 +25,7 @@ module.exports = class AvatarCommand extends Command {
   }
 
   async run (msg, {equation}) {
-
+    deleteCommandMessages(msg);
     const calculator = await fetch('http://api.mathjs.org/v4/', {
       body: JSON.stringify({ expr: equation }),
       method: 'POST',

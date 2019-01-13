@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {kickUser,banUser,warnUser,sendLogsBot,error} = require('../../utils.js')
+const {kickUser,banUser,warnUser,sendLogsBot,deleteCommandMessages} = require('../../utils.js')
 const {MessageEmbed} = require('discord.js');
 
 module.exports = class BanCommand extends Command {
@@ -23,7 +23,7 @@ module.exports = class BanCommand extends Command {
   }
 
   async run (msg, {member}) {
-    msg.delete()
+    deleteCommandMessages(msg);
 
       const embed = new MessageEmbed()
       .setColor(0xcd6e57)

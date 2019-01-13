@@ -1,5 +1,6 @@
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class ClearCommand extends Command {
   constructor (client) {
@@ -17,6 +18,7 @@ module.exports = class ClearCommand extends Command {
   }
 
   async run (msg) {
+    deleteCommandMessages(msg);
     clearChannel(msg).then(response => {
 
       const value = response.response;

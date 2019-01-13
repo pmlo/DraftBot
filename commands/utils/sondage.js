@@ -1,5 +1,6 @@
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
@@ -22,6 +23,7 @@ module.exports = class QuoteCommand extends Command {
   }
 
   async run (msg, {message}) {
+    deleteCommandMessages(msg);
     const emojis = ['✅','❌']
 
     const embed = new MessageEmbed()
@@ -33,7 +35,5 @@ module.exports = class QuoteCommand extends Command {
 
     msg.embed(embed)
     .then(question => emojis.reduce((acc, emoji) => acc.then(() => question.react(emoji)),Promise.resolve()))
-    
-    msg.delete();
   }
 }

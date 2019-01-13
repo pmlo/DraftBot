@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando')
 const Jimp = require('jimp');
 const path = require('path');
 const { MessageAttachment, MessageEmbed } = require('discord.js');
-const {roundNumber} = require('../../utils.js')
+const {roundNumber,deleteCommandMessages} = require('../../utils.js');
 const { oneLine } = require('common-tags');
 
 module.exports = class AmourCommand extends Command {
@@ -32,6 +32,7 @@ module.exports = class AmourCommand extends Command {
 	}
 
 	async run(msg, {romeo, juliette}) {
+		deleteCommandMessages(msg);
 		romeo = romeo !== 'random' ? romeo.user : msg.guild.members.random().user;
 		juliette = juliette !== 'random' ? juliette.user : msg.guild.members.random().user;
 

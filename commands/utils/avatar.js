@@ -1,5 +1,6 @@
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
@@ -37,7 +38,7 @@ module.exports = class AvatarCommand extends Command {
   }
 
   run (msg, {member, size}) {
-
+    deleteCommandMessages(msg);
     const avatar = member.user.displayAvatarURL({size});
     
     const ext = avatar.substring(avatar.length - 14, avatar.length - 8);
@@ -48,8 +49,6 @@ module.exports = class AvatarCommand extends Command {
     .setTitle(member.displayName)
     .setURL(avatar)
     .setDescription(`[Lien direct](${avatar})`);
-
-    msg.delete()
 
     return msg.embed(embed);
   }

@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {sendLogsBot} = require('../../utils.js');
+const {sendLogsBot,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class InvitesCommand extends Command {
   constructor (client) {
@@ -16,6 +16,7 @@ module.exports = class InvitesCommand extends Command {
   }
 
   async run (msg) {
+    deleteCommandMessages(msg);
     let description;
 
     if (msg.guild.settings.get('invites') !== false) {

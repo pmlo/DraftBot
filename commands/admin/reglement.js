@@ -2,6 +2,7 @@ const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
 const Database = require('better-sqlite3');
 const path = require('path');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class WelcomeCommand extends Command {
   constructor (client) {
@@ -23,6 +24,7 @@ module.exports = class WelcomeCommand extends Command {
   }
 
   async run (msg, {role}) {
+    deleteCommandMessages(msg);
     const db = new Database(path.join(__dirname, '../../storage.sqlite'));
   
     const embed = new MessageEmbed()

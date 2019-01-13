@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 const { Command } = require('discord.js-commando')
 const { stripIndents } = require('common-tags')
-const { findChannel,findRole } = require('../../utils.js')
+const { findChannel,findRole,deleteCommandMessages} = require('../../utils.js')
 
 module.exports = class InviteCommand extends Command {
   constructor (client) {
@@ -21,6 +21,7 @@ module.exports = class InviteCommand extends Command {
   }
 
   run (msg) {
+    deleteCommandMessages(msg);
     const configEmbed = new MessageEmbed()
       .setTitle('Configuration')
       .setAuthor(msg.author.username,msg.author.displayAvatarURL({format: 'png'}))

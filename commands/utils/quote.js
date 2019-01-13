@@ -1,5 +1,6 @@
-const {Command} = require('discord.js-commando'),
-      {MessageEmbed} = require('discord.js')
+const {Command} = require('discord.js-commando');
+const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class QuoteCommand extends Command {
   constructor (client) {
@@ -28,14 +29,13 @@ module.exports = class QuoteCommand extends Command {
   }
 
   async run (msg, {message,member}) {
+    deleteCommandMessages(msg);
     const embed = new MessageEmbed()
     .setAuthor(`${msg.author.username} cite:`, msg.author.displayAvatarURL())
     .setColor(0xcd6e57)
     .setDescription(message)
     .setTimestamp()
     .setFooter(`Dans #${message.channel.name}`, message.author.displayAvatarURL())
-
-    msg.delete()
     
     return msg.say(member ? member.user: '',embed)
   }

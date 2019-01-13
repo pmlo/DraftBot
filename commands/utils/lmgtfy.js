@@ -1,5 +1,6 @@
-const {Command} = require('discord.js-commando'), 
-  {MessageEmbed} = require('discord.js')
+const {Command} = require('discord.js-commando');
+const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
@@ -22,7 +23,7 @@ module.exports = class AvatarCommand extends Command {
 
   run (msg, {member, search}) {
 
-    msg.delete()
+    deleteCommandMessages(msg);
 
     const question = search.split(' ').filter(val => val !== '').join('+');
 

@@ -4,6 +4,7 @@ const {MessageEmbed} = require('discord.js');
 const toMarkdown = require("to-markdown");
 const fetch = require('node-fetch');
 const {JSDOM} = require("jsdom");
+const {deleteCommandMessages} = require('../../utils.js');
 
 //getSimilarObjects
 
@@ -93,6 +94,8 @@ module.exports = class DdocsCommand extends Command {
   }
 
   async run (msg, {query,version}) {
+    deleteCommandMessages(msg);
+    return msg.reply('Cette commande n\'est pas encore disponible !')
     try {
   
       const docs = await this.getDocs(version)
@@ -115,8 +118,6 @@ module.exports = class DdocsCommand extends Command {
       const docsSearch = new Fuse(docs.methods.concat(docs.classes).concat(docs.globals).concat(docs.modules), hitOpts).search(input.main);
 
       const hit = docsSearch[0];
-
-      console.log(hit)
 /* 
       const docsEmbed = new MessageEmbed()
         .setColor(0xcd6e57)

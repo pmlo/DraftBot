@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando')
-const {getRewards} = require('../../utils.js');
+const {getRewards,deleteCommandMessages} = require('../../utils.js');
 const {MessageEmbed} = require('discord.js');
 
 module.exports = class PrefixCommand extends Command {
@@ -16,6 +16,7 @@ module.exports = class PrefixCommand extends Command {
 	}
 
 	async run(msg) {
+		deleteCommandMessages(msg);
 		getRewards(msg.guild).then(async response => {
 			const embed = new MessageEmbed()
 			.setTitle("Récompenses")

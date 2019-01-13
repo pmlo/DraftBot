@@ -2,8 +2,9 @@ const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
 const weather = require('weather-js');
 const moment = require('moment');
-moment.locale('fr');
+const {deleteCommandMessages} = require('../../utils.js');
 
+moment.locale('fr');
 
 module.exports = class WeatherCommand extends Command {
     constructor(client) {
@@ -26,7 +27,7 @@ module.exports = class WeatherCommand extends Command {
     }
 
     run(msg, {ville}) {
-
+        deleteCommandMessages(msg);
         weather.find({search: ville, degreeType: 'C'}, function (err, result) {
             try {
                 if (err) throw 'weather bug';

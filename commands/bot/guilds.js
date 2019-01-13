@@ -1,5 +1,6 @@
-const {Command} = require('discord.js-commando'), 
-  {MessageEmbed} = require('discord.js')
+const {Command} = require('discord.js-commando');
+const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
@@ -14,12 +15,12 @@ module.exports = class AvatarCommand extends Command {
   }
 
   run (msg) {
+    deleteCommandMessages(msg);
     const embed = new MessageEmbed()
     .setColor('#cd6e57')
     .setDescription(`Le DraftBot se trouves sur ${this.client.guilds.size} ${this.client.guilds.size > 1 ? 'serveurs' :'serveur'}`)
     .setTimestamp(msg.createdAt);
 
-    msg.delete()
     return msg.embed(embed);
   }
 };

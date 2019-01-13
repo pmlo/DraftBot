@@ -1,5 +1,6 @@
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class ClearCommand extends Command {
   constructor (client) {
@@ -24,6 +25,7 @@ module.exports = class ClearCommand extends Command {
   }
 
   async run (msg, {amount}) {
+    deleteCommandMessages(msg);
     let number = msg.channel.messages.array().reverse().findIndex(q => q.id === msg.id) 
     number > 0 ? number-- : number
     amount = amount + number >= 100 ? 99 : amount + number;

@@ -1,6 +1,7 @@
 const {Command} = require('discord.js-commando')
 const path = require('path');
 const Database = require('better-sqlite3');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class PrefixCommand extends Command {
 	constructor(client) {
@@ -35,6 +36,7 @@ module.exports = class PrefixCommand extends Command {
 	}
 
 	async run(msg, {argument,level,role}) {
+		deleteCommandMessages(msg);
 		if(msg.guild.settings.get('levelSystem') === false) return msg.reply('impossible d\'ajouter des récompenses aux levels car ils ont été désactivés sur ce serveur.')
 		const db = new Database(path.join(__dirname, '../../storage.sqlite'));
 		if(argument === 'add' || argument === 'ajouter'){

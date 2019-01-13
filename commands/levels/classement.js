@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando')
-const {getUsersXp,getLevelFromXp} = require('../../utils.js');
+const {getUsersXp,getLevelFromXp,deleteCommandMessages} = require('../../utils.js');
 const {MessageEmbed} = require('discord.js');
 
 module.exports = class PrefixCommand extends Command {
@@ -16,6 +16,7 @@ module.exports = class PrefixCommand extends Command {
 	}
 
 	async run(msg) {
+		deleteCommandMessages(msg);
 		if(msg.guild.settings.get('levelSystem') === false) return msg.reply('impossible d\'afficher les niveaux, ils ont été désactivés sur ce serveur.')
 
 		getUsersXp(msg,msg.author).then(async ({xp,users}) => {
@@ -47,9 +48,6 @@ module.exports = class PrefixCommand extends Command {
 			.addField('Niveau',xplist,true)
 
 			msg.embed(embed)
-
-			// console.log(users)
-			// levelImage(msg,user,exp,place)
 		})
 	}
 };

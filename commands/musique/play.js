@@ -2,10 +2,11 @@ const YouTube = require('simple-youtube-api');
 const moment = require('moment');
 const ytdl = require('ytdl-core');
 const { Command } = require('discord.js-commando');
-const { Song } = require('../../utils.js');
+const { Song,deleteCommandMessages } = require('../../utils.js');
 const emojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣','❌'];
 
 const run = (current) => async (msg, { url }) =>  {
+    deleteCommandMessages(msg);
     const queue = current.queue.get(msg.guild.id);
 
     let voiceChannel;

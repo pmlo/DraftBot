@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {roundNumber} = require('../../utils.js');
+const {roundNumber,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class StopMusicCommand extends Command {
   constructor (client) {
@@ -20,8 +20,8 @@ module.exports = class StopMusicCommand extends Command {
     this.votes = new Map();
   }
 
-  /* eslint-disable max-statements*/
   run (msg, args) {
+    deleteCommandMessages(msg);
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {

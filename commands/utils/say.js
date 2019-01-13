@@ -1,5 +1,4 @@
-const {Command} = require('discord.js-commando'), 
-  {MessageEmbed} = require('discord.js')
+const {Command} = require('discord.js-commando');
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
@@ -21,8 +20,8 @@ module.exports = class AvatarCommand extends Command {
     });
   }
 
-  run (msg, {message}) {
-    msg.say(message)
-    return msg.delete()
+  async run (msg, {message}) {
+    await msg.delete();
+    await msg.say(message)
   }
 };

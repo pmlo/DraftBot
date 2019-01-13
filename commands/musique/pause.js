@@ -1,4 +1,5 @@
 const {Command} = require('discord.js-commando');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class PauseSongCommand extends Command {
   constructor (client) {
@@ -14,6 +15,7 @@ module.exports = class PauseSongCommand extends Command {
   }
 
   run (msg) {
+    deleteCommandMessages(msg);
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {

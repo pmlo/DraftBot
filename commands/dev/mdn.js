@@ -3,6 +3,7 @@ const {MessageEmbed} = require('discord.js');
 const toMarkdown = require("to-markdown");
 const {get} = require("snekfetch");
 const {JSDOM} = require("jsdom");
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class DdocsCommand extends Command {
   constructor (client) {
@@ -51,6 +52,7 @@ module.exports = class DdocsCommand extends Command {
   }
 
   async run (msg, {query}) {
+    deleteCommandMessages(msg);
     try {
       const data = await this.getResult(query);
 

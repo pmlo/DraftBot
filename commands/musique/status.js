@@ -1,6 +1,6 @@
-const {Command} = require('discord.js-commando'), 
-  {stripIndents} = require('common-tags'), 
-  {Song} = require('../../utils.js');
+const {Command} = require('discord.js-commando');
+const {stripIndents} = require('common-tags');
+const {Song,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class MusicStatusCommand extends Command {
   constructor (client) {
@@ -16,6 +16,7 @@ module.exports = class MusicStatusCommand extends Command {
   }
 
   run (msg) {
+    deleteCommandMessages(msg);
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {

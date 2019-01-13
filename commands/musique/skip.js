@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {roundNumber} = require('../../utils.js');
+const {roundNumber,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class SkipSongCommand extends Command {
   constructor (client) {
@@ -17,6 +17,7 @@ module.exports = class SkipSongCommand extends Command {
   }
 
   run (msg, args) {
+    deleteCommandMessages(msg);
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {

@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {sendLogsBot} = require('../../utils.js')
+const {sendLogsBot,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class KickCommand extends Command {
   constructor (client) {
@@ -29,6 +29,7 @@ module.exports = class KickCommand extends Command {
   }
 
   async run (msg, {user,reason}) {
+    deleteCommandMessages(msg);
     user.kick({ reason: reason })
     return sendLogsBot(msg, `Le membre ${user.tag} a été kick.\n**Raison:** ${reason}`)
   }

@@ -1,6 +1,6 @@
 const { Command } = require('discord.js-commando')
 const { MessageEmbed } = require('discord.js')
-const { error } = require('../../utils.js');
+const { error,deleteCommandMessages } = require('../../utils.js');
 
 module.exports = class InviteCommandCommand extends Command {
 	constructor(client) {
@@ -19,7 +19,7 @@ module.exports = class InviteCommandCommand extends Command {
 	}
 
 	run(msg, { guild }) {
-
+		deleteCommandMessages(msg);
 		const newGuild = this.client.guilds.find(g => g.name.toLowerCase().includes(guild.toLowerCase()))
 		
 		newGuild.fetchInvites()

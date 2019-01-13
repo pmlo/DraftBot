@@ -1,5 +1,6 @@
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class MoveConvCommand extends Command {
   constructor (client) {
@@ -29,7 +30,7 @@ module.exports = class MoveConvCommand extends Command {
   }
 
   async run (msg, {messages,channel}) {
-    msg.delete()
+    deleteCommandMessages(msg);
     const oldChannel = msg.guild.channels.get(msg.channel.id);
 
     channel.fetchWebhooks().then(async webhooks => {

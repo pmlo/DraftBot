@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {sendLogsBot} = require('../../utils.js');
+const {sendLogsBot,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class LogsCommand extends Command {
   constructor (client) {
@@ -21,7 +21,7 @@ module.exports = class LogsCommand extends Command {
   }
 
   async run (msg, {channel}) {
-
+    deleteCommandMessages(msg);
     let description;
 
     if(channel) {

@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { warnUser } = require('../../utils.js');
+const { warnUser,deleteCommandMessages } = require('../../utils.js');
 
 module.exports = class WarnCommand extends Command {
   constructor (client) {
@@ -29,6 +29,7 @@ module.exports = class WarnCommand extends Command {
   }
 
   run (msg, {member, reason}) {
+    deleteCommandMessages(msg);
     warnUser(msg,member,reason);
   }
 };

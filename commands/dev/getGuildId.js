@@ -1,5 +1,6 @@
 const {Command} = require('discord.js-commando')
-const {MessageEmbed} = require('discord.js')
+const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class AvatarCommand extends Command {
   constructor (client) {
@@ -15,6 +16,7 @@ module.exports = class AvatarCommand extends Command {
   }
 
   run (msg) {
+    deleteCommandMessages(msg);
     const embed = new MessageEmbed()
       .setColor(0xcd6e57)
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())

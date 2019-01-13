@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {sendLogsBot} = require('../../utils.js');
+const {sendLogsBot,deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class autoroleCommand extends Command {
   constructor (client) {
@@ -26,6 +26,7 @@ module.exports = class autoroleCommand extends Command {
   }
 
   run (msg, {role}) {
+    deleteCommandMessages(msg)
     let description;
 
     if(role == 'no'){

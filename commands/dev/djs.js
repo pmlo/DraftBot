@@ -2,6 +2,7 @@ const Fuse = require('fuse.js');
 const fetch = require('node-fetch');
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
+const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class DdocsCommand extends Command {
   constructor (client) {
@@ -81,6 +82,7 @@ module.exports = class DdocsCommand extends Command {
   }
 
   async run (msg, {query, version}) {
+    deleteCommandMessages(msg);
     try {
 
       const docs = await this.getDocs(version);
