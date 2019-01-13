@@ -30,7 +30,7 @@ module.exports = class WelcomeCommand extends Command {
     .setTitle(`Acceptez le règlement de ${msg.guild.name} pour accéder à l'intégralité du serveur`)
     .setFooter(`Pour accpeter le règelement du serveur veuillez interagir avec la réaction ci-dessous !`)
 
-    channel.send(embed).then(message => {
+    msg.channel.send(embed).then(message => {
       message.react('✅');
       db.prepare(`INSERT INTO "access" (guild, message, role) VALUES ($guild, $message, $role)`).run({
         guild: msg.guild.id,
