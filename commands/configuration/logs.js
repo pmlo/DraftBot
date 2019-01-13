@@ -6,7 +6,7 @@ module.exports = class LogsCommand extends Command {
     super(client, {
       name: 'logs',
       memberName: 'logs',
-      group: 'admin',
+      group: 'configuration',
       description: 'Définir le channel pour les logs du serveur.',
       examples: ['logs #logs'],
       guildOnly: true,
