@@ -212,9 +212,9 @@ const sendLogsServ = (guild,title, message) => {
   if(message !== null) embed.setDescription(message)
 
   if (guild.settings.get('logsMessageServ') === true) {
-      const channel = guild.settings.get('logsChannel') ? guild.settings.get('logsChannel') : guild.channels.find(c => c.name === 'logs');
+      const channel = guild.settings.get('logsChannel') ? guild.channels.find(c => c.id === guild.settings.get('logsChannel').id) : guild.channels.find(c => c.name === 'logs');
       if(channel !== undefined){
-        guild.channels.find(c => c.id === channel.id).send('',embed)
+        channel.send('',embed)
         return;
       }
     return guild.systemChannel.send(error('impossible de trouver de channel de logs !'))
