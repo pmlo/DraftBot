@@ -190,7 +190,7 @@ const sendLogsBot = (msg, message) => {
     .setFooter(`Logs du serveur ${msg.guild.name}`)
     .setTimestamp();
 
-  msg.embed(embed).then(msg => msg.delete({timeout: 2000}))
+  msg.embed(embed).then(msg => msg.delete({timeout: 8000}))
 
   if (msg.guild.settings.get('logsMessageBot') === true) {
       const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
@@ -530,6 +530,11 @@ const stringifyPrimitive = v => {
   }
 };
 
+const deleteCommandMessages = msg => {
+  console.log(msg.guild.settings.get('deletecommandmessages') != false,msg.deletable)
+  if (msg.deletable && msg.guild.settings.get('deletecommandmessages') != false) msg.delete();
+};
+
 module.exports = {
   makeWelcomeImage,
   addRole,
@@ -558,5 +563,6 @@ module.exports = {
   getLevelFromXp,
   getRewards,
   stringify,
-  getUsersXp
+  getUsersXp,
+  deleteCommandMessages
 };
