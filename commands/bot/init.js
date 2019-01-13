@@ -141,6 +141,15 @@ module.exports = class InviteCommand extends Command {
         this.runProcess(msg,10)
       }).catch(error => console.log(error))
     }
+    if(process === 10){
+      return commandSystem(msg).then(response => {
+        const value = response.response;
+        msg.guild.settings.set('deletecommandmessages', value);
+
+        msg.embed(resultEmbed(msg,`Les messages de commandes seront maintenant **${value === true ? 'supprimés' : 'laissés'}** !`))
+        this.runProcess(msg,11)
+      }).catch(error => console.log(error))
+    }
 
     // Il n'y pas plus de process
     msg.embed(questionEmbed(msg,'Félicitations, la configuration est terminée, merci !'))
@@ -412,6 +421,35 @@ const levelSystem = (msg) => new Promise((resolve, reject) => {
   
     msg.client.once('cancel', () => {
       msg.client.removeListener('message', eventListenLevelSystemReactions)
+      return reject('cancelled')
+    })
+  })
+});
+
+const commandSystem = (msg) => new Promise((resolve, reject) => {
+  const emojis = ['✅','❎']
+
+  msg.embed(questionEmbedFile(msg,'Souhaitez vous que les commandes executés par les utilisateurs soient supprimés ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/delete_command.png'))
+  .then(question => {
+    question.react(emojis[0]);
+    question.react(emojis[1]);
+
+    function eventListenCommandSystemReactions(messageReaction,user){
+      if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
+        if(!emojis.includes(messageReaction.emoji.name)){
+          messageReaction.users.remove(user)
+          return;
+        }
+        msg.client.removeListener('messageReactionAdd', arguments.callee);
+        messageReaction.message.delete();
+    
+        return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
+    }
+  
+    msg.client.on('messageReactionAdd',eventListenCommandSystemReactions)
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenCommandSystemReactions)
       return reject('cancelled')
     })
   })
