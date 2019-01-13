@@ -80,7 +80,7 @@ module.exports = class InviteCommand extends Command {
     if(process === 3){
       return roleAutoAsk(msg).then(response => {
         const value = response.response
-        //aucun stockage 
+        if(value !== true ) msg.guild.settings.remove('defaultRole');
         msg.embed(resultEmbed(msg,`La fonction de role automatique est maintenant **${value === true ? 'activé' : 'désactivé'}** !`))
         this.runProcess(msg, value === true ? 4 : 5)
       }).catch(error => console.log(error))
