@@ -4,6 +4,7 @@ const {makeWelcomeImage,newUser,guildAdd,sendLogsServ,invites,createTables,error
 const websocket = require('./websocket');
 const {oneLine} = require('common-tags');
 const Database = require('better-sqlite3');
+const DBL = require("dblapi.js");
 
 require('dotenv').config();
 
@@ -15,6 +16,14 @@ const DraftBot = new CommandoClient({
 });
 
 new websocket(process.env.token, 8000, DraftBot)
+
+if(process.env.discordbots !== 'false'){
+    const dbl = new DBL(process.env.discordbots, this.client);
+                
+    dbl.on('posted', () => {
+        console.log('Server count posted!');
+    })
+}
 
 const settings = new Database(path.join(__dirname, './settings.sqlite'));
 const db = new Database(path.join(__dirname, './storage.sqlite'));
@@ -162,15 +171,8 @@ DraftBot.registry
         ['leadersboards','Leadersboards - Consultez les statistiques de vos jeux préférés'],
         ['dev', 'Développeurs - Outils pour développeurs'],
         ['moderation', 'Moderation - Commandes de modération'],
-        ['admin', 'Admin - Commandes d\'administateur']
+        ['configuration', 'Configuration - Commandes permettant de configurer le bot, toutes regroupés dans !init']
     ])
-    .registerDefaultGroups()
-    .registerDefaultCommands({
-        help: true,
-        prefix: true,
-        ping: true,
-        commandState: true
-      })
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
 DraftBot.login(process.env.token);
