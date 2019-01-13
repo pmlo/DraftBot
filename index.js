@@ -128,7 +128,7 @@ DraftBot.on('raw', event => {
                     }
                 }
 
-                if(roleReact && !user.bot){
+                if(roleReact && user.id !== DraftBot.user.id){
                     const role = msg.guild.roles.find(r => r.id === roleReact.role);
 
                     if (event.t === "MESSAGE_REACTION_ADD"){
@@ -137,7 +137,7 @@ DraftBot.on('raw', event => {
                         user.roles.remove(role).catch(testErr)
                     }
                 }
-                if(access && !user.bot && data.emoji.name === '✅' && msg.embeds[0].title.startsWith('Acceptez')){
+                if(access && user.id !== DraftBot.user.id && data.emoji.name === '✅' && msg.embeds[0].title.startsWith('Acceptez')){
                     const role = msg.guild.roles.find(r => r.id === access.role);
                     
                     if (event.t === "MESSAGE_REACTION_ADD"){
