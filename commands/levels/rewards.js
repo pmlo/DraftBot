@@ -23,8 +23,6 @@ module.exports = class PrefixCommand extends Command {
 			.setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.client.user.avatarURL({format: 'png'}))
 			.setTimestamp();
 
-			console.log(response)
-
 			let description = "Il n'y a pas de récompense sur ce serveur !";
 			if(response.length > 0){
 				description = 'Voici les récompenses sur ce serveur:\n';
