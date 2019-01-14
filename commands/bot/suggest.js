@@ -21,7 +21,7 @@ module.exports = class InviteCommand extends Command {
 
   run (msg,{suggest}) {
     deleteCommandMessages(msg);
-    msg.reply('merci de votre suggestion, elle sera annalisé et si elle est pertinante, vous la vérez très prochainement dans la liste des commandes !')
+    msg.reply('merci de votre suggestion, elle sera annalisée et si elle est pertinente, vous la vérez très prochainement dans la liste des commandes !')
     const embed = new MessageEmbed()
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .setColor(0xcd6e57)

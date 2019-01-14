@@ -13,7 +13,7 @@ module.exports = class WelcomeCommand extends Command {
       guildOnly: true,
       args: [{
 				key: 'channel',
-				prompt: 'Quel salon  voulez vous pour les messages de bienvenue?',
+				prompt: 'Quel salon voulez vous pour les messages de bienvenue?',
         type: 'channel',
         default: ''
 			}],
