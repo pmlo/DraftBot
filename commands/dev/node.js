@@ -195,7 +195,7 @@ module.exports = class DdocsCommand extends Command {
 
       return msg.embed(docsEmbed); */
     } catch (err) {
-      console.log(err)
+      console.log('Node command => end command',err)
       return msg.reply(`could not find an item for \`${query}\` in mdn docs.`);
     }
   }

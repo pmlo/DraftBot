@@ -67,7 +67,7 @@ module.exports = class InviteCommand extends Command {
     
         msg.embed(resultEmbed(msg,`Les messages de bienvenue sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
         this.runProcess(msg, value === true ? 2 : 3)
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => welcomeMessage',error))
     }
     if(process === 2){
       return channelWelcome(msg).then(response => {
@@ -76,7 +76,7 @@ module.exports = class InviteCommand extends Command {
     
         msg.embed(resultEmbed(msg,`Les messages de bienvenue seront maintenant envoyés dans le salon \`#${value.name}\` !`))
         this.runProcess(msg,3)
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => welcomeChannel',error))
     }
     if(process === 3){
       return roleAutoAsk(msg).then(response => {
@@ -84,7 +84,7 @@ module.exports = class InviteCommand extends Command {
         if(value !== true ) msg.guild.settings.remove('defaultRole');
         msg.embed(resultEmbed(msg,`La fonction de role automatique est maintenant **${value === true ? 'activé' : 'désactivé'}** !`))
         this.runProcess(msg, value === true ? 4 : 5)
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => roleAutoAsk',error))
     }
     if(process === 4){
       return roleAuto(msg).then(response => {
@@ -93,7 +93,7 @@ module.exports = class InviteCommand extends Command {
     
         msg.embed(resultEmbed(msg,`Le role \`${value.name}\` sera maintenant ajouté automatiquement aux nouveaux membres !`))
         this.runProcess(msg,5);
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => roleAuto',error))
     }
     if(process === 5){
       return logsMessagesBot(msg).then(response => {
@@ -103,7 +103,7 @@ module.exports = class InviteCommand extends Command {
         msg.embed(resultEmbed(msg,`Les messages de logs du bot sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
         this.logschannel = value;
         this.runProcess(msg, 6);
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => logsMessageBot',error))
     }
     if(process === 6){
       return logsMessagesServ(msg).then(response => {
@@ -112,7 +112,7 @@ module.exports = class InviteCommand extends Command {
     
         msg.embed(resultEmbed(msg,`Les messages de logs du serveur sont maintenant **${value === true ? 'activés' : 'désactivés'}** !`))
         this.runProcess(msg, value === true || this.logschannel === true ? 7 : 8)
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => logsMessageServ',error))
     }
     if(process === 7){
       return channelLogs(msg).then(response => {
@@ -121,7 +121,7 @@ module.exports = class InviteCommand extends Command {
     
         msg.embed(resultEmbed(msg,`Les messages de logs seront maintenant envoyés dans le salon \`#${value.name}\` !`))
         this.runProcess(msg,8)
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => channelLogs',error))
     }
     if(process === 8){
       return levelSystem(msg).then(response => {
@@ -130,7 +130,7 @@ module.exports = class InviteCommand extends Command {
     
         msg.embed(resultEmbed(msg,`Le système de niveau est maintenant **${value === true ? 'activé' : 'désactivé'}** !`))
         this.runProcess(msg,9)
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => levelSystem',error))
     }
     if(process === 9){
       return authorizeInvites(msg).then(response => {
@@ -139,7 +139,7 @@ module.exports = class InviteCommand extends Command {
     
         msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisés' : 'interdites donc supprimés'}** !`))
         this.runProcess(msg,10)
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => authorizeInvites',error))
     }
     if(process === 10){
       return commandSystem(msg).then(response => {
@@ -148,7 +148,7 @@ module.exports = class InviteCommand extends Command {
 
         msg.embed(resultEmbed(msg,`Les messages de commandes seront maintenant **${value === true ? 'supprimés' : 'laissés'}** !`))
         this.runProcess(msg,11)
-      }).catch(error => console.log(error))
+      }).catch(error => console.log('Init command => commandSystem',error))
     }
 
     // Il n'y pas plus de process
@@ -209,7 +209,7 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
       }).catch(error => {
         message.delete()
         msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
-        console.log(error)
+        console.log('Init command => channelWelcome in findChannel func',error)
         return;
       })
     }
@@ -267,7 +267,7 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
       }).catch(error => {
         message.delete({timeout: 2000})
         msg.embed(errorEmbed(msg,`Impossible de trouver le role \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
-        console.log(error)
+        console.log('Init command => roleAuto in FindRole func',error)
         return;
       })
     }

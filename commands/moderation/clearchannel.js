@@ -30,7 +30,7 @@ module.exports = class ClearCommand extends Command {
           await clone.send(`${msg.author}, la tache est maintenant terminé. Tous les messages ont été supprimés !`)
         })
       }
-    }).catch(error => console.log(error))
+    }).catch(error => console.log('ClearChannel command => clearChannel func',error))
   }
 };
 

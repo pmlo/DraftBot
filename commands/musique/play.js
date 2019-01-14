@@ -55,7 +55,7 @@ const run = (current) => async (msg, { url }) =>  {
 
                 listQueue.connection = connection;
             } catch (error) {
-                console.log(error)
+                console.log('Play command => connexion with link',error)
                 current.queue.delete(msg.guild.id);
                 statusMsg.edit(`${msg.author}, impossible de rejoindre votre salon vocal.`);
 
@@ -104,7 +104,7 @@ const run = (current) => async (msg, { url }) =>  {
             await emojis.reduce((acc, emoji) => acc.then(() => reactMessage.react(emoji)), Promise.resolve())
             bot.on('messageReactionAdd', startReactEvent(msg,videos,sendedEmbed,current,queue,voiceChannel,statusMsg));
         } catch (err) {
-            console.log(err)
+            console.log('Play command => react system',err)
             return statusMsg.edit(`${msg.author}, impossible d'obtenir les détails de la vidéo recherché.`);
         }
     }
@@ -154,7 +154,7 @@ const handleVideo = (current) => async (video, queue, voiceChannel, msg, statusM
 
             return null;
         } catch (error) {
-            console.log(error)
+            console.log('Play command => join in the handle',error)
             current.queue.delete(msg.guild.id);
             statusMsg.edit(`${msg.author}, impossible de rejoindre votre salon vocal.`);
 

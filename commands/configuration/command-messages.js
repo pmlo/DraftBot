@@ -27,8 +27,6 @@ module.exports = class WelcomeCommand extends Command {
       description = `🎉 Les messages de commandes seront maintenant **laissés** !`;
     }
 
-    console.log(msg.guild.settings.get('deletecommandmessages'))
-
     return sendLogsBot(msg, description)
   }
 };

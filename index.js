@@ -156,7 +156,7 @@ DraftBot.on('raw', event => {
                     }
                 }
             }
-        }).catch(console.log)
+        }).catch(err => console.log('RAW reactions => fetchMessages',err))
     }
 });
 
@@ -171,7 +171,7 @@ DraftBot.registry
         ['leadersboards','Leadersboards - Consultez les statistiques de vos jeux préférés'],
         ['dev', 'Développeurs - Outils pour développeurs'],
         ['moderation', 'Moderation - Commandes de modération'],
-        ['configuration', 'Configuration - Commandes permettant de configurer le bot, toutes regroupés dans !init']
+        ['configuration', 'Configuration - Commandes permettant de configurer le bot, toutes regroupés dans !init'],
         ['admin', 'Admin - Commandes permettant de gérer les commandes sur le serveur']
     ])
     .registerCommandsIn(path.join(__dirname, 'commands'));

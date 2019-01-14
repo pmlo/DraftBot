@@ -72,7 +72,7 @@ const levelImage = async (msg,user,xp,place) => {
     return msg.embed(newMemberEmbed)
 
   } catch (error) {
-    return console.log(error);
+    return console.log('Utils command => generate level image',error);
   }
 }
 
@@ -117,7 +117,7 @@ const makeWelcomeImage = async (member) => {
       
       return member.guild.channels.find(c => c.id === channel.id).send(`🎉  Bienvenue <@${member.id}>  🎉!`, {embed: newMemberEmbed});
     } catch (error) {
-      return console.log(error);
+      return console.log('Utils => WelcomeImage',error);
     }
   }
 };
@@ -143,7 +143,7 @@ const guildAdd = async guild => {
     if(channel !== null) channel.send(newGuildEmbed);
 
     const canvas = new Jimp(500, 150);
-    const avatar = await Jimp.read(guild.iconURL({format: 'png'}));
+    const avatar = await Jimp.read(guild.iconURL({format: 'png'}) ? guild.iconURL({format: 'png'}) : guild.owner.user.displayAvatarURL({format: 'png'}));
 
     const Quantify_55_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_55_white.fnt'));
     const Quantify_25_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_25_white.fnt'));
@@ -171,7 +171,7 @@ const guildAdd = async guild => {
       .setImage('attachment://newserv.png');
     guild.client.channels.get('498406991891529728').send(newBotEmbed)
   } catch (err) {
-    return console.log(err);
+    return console.log('Utils => NewServ',err);
     
   }
 };
@@ -432,6 +432,12 @@ const getUserXp = (msg,user) => new Promise((resolve, reject) =>{
   resolve({xp, users})
 })
 
+const getSimpleUserXp = (msg,user) => new Promise((resolve, reject) =>{
+  const db = new Database(path.join(__dirname, './storage.sqlite'));
+  const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
+  resolve(xp)
+})
+
 const getUsersXp = (msg,user) => new Promise((resolve, reject) =>{
   const db = new Database(path.join(__dirname, './storage.sqlite'));
   const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
@@ -531,7 +537,6 @@ const stringifyPrimitive = v => {
 };
 
 const deleteCommandMessages = msg => {
-  console.log(msg.guild.settings.get('deletecommandmessages') != false,msg.deletable)
   if (msg.deletable && msg.guild.settings.get('deletecommandmessages') != false) msg.delete();
 };
 
@@ -564,5 +569,6 @@ module.exports = {
   getRewards,
   stringify,
   getUsersXp,
-  deleteCommandMessages
+  deleteCommandMessages,
+  getSimpleUserXp
 };
