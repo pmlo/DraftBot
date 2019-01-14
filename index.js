@@ -172,6 +172,7 @@ DraftBot.registry
         ['dev', 'Développeurs - Outils pour développeurs'],
         ['moderation', 'Moderation - Commandes de modération'],
         ['configuration', 'Configuration - Commandes permettant de configurer le bot, toutes regroupés dans !init']
+        ['admin', 'Admin - Commandes permettant de gérer les commandes sur le serveur']
     ])
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
