@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const {MessageEmbed} = require('discord.js');
 const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class DisableCommandCommand extends Command {
@@ -31,16 +30,13 @@ module.exports = class DisableCommandCommand extends Command {
 	run(msg, args) {
 		deleteCommandMessages(msg)
 		if(!args.cmdOrGrp.isEnabledIn(msg.guild, true)) {
-			return msg.reply(
-				`${args.cmdOrGrp.group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` est déjà désactivé.`
-			);
+			return msg.reply(`${args.cmdOrGrp.group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` est déjà désactivé.`);
 		}
 		if(args.cmdOrGrp.guarded) {
-			return msg.reply(
-				`Vous ne pouvez pas désactiver ${args.cmdOrGrp.group ? 'la commande' : 'le groupe'} \`${args.cmdOrGrp.name}\`.`
-			);
+			return msg.reply(`Vous ne pouvez pas désactiver ${args.cmdOrGrp.group ? 'la commande' : 'le groupe'} \`${args.cmdOrGrp.name}\`.`);
 		}
 		args.cmdOrGrp.setEnabledIn(msg.guild, false);
-		return msg.reply(`${args.cmdOrGrp.group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\`est maintenant désactivé.`);
+	
+		return sendLogsBot(msg, `${args.cmdOrGrp.group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\`est maintenant désactivé.`)
 	}
 };

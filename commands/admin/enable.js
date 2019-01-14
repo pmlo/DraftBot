@@ -1,5 +1,4 @@
 const {Command} = require('discord.js-commando');
-const {MessageEmbed} = require('discord.js');
 const {deleteCommandMessages} = require('../../utils.js');
 
 module.exports = class EnableCommandCommand extends Command {
@@ -41,12 +40,7 @@ module.exports = class EnableCommandCommand extends Command {
 			);
 		}
 		args.cmdOrGrp.setEnabledIn(msg.guild, true);
-		return msg.reply(
-			`${group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` ${
-				group && !group.isEnabledIn(msg.guild) ?
-				`, mais le groupe \`${group.name}\` est désactivé, donc il ne peut toujours pas être utilisé` :
-				''
-			}.`
-		);
+
+		return sendLogsBot(msg, `${group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` ${group && !group.isEnabledIn(msg.guild) ? `, mais le groupe \`${group.name}\` est désactivé, donc il ne peut toujours pas être utilisé` : ''}.`)
 	}
 };
