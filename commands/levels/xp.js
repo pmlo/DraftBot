@@ -43,7 +43,7 @@ module.exports = class PrefixCommand extends Command {
 			const {xp} = await getSimpleUserXp(msg,member.user)
 			if(nombre > xp) nombre = xp;
 			removeUserXp(msg,member.user,nombre)
-			msg.reply(`${nombre} xp ont été retirés au compte de ${member.user} !`)
+			msg.reply(`${nombre} xp ont été retirés au compte de \`${member.user.username}\` !`)
 		}
 	}
 };

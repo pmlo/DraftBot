@@ -36,7 +36,7 @@ DraftBot.on('ready', () => {
     createTables()
 });
 
-DraftBot.on('error', console.error);
+// DraftBot.on('error', console.error);
 
 DraftBot.on('guildMemberAdd', member => {
     makeWelcomeImage(member);
@@ -80,12 +80,17 @@ DraftBot.on('channelCreate', channel => {
 DraftBot.on('channelDelete', channel => sendLogsServ(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
 
 DraftBot.on('message', message => {
+
     if(!message.guild || message.author.bot) return;
     if (message.guild && message.guild.settings.get('invites') === false && invites(message, message.client)) message.delete();
 
     if(message.guild.settings.get('levelSystem') === false) return;
 
-    const xp = Math.floor(Math.random()*11)+15;
+    const xpCount = (message.guild.settings.get('xpCount') ? message.guild.settings.get('xpCount') : '15:25');
+
+    const sXpCount = xpCount.split(':');
+
+    const xp = xpCount !== '0' ? Math.floor(Math.random() * (new Number(sXpCount[1]) - new Number(sXpCount[0]) + 1)) + new Number(sXpCount[0]) : 0;
 
     const result = db.prepare(`SELECT xp FROM "levels" WHERE user=${message.author.id} AND guild=${message.guild.id}`).get()
 
