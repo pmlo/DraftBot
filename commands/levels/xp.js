@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando')
-const {removeUserXp,addUserXp,deleteCommandMessages} = require('../../utils.js');
+const {removeUserXp,addUserXp,deleteCommandMessages,getSimpleUserXp} = require('../../utils.js');
 
 module.exports = class PrefixCommand extends Command {
 	constructor(client) {
@@ -40,6 +40,8 @@ module.exports = class PrefixCommand extends Command {
 			addUserXp(msg,member.user,nombre)
 			msg.reply(`${nombre} xp ont été ajoutés au compte de ${member.user} !`)
 		}else if(argument === 'remove' || argument === 'enlever' || argument === 'retirer'){
+			const {xp} = await getSimpleUserXp(msg,member.user)
+			if(nombre > xp) nombre = xp;
 			removeUserXp(msg,member.user,nombre)
 			msg.reply(`${nombre} xp ont été retirés au compte de ${member.user} !`)
 		}
