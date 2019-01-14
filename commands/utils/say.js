@@ -22,6 +22,6 @@ module.exports = class AvatarCommand extends Command {
 
   async run (msg, {message}) {
     await msg.delete();
-    await msg.say(message)
+    await msg.say(message, {files: msg.attachments.map(a => a.proxyURL)})
   }
 };
