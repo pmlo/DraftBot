@@ -1,5 +1,5 @@
 const {Command} = require('discord.js-commando');
-const {deleteCommandMessages} = require('../../utils.js');
+const {deleteCommandMessages,sendLogsBot} = require('../../utils.js');
 
 module.exports = class DisableCommandCommand extends Command {
 	constructor(client) {
