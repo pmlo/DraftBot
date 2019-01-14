@@ -25,6 +25,10 @@ module.exports = class QuoteCommand extends Command {
   async run (msg, {titre}) {
     deleteCommandMessages(msg);
 
+    if(title.length > 256){
+      return msg.reply(`Le titre ne peux pas être plus grand que 256 caractères, il fait actuellement \`${title.length}\` !`)
+    }
+
     const embed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setTitle(titre)
