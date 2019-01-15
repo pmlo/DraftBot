@@ -44,13 +44,13 @@ module.exports = class WelcomeCommand extends Command {
         const value = response.response;
         msg.guild.settings.set('xpCount', value);
         const sValue = value.split(':')
-
+        stopTimer();
         if(value === '0'){
           return sendLogsBot(msg,`L'xp attribué sera de \`${value}\` !`);
         }
         return sendLogsBot(msg,`L'xp attribué sera entre  \`${sValue[0]}\` et \`${sValue[1]}\` !`);
       }).catch(error => console.log('Level-admin command => ',error))
-    }x
+    }
   }
 };
 
