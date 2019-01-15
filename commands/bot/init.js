@@ -129,25 +129,36 @@ module.exports = class InviteCommand extends Command {
         msg.guild.settings.set('levelSystem', value);
     
         msg.embed(resultEmbed(msg,`Le système de niveau est maintenant **${value === true ? 'activé' : 'désactivé'}** !`))
-        this.runProcess(msg,9)
+        this.runProcess(msg,value === true ? 9 : 10)
       }).catch(error => console.log('Init command => levelSystem',error))
     }
     if(process === 9){
+      return levelSystemXp(msg).then(response => {
+        const value = response.response;
+        msg.guild.settings.set('xpCount', value);
+        const sValue = value.split(':')
+        
+        msg.embed(resultEmbed(msg,`L'xp attribué aux membres lors de l'envoie d'un message sera ${ value === '0' ? `de \`0\`xp` : `entre  \`${sValue[0]}\` et \`${sValue[1]}\`xp`} !`));
+  
+        this.runProcess(msg,10)
+      }).catch(error => console.log('Init command => levelSystemXp',error))
+    }
+    if(process === 10){
       return authorizeInvites(msg).then(response => {
         const value = response.response;
         msg.guild.settings.set('invites', value);
     
         msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisés' : 'interdites donc supprimés'}** !`))
-        this.runProcess(msg,10)
+        this.runProcess(msg,11)
       }).catch(error => console.log('Init command => authorizeInvites',error))
     }
-    if(process === 10){
+    if(process === 11){
       return commandSystem(msg).then(response => {
         const value = response.response;
         msg.guild.settings.set('deletecommandmessages', value);
 
         msg.embed(resultEmbed(msg,`Les messages de commandes seront maintenant **${value === true ? 'supprimés' : 'laissés'}** !`))
-        this.runProcess(msg,11)
+        this.runProcess(msg,12)
       }).catch(error => console.log('Init command => commandSystem',error))
     }
 
@@ -421,6 +432,48 @@ const levelSystem = (msg) => new Promise((resolve, reject) => {
   
     msg.client.once('cancel', () => {
       msg.client.removeListener('message', eventListenLevelSystemReactions)
+      return reject('cancelled')
+    })
+  })
+});
+
+const levelSystemXp = (msg) => new Promise((resolve, reject) => {
+  const emojis = ['0⃣','1⃣', '2⃣', '3⃣'];
+
+  const currentXp = msg.guild.settings.get('xpCount') ? msg.guild.settings.get('xpCount') : '15:25';
+
+  msg.embed(questionEmbed(msg,`\n
+    Quel quantité d'xp souhaitez vous attribuer aux membres lorsqu'ils envoient un message ?\n 
+    0⃣ | 0 xp par messages ${currentXp == '0' ? '✅' : ''}\n
+    1⃣ | Entre 5 xp 15 par messages ${currentXp == '5:15' ? '✅' : ''}\n
+    2⃣ | Entre 15 xp 25 par messages ${currentXp == '15:25' ? '✅' : ''}\n
+    3⃣ | Entre 25 xp 35 par messages ${currentXp == '25:35' ? '✅' : ''}
+  `))
+  .then(async question => {
+    await emojis.reduce((acc, emoji) => acc.then(() => question.react(emoji)), Promise.resolve())
+
+    function eventListenLevelSystemXpReactions(messageReaction,user){
+      if(user.bot || messageReaction.message.id !== question.id || user.id !== msg.author.id) return;
+        if(!emojis.includes(messageReaction.emoji.name)){
+          messageReaction.users.remove(user)
+          return;
+        }
+        msg.client.removeListener('messageReactionAdd', arguments.callee);
+        messageReaction.message.delete();
+    
+        switch (messageReaction.emoji.name) {
+          case '0⃣': return resolve({response: '0'});
+          case '1⃣': return resolve({response: '5:15'});
+          case '2⃣': return resolve({response: '15:25'});
+          case '3⃣': return resolve({response: '25:35'});
+        }
+        return null;
+    }
+  
+    msg.client.on('messageReactionAdd',eventListenLevelSystemXpReactions)
+  
+    msg.client.once('cancel', () => {
+      msg.client.removeListener('message', eventListenLevelSystemXpReactions)
       return reject('cancelled')
     })
   })
