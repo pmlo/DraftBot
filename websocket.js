@@ -26,6 +26,10 @@ class WebSocket {
                 res.status(200).send({ user: response})
             })
         })
+
+        this.server = this.app.listen(port, () => {
+            console.log("Websocket API set up at port " + this.server.address().port)
+        })
     }
 }
 
