@@ -12,7 +12,7 @@ module.exports = class PubgCommand extends Command {
       name: 'lol',
       memberName: 'lol',
       group: 'leadersboards',
-      description: 'Récupérer les statistiques d\'un joueur League of Legends',
+      description: 'Récupérer les statistiques d\'un joueuw1r League of Legends',
       examples: ['lol DraftMan_Dev'],
       guildOnly: false,
       args: [
@@ -27,22 +27,22 @@ module.exports = class PubgCommand extends Command {
 
   async run (msg, {user}) {
     deleteCommandMessages(msg);
-    const status = await msg.say(`Recherche du joueur \`${user}\``)
+    const status = await msg.say(`Recherche du joueuw1r \`${user}\``)
 
-    const summoner = await fetch(`https://eu.api.riotgames.com/lol/summoner/v4/summoners/by-name/${user}?api_key=${process.env.lol_api}`)
+    const summoner = await fetch(`https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${user}?api_key=${process.env.lol_api}`)
     const userP = await summoner.json();
 
     if(userP.status !== undefined){
-      return status.edit(`:x: Le profil du joueur \`${user}\` n'existe pas :pensive:`)
+      return status.edit(`:x: Le profil du joueuw1r \`${user}\` n'existe pas :pensive:`)
     }
 
     status.edit(`Profil League of Legend de \`${user}\` trouvé !`)
 
-    const match = await fetch(`https://eu.api.riotgames.com/lol/match/v4/matchlists/by-account/${userP.accountId}?api_key=${process.env.lol_api}`)
+    const match = await fetch(`https://euw1.api.riotgames.com/lol/match/v4/matchlists/by-account/${userP.accountId}?api_key=${process.env.lol_api}`)
     const {totalGames, matches} = await match.json()
     const lastMach = matches[0]
 
-    const league = await fetch(`https://eu.api.riotgames.com//lol/league/v4/positions/by-summoner/${userP.id}?api_key=${process.env.lol_api}`)
+    const league = await fetch(`https://euw1.api.riotgames.com//lol/league/v4/positions/by-summoner/${userP.id}?api_key=${process.env.lol_api}`)
     const [{wins,losses,rank,tier,leagueName}] = await league.json()
 
     const championsRq = await fetch(`http://ddragon.leagueoflegends.com/cdn/6.24.1/data/fr_FR/champion.json`)
