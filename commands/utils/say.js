@@ -8,7 +8,7 @@ module.exports = class AvatarCommand extends Command {
       group: 'utils',
       aliases: ['dit','sayd'],
       description: 'Permet de faire parler le bot',
-      examples: ['say DraftMan est le plus fort !'],
+      examples: ['say DraftMan etait le plus fort !'],
       guildOnly: true,
       args: [
         {
