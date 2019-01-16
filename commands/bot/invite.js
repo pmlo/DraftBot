@@ -24,6 +24,6 @@ module.exports = class InviteCommand extends Command {
       .setColor(0xcd6e57)
       .setDescription("Ajoute moi à ton serveur pour que je puisses t'aider dans les taches difficliles.\nSi tu souhaites en apprendre plus à mon sujet, DraftMan a réaliser une page en **mon** honneur et vu qu'on est plutôt proches je t'en fait cadeau 😉!\n[draftman.fr/draftbot](https://www.draftman.fr/draftbot)\n\n Pour ce qui est de l'invitation: la voici :\n[draftman.fr/drafbot/invite](https://www.draftman.fr/draftbot/invite)\n\nCordialement __**DraftBot**__\n\nPS: Je t'attends patiemment 😘");
 
-    return msg.embed(inviteEmbed, `Je veut faire partie de ta vie <@${msg.member.id}> ❤ !`);
+    return msg.embed(inviteEmbed, `Je veut faire partie de ta vie ${msg.author} ❤ !`);
   }
 };
