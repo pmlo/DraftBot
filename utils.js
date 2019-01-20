@@ -73,8 +73,41 @@ const levelImage = async (msg,user,xp,place) => {
 
   } catch (error) {
     return console.log('Utils command => generate level image',error);
-  }
+  } 
 }
+
+const rewardGiven = async (msg,role,level,member) => {
+  try {
+    const canvas = new Jimp(650, 150);
+    const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'}));
+    const tada = await Jimp.read('./images/tada.png');
+
+    const Quantify_55_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_55_white.fnt'));
+    const Quantify_25_white = await Jimp.loadFont(path.join(__dirname, './fonts/Quantify_25_white.fnt'));
+    const OpenSans_22_white = await Jimp.loadFont(path.join(__dirname, './fonts/OpenSans_22_white.fnt'));
+    const mask = await Jimp.read('https://www.draftman.fr/images/mask.png');
+
+    avatar.resize(136, Jimp.AUTO);
+    tada.resize(100, Jimp.AUTO);
+    mask.resize(136, Jimp.AUTO);
+
+    avatar.mask(mask, 0, 0);
+
+    canvas.blit(avatar, 5, 5);
+    canvas.blit(tada, 460, 15);
+
+    canvas.print(Quantify_55_white, 158, 20, 'Felicitations !');
+    canvas.print(OpenSans_22_white, 158, 70, 'vous recevez le role');
+    canvas.print(Quantify_25_white, 158, 105, role.name);
+
+    const buffer = await canvas.getBufferAsync(Jimp.MIME_PNG);
+    
+    return msg.reply(`voici votre récompense pour avoir atteint le **niveau ${level}** !`,{files: [buffer]})
+  } catch (error) {
+    return console.log('Utils command => generate reward image',error);
+  } 
+}
+
 
 const makeWelcomeImage = async (member) => {
   if (member.guild.settings.get('welcomeMessage') !== false && !member.user.bot) {
@@ -164,15 +197,16 @@ const guildAdd = async guild => {
     const embedAttachment = new MessageAttachment(buffer, 'newserv.png');
 
     const newBotEmbed = new MessageEmbed()
-      .attachFiles([embedAttachment])
-      .setColor(0xcd6e57)
-      .setTitle('Ho ! Je viens de rejoindre un nouveau serveur !')
-      .setDescription(`Je suis maintenant sur **${guild.client.guilds.size}** serveurs discord !`)
-      .setImage('attachment://newserv.png');
+    .attachFiles([embedAttachment])
+    .setColor(0xcd6e57)
+    .setTitle('Ho ! Je viens de rejoindre un nouveau serveur !')
+    .setDescription(`Je suis maintenant sur **${guild.client.guilds.size}** serveurs discord !`)
+    .addField('Effectif',`${guild.memberCount} membres (${guild.large ? 'Grande' : 'Petite'} communauté)`,true)
+    .addField('Créateur',guild.owner.user,true)
+    .setImage('attachment://newserv.png');
     guild.client.channels.get('498406991891529728').send(newBotEmbed)
   } catch (err) {
     return console.log('Utils => NewServ',err);
-    
   }
 };
 
@@ -344,14 +378,21 @@ const findRole = (val, msg) => new Promise((resolve, reject) =>{
   return reject();
 });
 
-const invites = function (msg, client) {
-  if (msg.author.bot || client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
+const invites = msg => {
+  if (msg.author.bot || msg.client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
     return false;
   }
   if ((/(?:discord\.gg|discordapp.com\/invite)/gim).test(msg.content)) {
     return true;
   }
   return false;
+};
+
+const badwords = msg => {
+  if (msg.author.bot || msg.client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
+      return false;
+  }
+  return msg.guild.settings.get('badwords').some(v => msg.content.indexOf(v) >= 0);
 };
 
 const createTables = () => {
@@ -553,6 +594,7 @@ module.exports = {
   findRole,
   guildAdd,
   invites,
+  badwords,
   createTables,
   warnUser,
   getWarnUser,
@@ -570,5 +612,6 @@ module.exports = {
   stringify,
   getUsersXp,
   deleteCommandMessages,
-  getSimpleUserXp
+  getSimpleUserXp,
+  rewardGiven
 };
