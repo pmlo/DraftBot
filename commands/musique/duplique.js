@@ -1,7 +1,7 @@
 const {Command} = require('discord.js-commando');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class MusicStatusCommand extends Command {
+module.exports = class DupliqueSongCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'duplique',

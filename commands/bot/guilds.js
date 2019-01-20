@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class AvatarCommand extends Command {
+module.exports = class GuildsCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'guildscount',

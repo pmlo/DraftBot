@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const {oneLine} = require('common-tags');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class AvatarCommand extends Command {
+module.exports = class MathsCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'maths',

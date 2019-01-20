@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando');
 const {sendLogsBot,deleteCommandMessages} = require('../../utils.js');
 const {MessageEmbed} = require('discord.js');
 
-module.exports = class WelcomeCommand extends Command {
+module.exports = class LevelAdminCommand extends Command {
   constructor (client) {  
     super(client, {
       name: 'level-admin',

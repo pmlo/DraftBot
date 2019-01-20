@@ -6,7 +6,7 @@ const {deleteCommandMessages} = require('../../utils.js');
 
 moment.locale('fr');
 
-module.exports = class WeatherCommand extends Command {
+module.exports = class MeteoCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'meteo',

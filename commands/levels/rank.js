@@ -1,7 +1,7 @@
 const {Command} = require('discord.js-commando')
 const {getUserXp,levelImage,deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class PrefixCommand extends Command {
+module.exports = class RankCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'rank',

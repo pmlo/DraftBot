@@ -2,7 +2,7 @@ const {Command, util} = require('discord.js-commando')
 const {oneLine, stripIndents} = require('common-tags')
 const {Song,deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class ViewQueueCommand extends Command {
+module.exports = class QueueSongCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'queue',

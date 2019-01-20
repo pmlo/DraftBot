@@ -1,14 +1,9 @@
 const {Command} = require('discord.js-commando');
 const Fuse = require('fuse.js');
-const {MessageEmbed} = require('discord.js');
-const toMarkdown = require("to-markdown");
 const fetch = require('node-fetch');
-const {JSDOM} = require("jsdom");
 const {deleteCommandMessages} = require('../../utils.js');
 
-//getSimilarObjects
-
-module.exports = class DdocsCommand extends Command {
+module.exports = class NodeCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'nodejs',

@@ -3,7 +3,7 @@ const { Command } = require('discord.js-commando')
 const { stripIndents } = require('common-tags')
 const { findChannel,findRole,deleteCommandMessages} = require('../../utils.js')
 
-module.exports = class InviteCommand extends Command {
+module.exports = class InitCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'init',

@@ -1,7 +1,7 @@
 const {Command} = require('discord.js-commando');
 const {sendLogsBot,deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class autoroleCommand extends Command {
+module.exports = class AutoroleCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'autorole',

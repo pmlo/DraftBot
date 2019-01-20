@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando');
 const {kickUser,banUser,warnUser,sendLogsBot,deleteCommandMessages} = require('../../utils.js')
 const {MessageEmbed} = require('discord.js');
 
-module.exports = class BanCommand extends Command {
+module.exports = class SanctionCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'sanction',

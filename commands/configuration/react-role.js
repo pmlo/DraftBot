@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class QuoteCommand extends Command {
+module.exports = class ReactRoleCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'react-role',

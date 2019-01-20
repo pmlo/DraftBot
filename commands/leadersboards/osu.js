@@ -5,7 +5,7 @@ const {MessageEmbed} = require('discord.js');
 const _ = require('lodash');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class PubgCommand extends Command {
+module.exports = class OSUCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'osu',

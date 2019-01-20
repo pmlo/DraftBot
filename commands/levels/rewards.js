@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando')
 const {getRewards,deleteCommandMessages} = require('../../utils.js');
 const {MessageEmbed} = require('discord.js');
 
-module.exports = class PrefixCommand extends Command {
+module.exports = class RewardsCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'rewards',

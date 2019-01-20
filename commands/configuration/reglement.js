@@ -4,7 +4,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class WelcomeCommand extends Command {
+module.exports = class ReglementCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'reglement',

@@ -2,7 +2,7 @@ const {MessageEmbed} = require('discord.js');
 const {Command} = require('discord.js-commando');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class InviteCommand extends Command {
+module.exports = class InfoCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'info',

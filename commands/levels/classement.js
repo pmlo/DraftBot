@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando')
 const {getUsersXp,getLevelFromXp,deleteCommandMessages} = require('../../utils.js');
 const {MessageEmbed} = require('discord.js');
 
-module.exports = class PrefixCommand extends Command {
+module.exports = class ClassementCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'classement',

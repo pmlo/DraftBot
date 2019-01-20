@@ -6,13 +6,13 @@ const _ = require('lodash');
 const {deleteCommandMessages} = require('../../utils.js');
 
 
-module.exports = class PubgCommand extends Command {
+module.exports = class LOLCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'lol',
       memberName: 'lol',
       group: 'leadersboards',
-      description: 'Récupérer les statistiques d\'un joueuw1r League of Legends',
+      description: 'Récupérer les statistiques d\'un joueur League of Legends',
       examples: ['lol DraftMan_Dev'],
       guildOnly: false,
       args: [
@@ -27,13 +27,13 @@ module.exports = class PubgCommand extends Command {
 
   async run (msg, {user}) {
     deleteCommandMessages(msg);
-    const status = await msg.say(`Recherche du joueuw1r \`${user}\``)
+    const status = await msg.say(`Recherche du joueur \`${user}\``)
 
     const summoner = await fetch(`https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${user}?api_key=${process.env.lol_api}`)
     const userP = await summoner.json();
 
     if(userP.status !== undefined){
-      return status.edit(`:x: Le profil du joueuw1r \`${user}\` n'existe pas :pensive:`)
+      return status.edit(`:x: Le profil du joueur \`${user}\` n'existe pas :pensive:`)
     }
 
     status.edit(`Profil League of Legend de \`${user}\` trouvé !`)

@@ -5,7 +5,7 @@ const {get} = require("snekfetch");
 const {JSDOM} = require("jsdom");
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class DdocsCommand extends Command {
+module.exports = class MDNCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'mdn',

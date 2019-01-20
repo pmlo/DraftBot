@@ -2,7 +2,7 @@ const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class ClearCommand extends Command {
+module.exports = class ClearChannelCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'clearchannel',

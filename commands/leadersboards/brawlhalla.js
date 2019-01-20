@@ -7,7 +7,7 @@ const {deleteCommandMessages} = require('../../utils.js');
 const SteamAPI = require('steamapi');
 const steam = new SteamAPI(process.env.steam_api);
 
-module.exports = class PubgCommand extends Command {
+module.exports = class BrawlhallaCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'brawlhalla',
