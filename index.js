@@ -1,10 +1,13 @@
 const { CommandoClient, SyncSQLiteProvider } = require('discord.js-commando');
 const path = require('path');
-const {makeWelcomeImage,newUser,guildAdd,sendLogsServ,invites,createTables,error,getLevelFromXp,getLastUserReward} = require('./utils.js');
+const {makeWelcomeImage,rewardGiven,newUser,guildAdd,sendLogsServ,invites,badwords,createTables,error,getLevelFromXp,getLastUserReward} = require('./utils.js');
 const websocket = require('./websocket');
 const {oneLine} = require('common-tags');
 const Database = require('better-sqlite3');
+const moment = require('moment');
 const DBL = require("dblapi.js");
+
+let users = new Map();
 
 require('dotenv').config();
 
@@ -82,9 +85,13 @@ DraftBot.on('channelDelete', channel => sendLogsServ(channel.guild, `Le salon ${
 DraftBot.on('message', message => {
 
     if(!message.guild || message.author.bot) return;
-    if (message.guild && message.guild.settings.get('invites') === false && invites(message, message.client)) message.delete();
+    if(message.guild && message.guild.settings.get('invites') === false && invites(message)) message.delete();
+    if(message.guild && message.guild.settings.get('badwords') && message.guild.settings.get('badwords').status === true && badwords(message).mots) message.delete();
 
     if(message.guild.settings.get('levelSystem') === false) return;
+
+    if(users.get(message.author.id) && moment.duration(moment(users.get(message.author.id)).diff(moment())).asSeconds() < 10) return;
+    users.set(message.author.id,message.createdTimestamp);
 
     const xpCount = (message.guild.settings.get('xpCount') ? message.guild.settings.get('xpCount') : '15:25');
 
@@ -103,11 +110,9 @@ DraftBot.on('message', message => {
                 if(!member.roles.find(r => r.id === response.role)) {
                     member.roles.add(role).catch(error => {
                         if(error.message === 'Missing Permissions'){
-                            message.reply('Il y a un problème de permissions !')
+                            return message.reply('Il y a un problème de permissions !')
                         }
-                    }).then(() =>  message.reply(`Félicitation ! :tada:\nVous venez recevoir votre récompense car vous avez atteint le **niveau ${level}** !\nVous avez reçu le role **${role.name}** !`,{
-                        files: ['https://www.draftman.fr/images/draftbot/felicitation.jpg']
-                    }))
+                    }).then(rewardGiven(message,role,level,member))
                 }
             }
         })
