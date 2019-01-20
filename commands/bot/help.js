@@ -54,8 +54,11 @@ module.exports = class HelpCommand extends Command {
 
 				const messages = [];
 				try {
-					messages.push(await msg.direct(help));
-					if(msg.channel.type !== 'dm') messages.push(await msg.reply('je viens de vous envoyer la liste des commandes en MP !'));
+					if(msg.channel.type !== 'dm'){
+						messages.push(await msg.say(help));
+					}else{
+						messages.push(await msg.direct(help));
+					}
 				} catch(err) {
 					messages.push(await msg.reply(error('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.')));
 				}
