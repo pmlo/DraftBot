@@ -30,9 +30,9 @@ module.exports = class InviteCommand extends Command {
       .setDescription(
       stripIndents`
         Bienvenue sur mon procéssus de configuration !
-        Je vais vous posez une série de question me permettant de répondre aux mieux à vos besoins.
+        Je vais vous poser une série de question me permettant de répondre au mieux à vos besoins.
         
-        Vous pouvez arêter cette configuration à tout moment en envoyant \`cancel\` ou en dépassant 30 secondes par question.
+        Vous pouvez arêter cette configuration à tout moment en envoyant \`cancel\` ou en attendant 30 secondes après la question.
       `)
       .setFooter("Processus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
       .setTimestamp()
@@ -82,7 +82,7 @@ module.exports = class InviteCommand extends Command {
       return roleAutoAsk(msg).then(response => {
         const value = response.response
         if(value !== true ) msg.guild.settings.remove('defaultRole');
-        msg.embed(resultEmbed(msg,`La fonction de role automatique est maintenant **${value === true ? 'activé' : 'désactivé'}** !`))
+        msg.embed(resultEmbed(msg,`La fonction de rôle automatique est maintenant **${value === true ? 'activée' : 'désactivée'}** !`))
         this.runProcess(msg, value === true ? 4 : 5)
       }).catch(error => console.log('Init command => roleAutoAsk',error))
     }
@@ -138,7 +138,7 @@ module.exports = class InviteCommand extends Command {
         msg.guild.settings.set('xpCount', value);
         const sValue = value.split(':')
         
-        msg.embed(resultEmbed(msg,`L'xp attribué aux membres lors de l'envoie d'un message sera ${ value === '0' ? `de \`0\`xp` : `entre  \`${sValue[0]}\` et \`${sValue[1]}\`xp`} !`));
+        msg.embed(resultEmbed(msg,`L'XP attribuée aux membres lors de l'envoi d'un message sera ${ value === '0' ? `de \`0\`xp` : `entre  \`${sValue[0]}\` et \`${sValue[1]}\`xp`} !`));
   
         this.runProcess(msg,10)
       }).catch(error => console.log('Init command => levelSystemXp',error))
@@ -148,7 +148,7 @@ module.exports = class InviteCommand extends Command {
         const value = response.response;
         msg.guild.settings.set('invites', value);
     
-        msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisés' : 'interdites donc supprimés'}** !`))
+        msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisées' : 'interdites donc supprimées'}** !`))
         this.runProcess(msg,11)
       }).catch(error => console.log('Init command => authorizeInvites',error))
     }
@@ -157,7 +157,7 @@ module.exports = class InviteCommand extends Command {
         const value = response.response;
         msg.guild.settings.set('deletecommandmessages', value);
 
-        msg.embed(resultEmbed(msg,`Les messages de commandes seront maintenant **${value === true ? 'supprimés' : 'laissés'}** !`))
+        msg.embed(resultEmbed(msg,`Les messages de commandes seront maintenant **${value === true ? 'supprimés' : 'conservés'}** !`))
         this.runProcess(msg,12)
       }).catch(error => console.log('Init command => commandSystem',error))
     }
@@ -178,7 +178,7 @@ module.exports = class InviteCommand extends Command {
 const welcomeMessage = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Voulez vous un message de bienvenue quand un joueur rejoint le serveur ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/welcome_message.png'))
+  msg.embed(questionEmbedFile(msg,'Voulez-vous un message de bienvenue quand un joueur rejoint le serveur ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/welcome_message.png'))
   .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
