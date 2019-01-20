@@ -28,7 +28,7 @@ module.exports = class AvatarCommand extends Command {
     const question = search.split(' ').filter(val => val !== '').join('+');
 
     const embed = new MessageEmbed()
-      .setColor('#cd6e57')
+      .setColor(0xcd6e57)
       .setTitle(member.user.username)
       .setURL(`https://www.lmgtfy.com/?q=${question}`)
       .setDescription(`voici la solution à [ta question](https://www.lmgtfy.com/?q=${question}), c'est de la part de ${msg.author}, il pense que celà pourrais t'aider !`);
