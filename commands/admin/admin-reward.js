@@ -3,15 +3,15 @@ const path = require('path');
 const Database = require('better-sqlite3');
 const {deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class PrefixCommand extends Command {
+module.exports = class RewardCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'addreward',
-			memberName: 'addreward',
-			group: 'levels',
+			name: 'admin-reward',
+			memberName: 'admin-reward',
+			group: 'admin',
 			aliases: ['addrecompense','addrécompense','addrewards'],
 			description: 'Ajouter des récompenses en fonction des niveaux',
-			examples: ['xp ajouter DraftMan 3000'],
+			examples: ['admin-reward 10 Actif'],
 			guildOnly: true,
 			args: [
 			{

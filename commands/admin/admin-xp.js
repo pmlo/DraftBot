@@ -1,12 +1,12 @@
 const {Command} = require('discord.js-commando')
 const {removeUserXp,addUserXp,deleteCommandMessages,getSimpleUserXp} = require('../../utils.js');
 
-module.exports = class PrefixCommand extends Command {
+module.exports = class XpCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'xp',
-			memberName: 'xp',
-			group: 'levels',
+			name: 'admin-xp',
+			memberName: 'admin-xp',
+			group: 'admin',
 			aliases: ['change-xp'],
 			description: 'Faire des modifications sur le nombre d\'xp d\'un membre',
 			examples: ['xp ajouter DraftMan 3000'],

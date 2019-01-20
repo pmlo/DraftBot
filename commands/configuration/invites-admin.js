@@ -1,15 +1,15 @@
 const {Command} = require('discord.js-commando');
 const {sendLogsBot,deleteCommandMessages} = require('../../utils.js');
 
-module.exports = class InvitesCommand extends Command {
+module.exports = class InvitesAdminCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'invites',
-      memberName: 'invites',
+      name: 'invites-admin',
+      memberName: 'invites-admin',
       group: 'configuration',
-      aliases: ['invitations','invs'],
+      aliases: ['invitations','invs','invites'],
       description: 'Autoriser ou Interdir les invitations vers d\'autres serveurs discord.',
-      examples: ['invites'],
+      examples: ['invites-admin'],
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR']
     });
