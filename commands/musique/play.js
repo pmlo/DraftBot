@@ -3,7 +3,7 @@ const moment = require('moment');
 const ytdl = require('ytdl-core');
 const { Command } = require('discord.js-commando');
 const { Song,deleteCommandMessages } = require('../../utils.js');
-const emojis = ['1⃣', '2⃣', '3⃣','❌'];
+const emojis = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣','❌'];
 
 const run = (current) => async (msg, { url }) =>  {
     deleteCommandMessages(msg);
@@ -42,6 +42,7 @@ const run = (current) => async (msg, { url }) =>  {
             const listQueue = {
                 textChannel: msg.channel,
                 loop: false,
+                timeLaps: null,
                 voiceChannel,
                 connection: null,
                 songs: [],
@@ -83,7 +84,7 @@ const run = (current) => async (msg, { url }) =>  {
     } catch (error) {
         try {
             statusMsg.edit(`${msg.author}, recherche des musiques disponibles...`);
-            const videos = await current.youtube.searchVideos(url, 3);
+            const videos = await current.youtube.searchVideos(url, 5);
             if (!videos[0] || !videos) {
                 return statusMsg.edit(`${msg.author}, il n'y a aucun résultats.`);
             }
@@ -102,7 +103,7 @@ const run = (current) => async (msg, { url }) =>  {
 
             const sendedEmbed = await msg.embed(musicsList);
             const [reactMessage] = await [sendedEmbed, videos.map((_, index) => emojis[index])]
-            emojis.reduce((acc, emoji) => acc.then(() => reactMessage.react(emoji)), Promise.resolve())
+            emojis.reduce((acc, emoji) => acc.then(() => reactMessage.react(emoji).catch(() => null)), Promise.resolve())
             bot.on('messageReactionAdd', startReactEvent(msg,videos,sendedEmbed,current,queue,voiceChannel,statusMsg));
         } catch (err) {
             console.log('Play command => react system',err)
@@ -114,7 +115,6 @@ const run = (current) => async (msg, { url }) =>  {
 const handleVideo = (current) => async (video, queue, voiceChannel, msg, statusMsg) => {
     if (moment.duration(video.raw.contentDetails.duration, moment.ISO_8601).asSeconds() === 0) {
         statusMsg.edit(`${msg.author}, vous ne pouvez pas lire les flux en direct.`);
-
         return null;
     }
 
@@ -151,7 +151,7 @@ const handleVideo = (current) => async (video, queue, voiceChannel, msg, statusM
 
             queue.connection = connection;
             current.play(msg.guild, queue.songs[0]);
-            statusMsg.delete();
+            if(statusMsg) statusMsg.delete();
 
             return null;
         } catch (error) {
@@ -256,8 +256,9 @@ const play = (current) => (guild, song) => {
             description: `${`[${song}](${`${song.url}`})`}`,
             image: { url: song.thumbnail }
         }
-    }),
-    stream = ytdl(song.url, {
+    })
+
+    const stream = ytdl(song.url, {
         quality: 'highestaudio',
         filter: 'audioonly',
         highWaterMark: 12
@@ -267,29 +268,20 @@ const play = (current) => (guild, song) => {
         playing.then(msg => msg.edit(`❌ Impossible de jouer ${song}. Qu'est ce que c'est que ce travail! 😡`));
         queue.songs.shift();
         current.play(guild, queue.songs[0]);
-    }),
-    dispatcher = queue.connection.play(stream, {
+    })
+
+    const dispatcher = queue.connection.play(stream, {
         passes: 5,
         fec: true
-    }).on('end', () => {
-        if (streamErrored) {
-            return;
-        }
-        console.log(queue.voiceChannel.members.filter(member => !member.user.bot).array().length)
-        if (!queue.voiceChannel.members.filter(member => !member.user.bot).array().length == 0) {
-            queue.textChannel.send(`Il n\'y a plus personne ! Je perds mon temps... Je préfères partir :cry: !\nSi vous décidez de revenir faites simplement \`${guild.commandPrefix}resume\` !`);
-            queue.songs[0].dispatcher.pause();
-            queue.songs[0].playing = false;
-            queue.voiceChannel.leave();
-            return;
-        }
-        if(queue.loop){
-            return current.play(guild, queue.songs[0]);
-        }
-        current.play(guild, queue.songs[0]);
-        queue.songs.shift();
-        
-    }).on('error', (err) => {
+    })
+    .on('end', () => {
+        if (streamErrored) return;
+
+        if(!queue.loop) queue.songs.shift(); 
+
+        current.play(guild, queue.songs[0])
+    })
+    .on('error', (err) => {
         queue.textChannel.send(`Une erreur s'est produite lors de la lecture de la musique: \`${err}\``);
     });
 
@@ -297,6 +289,16 @@ const play = (current) => (guild, song) => {
     song.dispatcher = dispatcher;
     song.playing = true;
     queue.playing = true;
+
+    if (queue.voiceChannel.members.filter(member => !member.user.bot).array().length == 0) {
+        queue.textChannel.send(`Il n\'y a plus personne ! Je perds mon temps... Je préfères partir :cry: !\nSi vous décidez de revenir faites simplement \`${guild.commandPrefix}resume\` !`);
+        song.dispatcher.pause();
+        song.playing = false;
+        queue.timeLaps = setTimeout(()=> {
+            queue.textChannel.send(`Cela fait maintenant 5 minutes que vous êtes partis ! Je me sent vraiment inutile !\n*Je vous quitte définitivement...*`);
+            queue.voiceChannel.leave()
+        },5*60*1000)
+    }
 }
 
 const startReactEvent =  (msg,videos,sendedEmbed,current,queue,voiceChannel,statusMsg) => {
@@ -304,7 +306,7 @@ const startReactEvent =  (msg,videos,sendedEmbed,current,queue,voiceChannel,stat
         if(user.bot || sendedEmbed.id !== messageReaction.message.id || user.id !== msg.author.id) return;
         const emoji = messageReaction.emoji.name;
         if (emojis.includes(emoji)) {
-            sendedEmbed.delete();
+            if(sendedEmbed) sendedEmbed.delete();
             msg.client.removeListener('messageReactionAdd', startReactEvent);
             if(emoji === '❌'){
                 return null;

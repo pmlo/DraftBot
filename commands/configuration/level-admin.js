@@ -9,8 +9,9 @@ module.exports = class LevelAdminCommand extends Command {
       memberName: 'level-admin',
       group: 'configuration',
       aliases: ['admin-level','admin-levels','levels-admin'],
-      description: 'Activer ou désactiver le système de niveaux sur le serveur.',
-      examples: ['level-admin'],
+      description: 'Activer, désactiver ou configurer le système de niveaux sur le serveur.',
+      details: 'Pour configurer le le taut d\'xp attribué aux joueurs veuillez utiliser `level-admin config`',
+      examples: ['level-admin','level-admin config'],
       guildOnly: true,
       args: [{
 				key: 'config',
@@ -83,7 +84,7 @@ const getValue = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
 
         switch (messageReaction.emoji.name) {
           case '0⃣': return resolve({response: '0'});

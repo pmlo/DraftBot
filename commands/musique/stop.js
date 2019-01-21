@@ -38,7 +38,7 @@ module.exports = class StopMusicCommand extends Command {
       force = threshold <= 1 ||
       queue.voiceChannel.members.size < threshold ||
       queue.songs[0].member.id === msg.author.id ||
-      (msg.member.hasPermission('MANAGE_MESSAGES') && args.toLowerCase() === 'force');
+      (msg.member.hasPermission('MANAGE_MESSAGES'));
 
     if (force) {
       return msg.reply(this.stop(msg.guild, queue));

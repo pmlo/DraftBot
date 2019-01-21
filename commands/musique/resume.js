@@ -27,6 +27,9 @@ module.exports = class ResumeSongCommand extends Command {
     if (queue.songs[0].playing) {
       return msg.reply('reprendre une musique qui ne soit pas en pause est une très bonne idée. Vraiment fantastique. 🤔');
     }
+
+    if(queue.timeLaps !== null) clearTimeout(queue.timeLaps);
+
     queue.songs[0].dispatcher.resume();
     queue.songs[0].playing = true;
 

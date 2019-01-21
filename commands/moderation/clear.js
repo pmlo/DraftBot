@@ -69,7 +69,7 @@ const clearChannel = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }

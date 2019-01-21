@@ -56,7 +56,7 @@ module.exports = class MoveConvCommand extends Command {
             'content': message.content,
             'embeds': message.embeds
           })
-          message.delete()
+          if(message) message.delete();
         });
       });
     })

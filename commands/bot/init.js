@@ -191,7 +191,7 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }
@@ -214,11 +214,11 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
       findChannel(message.content, msg).then(response => {
         const channel = response.channel;
         msg.client.removeListener('message', func);
-        message.delete()
-        question.delete()
+        if(message) message.delete()
+        if(question) question.delete()
         return resolve({ response: channel });
       }).catch(error => {
-        message.delete()
+        if(message) message.delete()
         msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
         console.log('Init command => channelWelcome in findChannel func',error)
         return;
@@ -249,7 +249,7 @@ const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }
@@ -272,8 +272,8 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
       findRole(message.content, msg).then(response => {
         const role = response.role;
         msg.client.removeListener('message', func);
-        message.delete()
-        question.delete()
+        if(message) message.delete()
+        if(question) question.delete()
         return resolve({ response: role });
       }).catch(error => {
         message.delete({timeout: 2000})
@@ -307,7 +307,7 @@ const logsMessagesBot = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }
@@ -336,7 +336,7 @@ const logsMessagesServ = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }
@@ -359,12 +359,12 @@ const channelLogs = (msg) => new Promise((resolve, reject) => {
       findChannel(message.content, msg).then(response => {
         const channel = response.channel;
         if(channel === null) {
-          message.delete()
+          if(message) message.delete()
           msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
           return;
         }
-        message.delete()
-        question.delete()
+        if(message) message.delete()
+        if(question) question.delete()
         msg.client.removeListener('message', func);
         return resolve({ response: channel });
       })
@@ -394,7 +394,7 @@ const authorizeInvites = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }
@@ -423,7 +423,7 @@ const levelSystem = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }
@@ -459,7 +459,7 @@ const levelSystemXp = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         switch (messageReaction.emoji.name) {
           case '0⃣': return resolve({response: '0'});
@@ -494,7 +494,7 @@ const commandSystem = (msg) => new Promise((resolve, reject) => {
           return;
         }
         msg.client.removeListener('messageReactionAdd', arguments.callee);
-        messageReaction.message.delete();
+        if(messageReaction.message) messageReaction.message.delete();
     
         return resolve({ response: messageReaction.emoji.name === '✅' ? true : false });
     }
