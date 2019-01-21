@@ -23,7 +23,7 @@ module.exports = class StopMusicCommand extends Command {
     });
   }
 
-  run (msg, args) {
+  run (msg, {volume}) {
     deleteCommandMessages(msg);
     const queue = this.queue.get(msg.guild.id);
 
@@ -38,7 +38,7 @@ module.exports = class StopMusicCommand extends Command {
     }
 
     queue.volume = volume;
-    
+
     if (queue.songs[0].dispatcher) {
       queue.songs[0].dispatcher.setVolumeLogarithmic(queue.volume / 5);
     }
