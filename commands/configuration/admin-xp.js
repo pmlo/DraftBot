@@ -6,7 +6,7 @@ module.exports = class XpCommand extends Command {
 		super(client, {
 			name: 'admin-xp',
 			memberName: 'admin-xp',
-			group: 'admin',
+			group: 'configuration',
 			aliases: ['change-xp'],
 			description: 'Faire des modifications sur le nombre d\'xp d\'un membre',
 			examples: ['xp ajouter DraftMan 3000'],

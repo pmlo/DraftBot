@@ -11,11 +11,7 @@ module.exports = class StopMusicCommand extends Command {
       examples: ['stop'],
       description: 'Stopper la musique et vider la file d\'attente.',
       details: 'Si il y a plus de 3 personnes un vote sera lancé pour valider la décision! Le staff peut forcer l\'arrêt avec ajoutant `force` à la commande.',
-      guildOnly: true,
-      throttling: {
-        usages: 2,
-        duration: 3
-      }
+      guildOnly: true
     });
     this.votes = new Map();
   }
