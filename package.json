@@ -28,6 +28,7 @@
     "loadash": "^1.0.0",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
+    "musicmatch": "^0.3.2",
     "node-fetch": "^2.3.0",
     "node-opus": "^0.3.1",
     "simple-youtube-api": "^5.1.1",
