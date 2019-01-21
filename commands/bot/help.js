@@ -15,7 +15,7 @@ module.exports = class HelpCommand extends Command {
 			args: [
 				{
 					key: 'command',
-					prompt: 'Pour quelle commande voulez vous de l\'aide',
+					prompt: 'Pour quelle commande voulez-vous de l\'aide',
 					type: 'string',
 					default: ''
 				}
@@ -55,19 +55,20 @@ module.exports = class HelpCommand extends Command {
 				const messages = [];
 				try {
 					if(msg.channel.type !== 'dm'){
-						messages.push(await msg.say(help));
+						messages.push(msg.say(help));
 					}else{
-						messages.push(await msg.direct(help));
+						messages.push(msg.reply('Je viens de vous envoyer la liste des commandes en MP !'));
+						messages.push(msg.direct(help));
 					}
 				} catch(err) {
-					messages.push(await msg.reply(error('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.')));
+					messages.push(await msg.reply(error('Impossible de vous envoyer un message privé, il semblerait que vous ayez désactivé leur récéption.')));
 				}
 				return messages;
 			} else if(commands.length > 15) {
-				return msg.reply(':thinking: | Plusieurs commandes ont été trouvés. s\'il vous plaît veuillez être plus précis.');
+				return msg.reply(':thinking: | Plusieurs commandes ont été trouvées. S\'il vous plaît veuillez être plus précis.');
 			} else if(commands.length > 1) {
 				const list = commands.map(item => `"${(property ? item[property] : item).replace(/ /g, '\xa0')}"`).join(',   ');
-				return msg.reply(`:thinking: | Plusieurs commandes ont été trouvés, s'il vous plaît veuillez être plus précis: ${list}`);
+				return msg.reply(`:thinking: | Plusieurs commandes ont été trouvées, s'il vous plaît veuillez être plus précis: ${list}`);
 			} else {
 				return msg.reply(error(
 					`Impossible d'identifier la commande. Veuillez utiliser ${msg.usage(
