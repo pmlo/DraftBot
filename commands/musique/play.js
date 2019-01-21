@@ -277,7 +277,7 @@ const play = (current) => (guild, song) => {
     .on('end', () => {
         if (streamErrored) return;
 
-        if(!queue.loop) queue.songs.shift(); 
+        if(!queue.loop) queue.songs.shift();
 
         current.play(guild, queue.songs[0])
     })
