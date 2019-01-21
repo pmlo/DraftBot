@@ -7,12 +7,12 @@ const {deleteCommandMessages} = require('../../utils.js');
 module.exports = class ReactCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'react',
-      memberName: 'react',
+      name: 'role-react',
+      memberName: 'role-react',
       group: 'configuration',
-      aliases: ['ra'],
+      aliases: ['react-role'],
       description: 'Ajouter des roles à un message avec des réactions',
-      examples: ['react 5554845515145714 Graphiste 🖊'],
+      examples: ['role-react 5554845515145714 Graphiste 🖊'],
       guildOnly: true,
       args: [
         {

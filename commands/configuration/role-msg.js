@@ -5,12 +5,12 @@ const {deleteCommandMessages} = require('../../utils.js');
 module.exports = class ReactRoleCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'react-role',
-      memberName: 'react-role',
+      name: 'role-msg',
+      memberName: 'role-msg',
       group: 'configuration',
-      aliases: ['rr','role-react'],
+      aliases: ['react-msg'],
       description: 'Créer un message avec des réactions',
-      examples: ['react-role Titre'],
+      examples: ['role-msg Rôles du serveur'],
       guildOnly: true,
       args: [
         {
@@ -39,9 +39,9 @@ module.exports = class ReactRoleCommand extends Command {
     const help = new MessageEmbed()
       .setColor(0xcd6e57)
       .setAuthor(msg.author.username, msg.author.displayAvatarURL())
-      .setDescription(`**Astuce:** Pour ajouter des roles \`${msg.guild.commandPrefix}react ${focus.id} <role> <emoji>\``)
+      .setDescription(`**Astuce:** Pour ajouter des roles \`${msg.guild.commandPrefix}role-react ${focus.id} <role> <emoji>\``)
       .setTimestamp();
 
-    msg.embed(help).then(actionMessage => actionMessage.delete({timeout: 8000}))
+    msg.embed(help).then(actionMessage => actionMessage ? actionMessage.delete({timeout: 8000}): null)
   }
 };
