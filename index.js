@@ -83,7 +83,6 @@ DraftBot.on('channelCreate', channel => {
 DraftBot.on('channelDelete', channel => sendLogsServ(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
 
 DraftBot.on('message', message => {
-
     if(!message.guild || message.author.bot) return;
     if(message.guild && message.guild.settings.get('invites') === false && invites(message)) message.delete();
     if(message.guild && message.guild.settings.get('badwords') && message.guild.settings.get('badwords').status === true && badwords(message).mots) message.delete();
@@ -166,7 +165,10 @@ DraftBot.on('raw', event => {
                     }
                 }
             }
-        }).catch(err => console.log('RAW reactions => fetchMessages',err))
+        }).catch(err => {
+            if(err.message === 'Unknown Message') return;
+            console.log('RAW reactions => fetchMessages',err)
+        })
     }
 });
 
