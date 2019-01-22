@@ -9,7 +9,7 @@ module.exports = class ReactRoleCommand extends Command {
       memberName: 'role-msg',
       group: 'configuration',
       aliases: ['react-msg'],
-      description: 'Créer un message avec des réactions',
+      description: 'Créer un message avec des réactions permettant aux membres de s\'auto-attribuer des roles',
       examples: ['role-msg Rôles du serveur'],
       guildOnly: true,
       args: [

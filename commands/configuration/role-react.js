@@ -11,7 +11,7 @@ module.exports = class ReactCommand extends Command {
       memberName: 'role-react',
       group: 'configuration',
       aliases: ['react-role'],
-      description: 'Ajouter des roles à un message avec des réactions',
+      description: 'Ajouter des réactions ainsi que des roles à un message qui seront attribués lors de l\'intéraction avec les réactions.',
       examples: ['role-react 5554845515145714 Graphiste 🖊'],
       guildOnly: true,
       args: [
@@ -67,7 +67,7 @@ module.exports = class ReactCommand extends Command {
 
         if(embedBoo) {
           const roles = embed.description ? embed.description.split('\n') : [];
-          const description = roles.filter(r => r.split(' | ')[1] !== currentRole.name).join('\n')
+          const description = roles.filter(r => r !== `${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} | ${currentRole.name}`).join('\n')
           embed.setDescription(description);
         }
         reactEmbed.setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} viens d'être supprimé pour le role ${role.name} sur le selectionneur de roles !`)
@@ -75,10 +75,9 @@ module.exports = class ReactCommand extends Command {
         //UPDATE
         db.prepare(`UPDATE "reacts" SET role= ${role.id} WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).run()
         
-
         if(embedBoo) {
           const roles = embed.description ? embed.description.split('\n') : [];
-          const description = roles.filter(r => r.split(' | ')[1] !== currentRole.name).join('\n')
+          const description = roles.filter(r => r !== `${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} | ${currentRole.name}`).join('\n')
           roles.push(`${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} | ${role.name}\n`)
           embed.setDescription(description);
         }
