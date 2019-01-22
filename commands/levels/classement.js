@@ -30,15 +30,19 @@ module.exports = class ClassementCommand extends Command {
 			const exp = xp === undefined ? 0 : xp.xp;
 			let userlist = '', xplist = '';
 			let place = 0;
-			await [].forEach.call(users, user => {
+
+			const newUsers = users.filter(u => msg.guild.members.find(m => m.user.id === u.user));
+
+			await [].forEach.call(newUsers, user => {
 				this.client.users.fetch(user.user).then(u => {
+
 					place++
 					userlist += `\n#${place} **${u.username}**   `
 					xplist += `\nNiveau ${getLevelFromXp(user.xp)} (${user.xp}xp)`
 				})
 			})
 
-			const placeU = users.map(u => u.user).indexOf(msg.author.id)+1;
+			const placeU = newUsers.map(u => u.user).indexOf(msg.author.id)+1;
 			if(placeU > 5){
 				userlist += `\n\n#${placeU} **${msg.author.username}**   `
 				xplist += `\n\nNiveau ${getLevelFromXp(exp)} (${exp}xp)`
