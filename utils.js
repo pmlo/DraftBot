@@ -202,7 +202,7 @@ const guildAdd = async guild => {
     .setTitle('Ho ! Je viens de rejoindre un nouveau serveur !')
     .setDescription(`Je suis maintenant sur **${guild.client.guilds.size}** serveurs discord !`)
     .addField('Effectif',`${guild.memberCount} membres (${guild.large ? 'Grande' : 'Petite'} communauté)`,true)
-    .addField('Créateur',guild.owner.user,true)
+    .addField('Créateur',guild.owner.user.tag,true)
     .setImage('attachment://newserv.png');
     guild.client.channels.get('498406991891529728').send(newBotEmbed)
   } catch (err) {
@@ -581,6 +581,75 @@ const deleteCommandMessages = msg => {
   if (msg.deletable && msg.guild.settings.get('deletecommandmessages') != false) msg.delete();
 };
 
+const ms = (val, options = {}) => {
+  if (typeof val === 'string' && val.length > 0) return parse(val);
+  if (typeof val === 'number' && !isNaN(val)) {
+      return options.long ? fmtLong(val) : fmtShort(val);
+  }
+  throw new Error(`val is not a non-empty string or valid number. val=${JSON.stringify(val)}`
+  );
+};
+
+const s = 1000;
+const m = s * 60;
+const h = m * 60;
+const d = h * 24;
+const w = d * 7;
+const y = d * 365.25;
+
+const parse = str => {
+  str = String(str);
+  if (str.length > 100) return null;
+  const match = /^((?:\d+)?-?\d?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(str);
+  if (!match) return null;
+  const n = parseFloat(match[1]);
+  const type = (match[2] || 'ms').toLowerCase();
+  switch (type) {
+      case 'years':
+      case 'year':
+      case 'yrs':
+      case 'yr':
+      case 'y':
+          return n * y;
+      case 'weeks':
+      case 'week':
+      case 'w':
+          return n * w;
+      case 'days':
+      case 'day':
+      case 'd':
+          return n * d;
+      case 'hours':
+      case 'hour':
+      case 'hrs':
+      case 'hr':
+      case 'h':
+          return n * h;
+      case 'minutes':
+      case 'minute':
+      case 'mins':
+      case 'min':
+      case 'm':
+          return n * m;
+      case 'seconds':
+      case 'second':
+      case 'secs':
+      case 'sec':
+      case 's':
+          return n * s;
+      case 'milliseconds':
+      case 'millisecond':
+      case 'msecs':
+      case 'msec':
+      case 'ms':
+          return n;
+      default:
+          return undefined;
+  }
+};
+
+const capitalizeFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
 module.exports = {
   makeWelcomeImage,
   addRole,
@@ -613,5 +682,7 @@ module.exports = {
   getUsersXp,
   deleteCommandMessages,
   getSimpleUserXp,
-  rewardGiven
+  rewardGiven,
+  ms,
+  capitalizeFirstLetter
 };
