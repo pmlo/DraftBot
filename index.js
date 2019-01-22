@@ -87,12 +87,13 @@ DraftBot.on('message', message => {
     if(message.guild && message.guild.settings.get('invites') === false && invites(message)) message.delete();
     if(message.guild && message.guild.settings.get('badwords') && message.guild.settings.get('badwords').status === true && badwords(message).mots) message.delete();
 
-    if(message.guild.settings.get('levelSystem') === false) return;
+    if(message.guild.settings.get('levelSystem') === false) return; 
 
-    if(users.get(message.author.id) && moment.duration(moment(users.get(message.author.id)).diff(moment())).asSeconds() < 10) return;
+    if(users.get(message.author.id) && moment.duration(moment(users.get(message.author.id)).diff(moment())).asSeconds() > -10) return;
+
     users.set(message.author.id,message.createdTimestamp);
 
-    const xpCount = (message.guild.settings.get('xpCount') ? message.guild.settings.get('xpCount') : '15:25');
+    const xpCount = message.guild.settings.get('xpCount') ? message.guild.settings.get('xpCount') : '15:25';
 
     const sXpCount = xpCount.split(':');
 
