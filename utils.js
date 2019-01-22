@@ -482,7 +482,7 @@ const getSimpleUserXp = (msg,user) => new Promise((resolve, reject) =>{
 const getUsersXp = (msg,user) => new Promise((resolve, reject) =>{
   const db = new Database(path.join(__dirname, './storage.sqlite'));
   const xp = db.prepare(`SELECT xp FROM "levels" WHERE user= ${user.id} AND guild= ${msg.guild.id}`).get()
-  const users = db.prepare(`SELECT user,xp FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC LIMIT 5`).all()
+  const users = db.prepare(`SELECT user,xp FROM "levels" WHERE guild= ${msg.guild.id} ORDER BY xp DESC`).all()
   resolve({xp, users})
 })
 
