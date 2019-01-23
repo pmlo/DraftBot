@@ -19,7 +19,7 @@ module.exports = class BrawlhallaCommand extends Command {
       args: [
         {
           key: 'user',
-          prompt: 'De quel joueur voulez vous les statistiques?',
+          prompt: 'De quel joueur voulez-vous les statistiques?',
           type: 'string'
         }
       ]
@@ -33,7 +33,7 @@ module.exports = class BrawlhallaCommand extends Command {
     const id = await steam.resolve(user)
     
     if(id === undefined){
-      return status.edit(`:x: Le profil \`${user}\` n'existe pas où est privé :pensive:`)
+      return status.edit(`:x: Le profil \`${user}\` n'existe pas ou est privé :pensive:`)
     }
 
     status.edit(`Profil steam de \`${user}\` trouvé !`)
@@ -53,7 +53,7 @@ module.exports = class BrawlhallaCommand extends Command {
       return status.edit(`:x: Impossible de trouver les statistiques brawlhalla de \`${user}\` :pensive:`)
     }
 
-    status.edit(`Statistiques brawlhalla de \`${user}\` trouvés !`)
+    status.edit(`Statistiques brawlhalla de \`${user}\` trouvées !`)
 
     const legendMG = result.legends.reduce((accumulator, legend) => accumulator.games > legend.games ? accumulator : legend)
 

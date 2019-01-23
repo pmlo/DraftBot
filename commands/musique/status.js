@@ -20,7 +20,7 @@ module.exports = class MusicStatusCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.say('Il n\'y a aucune musique dans la file d\'attente. Pourquoi ne pas y ajouter quelques titres? 😎');
+      return msg.say('Il n\'y a aucune musique dans la file d\'attente. Pourquoi ne pas y ajouter quelques titres ? 🎶');
     }
     const song = queue.songs[0], // eslint-disable-line one-var
       currentTime = song.dispatcher ? song.dispatcher.streamTime / 1000 : 0,

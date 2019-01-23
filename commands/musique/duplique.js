@@ -13,7 +13,7 @@ module.exports = class DupliqueSongCommand extends Command {
       guildOnly: true,
       args: [{
         key: 'nombre',
-        prompt: 'Combien de fois souhaitez vous dupliquer la musique en cours ?',
+        prompt: 'Combien de fois souhaitez-vous dupliquer la musique en cours ?',
         type: 'integer',
         default: 1,
         min: 1,

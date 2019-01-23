@@ -17,7 +17,7 @@ module.exports = class MDNCommand extends Command {
       args: [
         {
           key: 'query',
-          prompt: 'Que souhaitez vous trouver ?\n',
+          prompt: 'Que souhaitez-vous trouver ?\n',
           type: 'string',
           parse: p => p.replace(/\.prototype\./g, " ").replace(/\./g, " ")
         }

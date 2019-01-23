@@ -14,17 +14,17 @@ module.exports = class BanCommand extends Command {
       args: [
         {
           key: 'user',
-          prompt: 'Quel membre voulez vous banir',
+          prompt: 'Quel membre voulez-vous banir',
           type: 'member'
         },
         {
           key: 'reason',
-          prompt: 'Pour quelle raison voulez vous banir ce membre?',
+          prompt: 'Pour quelle raison voulez-vous bannir ce membre?',
           type: 'string'
         },
         {
           key: 'jours',
-          prompt: 'Combien de jours?',
+          prompt: 'Combien de jours ?',
           type: 'integer',
           default: 0
         }

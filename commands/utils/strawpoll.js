@@ -22,7 +22,7 @@ module.exports = class StrawpollCommand extends Command {
         },
         {
           key: 'options',
-          prompt: 'Quelles sont les options du strawpoll (au minimum 2)? Envoyez une option par message et terminez par `finish`',
+          prompt: 'Quelles sont les options du strawpoll (au minimum 2) ? Envoyez une option par message et terminez par `finish`',
           type: 'string',
           infinite: true
         }
@@ -33,7 +33,7 @@ module.exports = class StrawpollCommand extends Command {
   async run (msg, {title, options}) {
     deleteCommandMessages(msg);
     if (options.length < 2) {
-      return msg.reply('un sondage doit avoir au moins 2 réponses');
+      return msg.reply('Un sondage doit avoir au moins 2 réponses !');
     }
     try {
       const pollPost = await fetch('https://www.strawpoll.me/api/v2/polls', {
@@ -58,7 +58,7 @@ module.exports = class StrawpollCommand extends Command {
 
       return msg.embed(pollEmbed, `http://www.strawpoll.me/${strawpoll.id}`);
     } catch (err) {
-      return msg.reply('une erreur s\'est produite lors de la création du strawpoll');
+      return msg.reply('Une erreur s\'est produite lors de la création du strawpoll');
     }
   }
 };

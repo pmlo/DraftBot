@@ -20,11 +20,11 @@ module.exports = class ShuffleCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('il n\'y a aucune musique dans la file d\'attente. Pourquoi ne pas y ajouter quelques titres? 😎');
+      return msg.reply('il n\'y a aucune musique dans la file d\'attente. Pourquoi ne pas y ajouter quelques titres ? 🎶');
     }
 
     if (queue.songs.length <= 2) {
-      return msg.reply('je ne peut pas mélanger une file d\'attente inférieure à 2 musiques. Pourquoi ne pas ajouter d\'autres musiques ?');
+      return msg.reply('Je ne peut pas mélanger une file d\'attente inférieure à 2 musiques. Pourquoi ne pas ajouter d\'autres musiques ? 🎶');
     }
 
     const currentPlaying = queue.songs[0];

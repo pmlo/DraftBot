@@ -8,8 +8,8 @@ module.exports = class SkipSongCommand extends Command {
       memberName: 'skip',
       group: 'musique',
       aliases: ['next','suivant','passer'],
-      description: 'Pemret de passer la muisque en cours.',
-      details: 'Si il y a plus de 3 personnes dans le salon un vote sera lancé! Le staff peut forcer l\'arrêt avec ajoutant `force` à la commande.',
+      description: 'Permet de passer la musique en cours.',
+      details: 'S\'il y a plus de 3 personnes dans le salon un vote sera lancé ! Le staff peut forcer l\'arrêt en ajoutant `force` à la commande.',
       examples: ['skip'],
       guildOnly: true,
     });
@@ -21,13 +21,13 @@ module.exports = class SkipSongCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('impossible de passer à la musique suivant vu qu\'il n\'y a pas de musique en attente! 🤔');
+      return msg.reply('Impossible de passer à la musique suivante vu qu\'il n\'y a pas de musique en attente! 🤔');
     }
     if (!queue.voiceChannel.members.has(msg.author.id)) {
-      return msg.reply('vous devez être dans un salon vocal pour passer une musique.');
+      return msg.reply('Vous devez être dans un salon vocal pour passer une musique.');
     }
     if (!queue.songs[0].dispatcher) {
-      return msg.reply('il n\'y a aucune musique en cours. Pourquoi ne pas commencer par en lancer une?');
+      return msg.reply('Il n\'y a aucune musique en cours. Pourquoi ne pas commencer par en lancer une ? 🎶');
     }
 
     const threshold = Math.ceil((queue.voiceChannel.members.size - 1) / 3),
@@ -44,7 +44,7 @@ module.exports = class SkipSongCommand extends Command {
 
     if (vote && vote.count >= 1) {
       if (vote.users.some(user => user === msg.author.id)) {
-        return msg.reply('vous avez déjà voté pour passer à la musique suivante.');
+        return msg.reply('Vous avez déjà voté pour passer à la musique suivante.');
       }
 
       vote.count += 1;
@@ -84,7 +84,7 @@ module.exports = class SkipSongCommand extends Command {
 
     song.dispatcher.end();
 
-    return `Muisque passé: **${song}**`;
+    return `Muisque passée: **${song}**`;
   }
 
   setTimeout (vote) {

@@ -8,13 +8,13 @@ module.exports = class AutoroleCommand extends Command {
       memberName: 'autorole',
       group: 'configuration',
       aliases: ['defaultrole'],
-      description: 'Mettre un role par défaut à ajouter quand un membre rejoint la guild',
+      description: 'Mettre un rôle par défaut à ajouter quand un nouveau membre rejoint la guilde',
       examples: ['autorole Member','autorole delete'],
       guildOnly: true,
       args: [
         {
           key: 'role',
-          prompt: 'Quel role voulez vous par défaut pour les membres ?',
+          prompt: 'Quel rôle voulez-vous par défaut pour les membres ?',
           type: 'role',
           default: 'no'
         }
@@ -30,16 +30,16 @@ module.exports = class AutoroleCommand extends Command {
 
     if(role == 'no'){
       if(msg.guild.settings.get('defaultRole')){
-        description = `🔓 Le role attribué aux nouveaux membres est \`${msg.guild.roles.find(r => msg.guild.settings.get('defaultRole') === r.id).name}\` !`;
+        description = `🔓 Le rôle attribué aux nouveaux membres est \`${msg.guild.roles.find(r => msg.guild.settings.get('defaultRole') === r.id).name}\` !`;
       }else{
-        description = `🔓 Il n'y a aucun role attribué automatiquement aux nouveaux membres !`;
+        description = `🔓 Il n'y a aucun rôle attribué automatiquement aux nouveaux membres !`;
       }
     } else if (role.id === msg.guild.settings.get('defaultRole')){
       msg.guild.settings.remove('defaultRole');
-      description = `Le role \`${role.name}\` qui était attribué automatiquement aux nouveaux membres est maintenant supprimé`;
+      description = `Le rôle \`${role.name}\` qui était attribué automatiquement aux nouveaux membres est maintenant supprimé`;
     } else {
       msg.guild.settings.set('defaultRole', role.id);
-      description = `Le role \`${role.name}\` sera maintenant attribué automatiquement aux nouveaux membres !`;
+      description = `Le rôle \`${role.name}\` sera maintenant attribué automatiquement aux nouveaux membres !`;
     }
     return sendLogsBot(msg, description)
   }

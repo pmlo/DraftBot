@@ -16,7 +16,7 @@ module.exports = class MathsCommand extends Command {
       args: [
         {
           key: 'equation',
-          prompt: 'Quelle équation souaitez vous résoudre ?',
+          prompt: 'Quelle équation souaitez-vous résoudre ?',
           type: 'string',
           parse: p => p.toLowerCase().replace(/x/gim, '*'),
         }

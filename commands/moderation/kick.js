@@ -7,7 +7,7 @@ module.exports = class KickCommand extends Command {
       name: 'kick',
       memberName: 'kick',
       group: 'moderation',
-      description: 'Permet de kick un membre',
+      description: 'Permet de renvoyer un membre du serveur',
       aliases: ['kicker','renvoyer'],
       examples: ['kick DraftMan'],
       guildOnly: true,
@@ -19,7 +19,7 @@ module.exports = class KickCommand extends Command {
         },
         {
           key: 'reason',
-          prompt: 'Pour quelle raison voulez vous kick ce membre?',
+          prompt: 'Pour quelle raison voulez-vous renvoyer ce membre?',
           type: 'string'
         }
       ],

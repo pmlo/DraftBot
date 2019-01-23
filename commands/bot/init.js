@@ -32,7 +32,7 @@ module.exports = class InitCommand extends Command {
         Bienvenue sur mon procéssus de configuration !
         Je vais vous poser une série de question me permettant de répondre au mieux à vos besoins.
         
-        Vous pouvez arêter cette configuration à tout moment en envoyant \`cancel\` ou en attendant 30 secondes après la question.
+        Vous pouvez arrêter cette configuration à tout moment en envoyant \`cancel\` ou en attendant 30 secondes après la question.
       `)
       .setFooter("Processus de configuration", msg.client.user.displayAvatarURL({format: 'png'}))
       .setTimestamp()
@@ -44,7 +44,7 @@ module.exports = class InitCommand extends Command {
       if(msg.author.id !== message.author.id) return;
 
       if(message.content.toLowerCase() === 'cancel'){
-        message.reply('configuration annulé !')
+        message.reply('Configuration annulée !')
         stopTimer()
         msg.client.emit('cancel')
         msg.client.removeListener('message', eventCancel)
@@ -148,7 +148,7 @@ module.exports = class InitCommand extends Command {
         const value = response.response;
         msg.guild.settings.set('invites', value);
     
-        msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisées' : 'interdites donc supprimées'}** !`))
+        msg.embed(resultEmbed(msg,`Les invitations seront maintenant **${value === true ? 'autorisées' : 'interdites et donc supprimées'}** !`))
         this.runProcess(msg,11)
       }).catch(error => console.log('Init command => authorizeInvites',error))
     }
@@ -163,7 +163,7 @@ module.exports = class InitCommand extends Command {
     }
 
     // Il n'y pas plus de process
-    msg.embed(questionEmbed(msg,'Félicitations, la configuration est terminée, merci !'))
+    msg.embed(questionEmbed(msg,'Félicitation, la configuration est maintenant terminée, merci !'))
     stopTimer()
     msg.client.emit('cancel')
   }
@@ -206,7 +206,7 @@ const welcomeMessage = (msg) => new Promise((resolve, reject) => {
 });
 
 const channelWelcome = (msg) => new Promise((resolve, reject) => {
-  msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de bienvenue ?'))
+  msg.embed(questionEmbed(msg,'Dans quel salon voulez-vous afficher les messages de bienvenue ?'))
   .then(question => {
     function eventListenChannelWelcomeChannel(message) {
       const func = arguments.callee
@@ -237,7 +237,7 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
 const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbed(msg,'Voulez vous un role à ajouter automatiquement aux nouveaux membres ?'))
+  msg.embed(questionEmbed(msg,'Voulez-vous un rôle à ajouter automatiquement aux nouveaux membres ?'))
   .then(question => {
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -264,7 +264,7 @@ const roleAutoAsk = (msg) => new Promise((resolve, reject) => {
 });
 
 const roleAuto = (msg) => new Promise((resolve, reject) => {
-  msg.embed(questionEmbed(msg,'Quel est le role que vous souhaitez ajouter automatiquement aux nouveaux membres ?'))
+  msg.embed(questionEmbed(msg,'Quel est le rôle que vous souhaitez ajouter automatiquement aux nouveaux membres ?'))
   .then(question => {
     function eventListenRoleAutoRole(message) {
       const func = arguments.callee
@@ -277,7 +277,7 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
         return resolve({ response: role });
       }).catch(error => {
         message.delete({timeout: 2000})
-        msg.embed(errorEmbed(msg,`Impossible de trouver le role \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
+        msg.embed(errorEmbed(msg,`Impossible de trouver le rôle \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
         console.log('Init command => roleAuto in FindRole func',error)
         return;
       })
@@ -295,7 +295,7 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
 const logsMessagesBot = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du **bot** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftimagesbot/exemples/logsbot_message.png'))
+  msg.embed(questionEmbedFile(msg,'Voulez-vous afficher les logs du **bot** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftimagesbot/exemples/logsbot_message.png'))
   .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -324,7 +324,7 @@ const logsMessagesBot = (msg) => new Promise((resolve, reject) => {
 const logsMessagesServ = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Voulez vous afficher les logs du **serveur** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/logsserv_message.png'))
+  msg.embed(questionEmbedFile(msg,'Voulez-vous afficher les logs du **serveur** dans un salon de logs ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/logsserv_message.png'))
   .then(question=>{
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -351,7 +351,7 @@ const logsMessagesServ = (msg) => new Promise((resolve, reject) => {
 });
 
 const channelLogs = (msg) => new Promise((resolve, reject) => {
-  msg.embed(questionEmbed(msg,'Dans quel salon voulez vous les messages de logs ?'))
+  msg.embed(questionEmbed(msg,'Dans quel salon voulez-vous afficher les messages de logs ?'))
   .then(question => {
     function eventListenChannelLogsChannel(message) {
       const func = arguments.callee
@@ -360,7 +360,7 @@ const channelLogs = (msg) => new Promise((resolve, reject) => {
         const channel = response.channel;
         if(channel === null) {
           if(message) message.delete()
-          msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
+          msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer !`)).then(m => m.delete({timeout: 3000}))
           return;
         }
         if(message) message.delete()
@@ -382,7 +382,7 @@ const channelLogs = (msg) => new Promise((resolve, reject) => {
 const authorizeInvites = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbed(msg,'Autorisez vous que des gens envoient des invitations vers d\'autres serveurs ?'))
+  msg.embed(questionEmbed(msg,'Autorisez-vous que vos utilisateurs envoient des invitations vers d\'autres serveurs ?'))
   .then(question => {
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -411,7 +411,7 @@ const authorizeInvites = (msg) => new Promise((resolve, reject) => {
 const levelSystem = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Souhaitez vous activer la fonction de niveau ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/rank_message.png'))
+  msg.embed(questionEmbedFile(msg,'Souhaitez-vous activer la fonction de niveau ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/rank_message.png'))
   .then(question => {
     question.react(emojis[0]);
     question.react(emojis[1]);
@@ -443,11 +443,11 @@ const levelSystemXp = (msg) => new Promise((resolve, reject) => {
   const currentXp = msg.guild.settings.get('xpCount') ? msg.guild.settings.get('xpCount') : '15:25';
 
   msg.embed(questionEmbed(msg,`\n
-    Quel quantité d'xp souhaitez vous attribuer aux membres lorsqu'ils envoient un message ?\n 
-    0⃣ | 0 xp par messages ${currentXp == '0' ? '✅' : ''}\n
-    1⃣ | Entre 5 xp 15 par messages ${currentXp == '5:15' ? '✅' : ''}\n
-    2⃣ | Entre 15 xp 25 par messages ${currentXp == '15:25' ? '✅' : ''}\n
-    3⃣ | Entre 25 xp 35 par messages ${currentXp == '25:35' ? '✅' : ''}
+    Quelle quantité d'xp souhaitez-vous attribuer aux membres lorsqu'ils envoient un message ?\n 
+    0⃣ | 0 xp par message ${currentXp == '0' ? '✅' : ''}\n
+    1⃣ | Entre 5 xp 15 par message ${currentXp == '5:15' ? '✅' : ''}\n
+    2⃣ | Entre 15 xp 25 par message ${currentXp == '15:25' ? '✅' : ''}\n
+    3⃣ | Entre 25 xp 35 par message ${currentXp == '25:35' ? '✅' : ''}
   `))
   .then(async question => {
     await emojis.reduce((acc, emoji) => acc.then(() => question.react(emoji)), Promise.resolve())
@@ -482,7 +482,7 @@ const levelSystemXp = (msg) => new Promise((resolve, reject) => {
 const commandSystem = (msg) => new Promise((resolve, reject) => {
   const emojis = ['✅','❎']
 
-  msg.embed(questionEmbedFile(msg,'Souhaitez vous que les commandes executés par les utilisateurs soient supprimés ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/delete_command.png'))
+  msg.embed(questionEmbedFile(msg,'Souhaitez-vous que les commandes executées par les utilisateurs soient supprimées ? *exemple ci-dessous*','https://www.draftman.fr/images/draftbot/exemples/delete_command.png'))
   .then(question => {
     question.react(emojis[0]);
     question.react(emojis[1]);

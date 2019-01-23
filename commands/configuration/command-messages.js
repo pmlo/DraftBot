@@ -24,7 +24,7 @@ module.exports = class CommandMessagesCommand extends Command {
       description = `🎉 Les messages de commandes seront maintenant **supprimés** !`;
     }else{
       msg.guild.settings.set('deletecommandmessages', false);
-      description = `🎉 Les messages de commandes seront maintenant **laissés** !`;
+      description = `🎉 Les messages de commandes seront maintenant **conservés** !`;
     }
 
     return sendLogsBot(msg, description)
