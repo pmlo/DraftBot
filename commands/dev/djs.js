@@ -23,7 +23,7 @@ module.exports = class DJsCommand extends Command {
         },
         {
           key: 'version',
-          prompt: 'Quelle version de la documentation voulez vous (stable, master, commando)?',
+          prompt: 'Quelle version de la documentation voulez vous (stable, master, commando) ?',
           type: 'string',
           parse: value => value.toLowerCase(),
           validate: value => ['master', 'stable', 'commando'].includes(value),

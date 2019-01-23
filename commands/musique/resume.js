@@ -19,13 +19,13 @@ module.exports = class ResumeSongCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('impossible de relancer la musique, il n\'y a pas de musique en cours de lecture.');
+      return msg.reply('Impossible de relancer la musique, il n\'y a pas de musique en cours de lecture.');
     }
     if (!queue.songs[0].dispatcher) {
-      return msg.reply('je suis presque certain qu\'une chanson qui n\'a pas encore été jouée peut être considérée comme "reprise". 😉');
+      return msg.reply('Je suis presque certain qu\'une chanson qui n\'a pas encore été jouée peut être considérée comme "reprise". 😉');
     }
     if (queue.songs[0].playing) {
-      return msg.reply('reprendre une musique qui ne soit pas en pause est une très bonne idée. Vraiment fantastique. 🤔');
+      return msg.reply('Reprendre une musique qui ne soit pas en pause est une très bonne idée. Vraiment fantastique. 🤔');
     }
 
     if(queue.timeLaps !== null) clearTimeout(queue.timeLaps);
@@ -33,7 +33,7 @@ module.exports = class ResumeSongCommand extends Command {
     queue.songs[0].dispatcher.resume();
     queue.songs[0].playing = true;
 
-    return msg.reply('musique relancé ! La fête n\'est pas encore terminée! 🎉');
+    return msg.reply('Musique relancée ! La fête n\'est pas encore terminée! 🎉');
   }
 
   get queue () {

@@ -10,7 +10,7 @@ module.exports = class StopMusicCommand extends Command {
       aliases: ['kill', 'stfu', 'quit', 'leave', 'disconnect'],
       examples: ['stop'],
       description: 'Stopper la musique et vider la file d\'attente.',
-      details: 'Si il y a plus de 3 personnes un vote sera lancé pour valider la décision! Le staff peut forcer l\'arrêt avec ajoutant `force` à la commande.',
+      details: 'S\'il y a plus de 3 personnes un vote sera lancé pour valider la décision ! Le staff peut forcer l\'arrêt avec ajoutant `force` à la commande.',
       guildOnly: true
     });
     this.votes = new Map();
@@ -21,13 +21,13 @@ module.exports = class StopMusicCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('il n\'y a aucune musique en cours');
+      return msg.reply('Il n\'y a aucune musique en cours');
     }
     if (!queue.voiceChannel.members.has(msg.author.id)) {
-      return msg.reply('vous devez être dans un salon vocal pour arrêter une musique.');
+      return msg.reply('Vous devez être dans un salon vocal pour arrêter une musique.');
     }
     if (!queue.songs[0].dispatcher) {
-      return msg.reply('il n\'y a aucune musique en cours. Pourquoi ne pas commencer par en lancer une?');
+      return msg.reply('Il n\'y a aucune musique en cours. Pourquoi ne pas commencer par en lancer une ? 🎶');
     }
 
     const threshold = Math.ceil((queue.voiceChannel.members.size - 1) / 3),
@@ -44,7 +44,7 @@ module.exports = class StopMusicCommand extends Command {
 
     if (vote && vote.count >= 1) {
       if (vote.users.some(user => user === msg.author.id)) {
-        return msg.reply('vous avez déjà voté pour arrêter à la musique en cours.');
+        return msg.reply('Vous avez déjà voté pour arrêter à la musique en cours.');
       }
 
       vote.count += 1;
@@ -87,7 +87,7 @@ module.exports = class StopMusicCommand extends Command {
       song.dispatcher.end();
     }
 
-    return 'tu viens purement et simplement de détruire la fête. Félicitations, bravo, c\'est le pompon 🎉';
+    return 'Tu viens purement et simplement de détruire la fête. Félicitations, bravo, c\'est le pompon 🎉';
   }
 
   setTimeout (vote) {

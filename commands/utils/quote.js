@@ -15,12 +15,12 @@ module.exports = class QuoteCommand extends Command {
       args: [
         {
           key: 'message',
-          prompt: 'Quel message voulez vous citez',
+          prompt: 'Quel message voulez-vous citez',
           type: 'message'
         },
         {
           key: 'member',
-          prompt: 'A quel membre voulez vous citerle message ?',
+          prompt: 'A quel membre voulez-vous citer le message ?',
           type: 'member',
           default: ''
         }

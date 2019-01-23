@@ -8,12 +8,12 @@ module.exports = class AvatarCommand extends Command {
       group: 'utils',
       aliases: ['dit','sayd'],
       description: 'Permet de faire parler le bot',
-      examples: ['say DraftMan etait le plus fort !'],
+      examples: ['say C\'est moi le plus fort ! Harder, better, faster, stronger 🎶'],
       guildOnly: true,
       args: [
         {
           key: 'message',
-          prompt: 'Quel message voulez vous envoyer ?',
+          prompt: 'Quel message voulez-vous envoyer ?',
           type: 'string',
         }
       ]

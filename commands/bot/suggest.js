@@ -21,7 +21,7 @@ module.exports = class SuggestCommand extends Command {
 
   run (msg,{suggest}) {
     deleteCommandMessages(msg);
-    msg.reply('merci de votre suggestion, elle sera analysée et si elle est pertinente, vous la verrez très prochainement dans la liste des commandes !')
+    msg.reply('Merci de votre suggestion, elle sera analysée et si elle est pertinente, vous la verrez très prochainement dans la liste des commandes !')
     const embed = new MessageEmbed()
       .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
       .setColor(0xcd6e57)

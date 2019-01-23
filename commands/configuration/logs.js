@@ -7,12 +7,12 @@ module.exports = class LogsCommand extends Command {
       name: 'logs',
       memberName: 'logs',
       group: 'configuration',
-      description: 'Définir le channel pour les logs du serveur.',
+      description: 'Définir le salon pour les logs du serveur.',
       examples: ['logs #logs'],
       guildOnly: true,
       args: [{
 				key: 'channel',
-				prompt: 'Quel salon voulez vous pour les logs',
+				prompt: 'Quel salon voulez-vous utiliser pour les logs',
         type: 'channel',
         default: ''
 			}],

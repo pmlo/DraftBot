@@ -9,7 +9,7 @@ module.exports = class RewardsCommand extends Command {
 			memberName: 'rewards',
 			group: 'levels',
 			aliases: ['recompense','recompenses','récompense','récompenses','rewards'],
-			description: 'Faire des modifications sur le nombre d\'xp d\'un membre',
+			description: 'Voir les récompenses disponible lors de gains de niveaux',
 			examples: ['rewards'],
 			guildOnly: true,
 		});

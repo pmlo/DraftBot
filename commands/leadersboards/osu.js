@@ -17,7 +17,7 @@ module.exports = class OSUCommand extends Command {
       args: [
         {
           key: 'user',
-          prompt: 'De quel joueur voulez vous les statistiques?',
+          prompt: 'De quel joueur voulez-vous les statistiques ?',
           type: 'string'
         }
       ]
@@ -32,7 +32,7 @@ module.exports = class OSUCommand extends Command {
     const response = await osu_rq.json()
     
     if(response.length === 0){
-      return status.edit(`:x: Le profil \`${user}\` n'existe pas où est privé :pensive:`)
+      return status.edit(`:x: Le profil \`${user}\` n'existe pas ou est privé :pensive:`)
     }
 
     status.edit(`Statistiques de \`${response[0].username}\` trouvés !`)
