@@ -27,7 +27,7 @@ module.exports = class ClearCommand extends Command {
         return msg.channel.clone(undefined, true, true, 'Messages supprimés').then(async clone => {
           await msg.channel.delete();
           await clone.setPosition(pos)
-          await clone.send(`${msg.author}, la tache est maintenant terminé. Tous les messages ont été supprimés !`)
+          await clone.send(`${msg.author}, la tâche est maintenant terminée. Tous les messages ont été supprimés !`)
         })
       }
     }).catch(error => console.log('ClearChannel command => clearChannel func',error))
@@ -40,7 +40,7 @@ const clearChannel = (msg) => new Promise((resolve, reject) => {
   const embed = new MessageEmbed()
   .setColor(0xcd6e57)
   .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-  .setDescription(`Etes vous sûr de vouloir vider entièrement le salon ?`)
+  .setDescription(`Etes vous sûr de vouloir vider entièrement ce salon ?`)
   .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
   .setTimestamp()
 

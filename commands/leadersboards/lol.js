@@ -18,7 +18,7 @@ module.exports = class PubgCommand extends Command {
       args: [
         {
           key: 'user',
-          prompt: 'De quel joueur voulez vous les statistiques?',
+          prompt: 'De quel joueur voulez-vous les statistiques?',
           type: 'string'
         }
       ]

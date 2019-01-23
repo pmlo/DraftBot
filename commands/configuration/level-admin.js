@@ -14,7 +14,7 @@ module.exports = class WelcomeCommand extends Command {
       guildOnly: true,
       args: [{
 				key: 'config',
-				prompt: 'Voulez vous redéfinir l\'xp atribué aux membres lors de l\'envoie d\'un message ?',
+				prompt: 'Voulez-vous redéfinir la quantité d\'XP attribuée aux membres lors de l\'envoi d\'un message ?',
         type: 'string',
         default: ''
 			}],
@@ -37,7 +37,7 @@ module.exports = class WelcomeCommand extends Command {
       return sendLogsBot(msg, description)
     }else{
       if(msg.guild.settings.get('levelSystem') == false){
-        return msg.reply(`Le système de levels est actuellement désactivé, pour le réactiver veuillez utiliser \`${msg.guild.commandPrefix}level-admin\` !`)
+        return msg.reply(`Le système de niveaux est actuellement désactivé, pour le réactiver veuillez utiliser \`${msg.guild.commandPrefix}level-admin\` !`)
       }
 
       return getValue(msg).then(response => {
@@ -46,9 +46,9 @@ module.exports = class WelcomeCommand extends Command {
         const sValue = value.split(':')
         stopTimer();
         if(value === '0'){
-          return sendLogsBot(msg,`L'xp attribué sera de \`${value}\` !`);
+          return sendLogsBot(msg,`L'XP attribuée sera de \`${value}\` !`);
         }
-        return sendLogsBot(msg,`L'xp attribué sera entre  \`${sValue[0]}\` et \`${sValue[1]}\` !`);
+        return sendLogsBot(msg,`L'XP attribuée sera compris aléatoirement entre  \`${sValue[0]}\` et \`${sValue[1]}\` !`);
       }).catch(error => console.log('Level-admin command => ',error))
     }
   }
@@ -63,11 +63,11 @@ const getValue = (msg) => new Promise((resolve, reject) => {
   .setAuthor(msg.author.username,msg.author.displayAvatarURL({format: 'png'}))
   .setColor(0xcd6e57)
   .setDescription(`\n
-    Quel quantité d'xp souhaitez vous attribuer aux membres lorsqu'ils envoient un message ? *(30 secondes pour répondre)*\n 
-    0⃣ | 0 xp par messages ${currentXp == '0' ? '✅' : ''}\n
-    1⃣ | Entre 5 xp 15 par messages ${currentXp == '5:15' ? '✅' : ''}\n
-    2⃣ | Entre 15 xp 25 par messages ${currentXp == '15:25' ? '✅' : ''}\n
-    3⃣ | Entre 25 xp 35 par messages ${currentXp == '25:35' ? '✅' : ''}
+    Quelle quantité d'XP souhaitez-vous attribuer aux membres lorsqu'ils envoient un message ? *(30 secondes pour répondre)*\n 
+    0⃣ | 0 xp par message ${currentXp == '0' ? '✅' : ''}\n
+    1⃣ | Entre 5 xp 15 par message ${currentXp == '5:15' ? '✅' : ''}\n
+    2⃣ | Entre 15 xp 25 par message ${currentXp == '15:25' ? '✅' : ''}\n
+    3⃣ | Entre 25 xp 35 par message ${currentXp == '25:35' ? '✅' : ''}
   `)
   .setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.client.user.avatarURL({format: 'png'}))
   .setTimestamp()
@@ -108,7 +108,7 @@ const getValue = (msg) => new Promise((resolve, reject) => {
 const startNewTimer = (msg) => {
   stopTimer()
   this.timer = setTimeout(() => {
-    msg.reply('les 30 secondes sont écoulés !')
+    msg.reply('les 30 secondes sont écoulées !')
     msg.client.emit('cancelCancel');
     msg.client.emit('cancel');
   },30000);

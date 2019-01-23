@@ -14,7 +14,7 @@ module.exports = class ClearCommand extends Command {
       guildOnly: true,
       args: [{
         key: 'amount',
-        prompt: 'Combien de messages voulez vous supprimer de messages',
+        prompt: 'Combien de messages voulez-vous supprimer ?',
         min: 1,
         max: 100,
         type: 'integer'
@@ -39,7 +39,7 @@ module.exports = class ClearCommand extends Command {
             return msg.channel.clone(undefined, true, true, 'Messages supprimés').then(async clone => {
               await msg.channel.delete();
               await clone.setPosition(msg.channel.calculatedPosition)
-              await clone.send(`${msg.author}, la tache est maintenant terminé. Tous les messages ont été supprimés !`)
+              await clone.send(`${msg.author}, la tache est maintenant terminée. Tous les messages ont été supprimés !`)
             })
           }
         }).catch(error => console.log('Clear command => clearChannel',error))
@@ -54,7 +54,7 @@ const clearChannel = (msg) => new Promise((resolve, reject) => {
   const embed = new MessageEmbed()
   .setColor(0xcd6e57)
   .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-  .setDescription(`Je ne peux pas supprimer des messages dattant de plus de 14 jours mais je peux vider entièrement le salon si vous le souhaitez !\nLe souhaitez vous ?`)
+  .setDescription(`Je ne peux pas supprimer des messages datant de plus de 14 jours mais je peux vider entièrement le salon si vous le souhaitez !\nLe souhaitez vous ?`)
   .setFooter(msg.guild ? msg.guild.name : '',msg.guild ? msg.guild.iconURL({format: 'png'}) : msg.client.user.avatarURL({format: 'png'}))
   .setTimestamp()
 

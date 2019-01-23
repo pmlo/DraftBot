@@ -12,7 +12,7 @@ module.exports = class AmourCommand extends Command {
 			memberName: 'amour',
 			group: 'fun',
 			aliases: ['amours'],
-			description: 'Trouver un l\'amour parfait',
+			description: 'Trouver le couple parfait',
 			examples: ['amour'],
 			args: [
 				{

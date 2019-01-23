@@ -14,25 +14,25 @@ const run = (current) => async (msg, { url }) =>  {
     if (!queue) {
         voiceChannel = msg.member.voice.channel;
         if (!voiceChannel) {
-            return msg.reply('veuillez rejoindre un salon vocal pour lancer une musique.');
+            return msg.reply('Veuillez rejoindre un salon vocal pour lancer une musique.');
         }
 
         const permissions = voiceChannel.permissionsFor(msg.client.user);
 
         if (!permissions.has('CONNECT')) {
-            return msg.reply('je n\'ai pas la permission de rejoindre un salon vocal. Merci de régler ce petit soucis 😉');
+            return msg.reply('Je n\'ai pas la permission de rejoindre un salon vocal.');
         }
         if (!permissions.has('SPEAK')) {
-            return msg.reply('je n\'ai pas la permission de parler dans un salon vocal. Merci de régler ce petit soucis 😉');
+            return msg.reply('jJe n\'ai pas la permission de parler dans un salon vocal.');
         }
     } else if (!queue.voiceChannel.members.has(msg.author.id)) {
-        return msg.reply('veuillez rejoindre un salon vocal pour lancer une musique.');
+        return msg.reply('Veuillez rejoindre un salon vocal pour lancer une musique.');
     }
 
     let statusMsg = await msg.reply('traitement de la demande...');
 
     if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-        await statusMsg.edit('obtention des vidéos de la playlist ... (cela peut prendre un certain temps pour en fonction de la longeur de la liste)');
+        await statusMsg.edit('Obtention des vidéos de la playlist ... (cela peut prendre un certain temps en fonction de la longueur de la liste)');
         const playlist = await current.youtube.getPlaylist(url),
             videos = await playlist.getVideos();
 
@@ -105,7 +105,7 @@ const run = (current) => async (msg, { url }) =>  {
             bot.on('messageReactionAdd', startReactEvent(msg,videos,sendedEmbed,current,queue,voiceChannel,statusMsg));
         } catch (err) {
             console.log('Play command => react system',err)
-            return statusMsg.edit(`${msg.author}, impossible d'obtenir les détails de la vidéo recherché.`);
+            return statusMsg.edit(`${msg.author}, impossible d'obtenir les détails de la vidéo recherchée.`);
         }
     }
 }
@@ -180,7 +180,7 @@ const handleVideo = (current) => async (video, queue, voiceChannel, msg, statusM
 
 const handlePlaylist = (current) => async (video, playlist, queue, voiceChannel, msg, statusMsg) => {
     if (moment.duration(video.raw.contentDetails.duration, moment.ISO_8601).asSeconds() === 0) {
-        statusMsg.edit(`${msg.author}, il semblerai que cette playlist soit un live et je ne peux pas jouer des live !`);
+        statusMsg.edit(`${msg.author}, il semblerai que cette playlist soit un live, or je ne peux pas jouer de live !`);
 
         return null;
     }
@@ -235,7 +235,7 @@ const play = (current) => (guild, song) => {
     }
 
     if (!song) {
-        queue.textChannel.send('Il n\'y a plus de musique ! Ajoutez quelques musiques à la file d\'attente pour relancer la musique !');
+        queue.textChannel.send('Il n\'y a plus de musique ! Ajoutez-en quelques-unes à la file d\'attente pour relancer la musique ! 🎶');
         queue.voiceChannel.leave();
         current.queue.delete(guild.id);
         return;
@@ -260,7 +260,7 @@ const play = (current) => (guild, song) => {
         })
             .on('error', () => {
                 streamErrored = true;
-                playing.then(msg => msg.edit(`❌ Impossible de jouer ${song}. Qu'est ce que c'est que ce travail! 😡`));
+                playing.then(msg => msg.edit(`❌ Impossible de jouer ${song}.`));
                 queue.songs.shift();
                 current.play(guild, queue.songs[0]);
             }),
@@ -274,7 +274,7 @@ const play = (current) => (guild, song) => {
             queue.songs.shift();
             current.play(guild, queue.songs[0]);
         }).on('error', (err) => {
-            queue.textChannel.send(`Une erreur s'est produite lors de la lecture de la musique: \`${err}\``);
+            queue.textChannel.send(`❌ Une erreur s'est produite lors de la lecture de la musique: \`${err}\``);
         });
 
     dispatcher.setVolumeLogarithmic(queue.volume / 5);
@@ -305,14 +305,14 @@ module.exports = class PlaySongCommand extends Command {
             name: 'play',
             memberName: 'play',
             group: 'musique',
-            description: 'Pemret de lancer une musique',
+            description: 'Permet de lancer une musique',
             aliases: ['jouer','lancer','musqiue','music'],
             examples: ['play {youtube video to play}'],
             guildOnly: true,
             args: [
                 {
                     key: 'url',
-                    prompt: 'Quelle musique voulez vous écouter',
+                    prompt: 'Quelle musique voulez-vous écouter ?',
                     type: 'string',
                     parse: p => p.replace(/<(.+)>/g, '$1')
                 }

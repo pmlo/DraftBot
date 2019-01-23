@@ -15,7 +15,7 @@ module.exports = class QuoteCommand extends Command {
       args: [
         {
           key: 'message',
-          prompt: 'Quel est l\'affirmation de votre sondage',
+          prompt: 'Quelle est l\'affirmation de votre sondage',
           type: 'string'
         }
       ]
@@ -28,7 +28,7 @@ module.exports = class QuoteCommand extends Command {
 
     const embed = new MessageEmbed()
     .setTitle(":newspaper: Sondage")
-    .addField(message,`Ceci est un sondage proposé par ${msg.author}`)
+    .addField(message,`Ce sondage est proposé par ${msg.author}`)
     .setColor(0xcd6e57)
     .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
     .setTimestamp()

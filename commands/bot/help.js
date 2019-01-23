@@ -64,7 +64,7 @@ module.exports = class HelpCommand extends Command {
 				return msg.reply(':thinking: | Plusieurs commandes ont été trouvées. S\'il vous plaît veuillez être plus précis.');
 			} else if(commands.length > 1) {
 				const list = commands.map(item => `"${(property ? item[property] : item).replace(/ /g, '\xa0')}"`).join(',   ');
-				return msg.reply(`:thinking: | Plusieurs commandes ont été trouvées, s'il vous plaît veuillez être plus précis: ${list}`);
+				return msg.reply(`:thinking: | Plusieurs commandes ont été trouvées. S\'il vous plaît veuillez être plus précis: ${list}`);
 			} else {
 				return msg.reply(error(
 					`Impossible d'identifier la commande. Veuillez utiliser ${msg.usage(
@@ -86,7 +86,7 @@ module.exports = class HelpCommand extends Command {
 
 							Par exemple, ${Command.usage('quote', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.
 
-							Utilisez ${this.usage('<commande>', null, null)} pour voir les détails d'une commande.
+							Utilisez ${this.usage('<commande>', null, null)} pour voir les détails d\'une commande.
 							Utilisez ${this.usage('all', null, null)} pour voir la liste de **toutes** les commandes disponibles.
 						`,
 						fields: []
@@ -106,7 +106,7 @@ module.exports = class HelpCommand extends Command {
 			} catch(err) {
 				
 				if(err.message === 'Cannot send messages to this user'){
-					messages.push(await msg.reply(error('Impossible de vous envoyer de messages privés, il semberait que vous ayez désactivé les messages privés.')));
+					messages.push(await msg.reply(error('Impossible de vous envoyer un message privé, il semblerait que vous ayez désactivé leur récéption.')));
 				}else{
 					console.log('Help error',err)
 				}

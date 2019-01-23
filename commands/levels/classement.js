@@ -17,7 +17,7 @@ module.exports = class PrefixCommand extends Command {
 
 	async run(msg) {
 		deleteCommandMessages(msg);
-		if(msg.guild.settings.get('levelSystem') === false) return msg.reply('impossible d\'afficher les niveaux, ils ont été désactivés sur ce serveur.')
+		if(msg.guild.settings.get('levelSystem') === false) return msg.reply('Impossible d\'afficher les niveaux, ils ont été désactivés sur ce serveur.')
 
 		getUsersXp(msg,msg.author).then(async ({xp,users}) => {
 			const embed = new MessageEmbed()

@@ -15,12 +15,12 @@ module.exports = class AvatarCommand extends Command {
       args: [
         {
           key: 'member',
-          prompt: 'De quel utilisateur voulez vous l\'avatar?',
+          prompt: 'De quel utilisateur voulez-vous l\'avatar?',
           type: 'member'
         },
         {
           key: 'size',
-          prompt: 'Quelle taille voulez vous pour l\'avatar? (Valid sizes: 128, 256, 512, 1024, 2048)',
+          prompt: 'Quelle taille voulez-vous pour l\'avatar? (Valid sizes: 128, 256, 512, 1024, 2048)',
           type: 'integer',
           default: 1024,
           validate: (size) => {

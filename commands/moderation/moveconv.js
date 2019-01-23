@@ -14,14 +14,14 @@ module.exports = class MoveConvCommand extends Command {
       guildOnly: true,
       args: [{
 				key: 'messages',
-				prompt: 'Combien de messages souhaitez vous déplacer ?',
+				prompt: 'Combien de messages souhaitez-vous déplacer ?',
         type: 'integer',
         min: 1,
         max: 50
       },
       {
 				key: 'channel',
-				prompt: 'Dans quel channel souhaitez vous déplacer ces messages ?',
+				prompt: 'Dans quel salon souhaitez-vous déplacer ces messages ?',
         type: 'channel'
 			}],
       clientPermissions: ['MANAGE_MESSAGES'],
@@ -41,7 +41,7 @@ module.exports = class MoveConvCommand extends Command {
 
       channel.send('',{embed: new MessageEmbed()
       .setColor(0xcd6e57)
-      .setDescription(`Conversation déplacé du salon #${oldChannel.name}`)
+      .setDescription(`Conversation déplacée du salon #${oldChannel.name}`)
       .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
       .setTimestamp()})
 

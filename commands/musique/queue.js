@@ -16,7 +16,7 @@ module.exports = class ViewQueueCommand extends Command {
       args: [
         {
           key: 'page',
-          prompt: 'Quelle page voulez vous voir ?',
+          prompt: 'Quelle page voulez-vous voir ?',
           type: 'integer',
           default: 1
         }
@@ -29,7 +29,7 @@ module.exports = class ViewQueueCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('il n\'y a aucune musique dans la file d\'attente. Pourquoi ne pas y ajouter quelques titres? 😎');
+      return msg.reply('Il n\'y a aucune musique dans la file d\'attente. Pourquoi ne pas y ajouter quelques titres ? 🎶');
     }
 
     const currentSong = queue.songs[0];

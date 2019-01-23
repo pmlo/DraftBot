@@ -8,7 +8,7 @@ module.exports = class InvitesCommand extends Command {
       memberName: 'invites',
       group: 'configuration',
       aliases: ['invitations','invs'],
-      description: 'Autoriser ou Interdir les invitations vers d\'autres serveurs discord.',
+      description: 'Autoriser ou interdire les invitations vers d\'autres serveurs discord.',
       examples: ['invites'],
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR']
@@ -21,10 +21,10 @@ module.exports = class InvitesCommand extends Command {
 
     if (msg.guild.settings.get('invites') !== false) {
       msg.guild.settings.set('invites', false);
-      description = `Les invitations vers d\'autres serveurs seront maintenant **interdites** et donc supprimés !`;
+      description = `Les invitations vers d\'autres serveurs seront maintenant **interdites** et donc supprimées !`;
     }else{
       msg.guild.settings.set('invites',true);
-      description = `Les invitations vers d\'autres serveurs seront maintenant **autorisés** !`;
+      description = `Les invitations vers d\'autres serveurs seront maintenant **autorisées** !`;
     }
 
     return sendLogsBot(msg, description)

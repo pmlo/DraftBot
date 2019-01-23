@@ -9,12 +9,12 @@ module.exports = class BanCommand extends Command {
       memberName: 'sanction',
       group: 'moderation',
       aliases: ['ss'],
-      description: 'Permet de lancer une sanction en vers un membre',
+      description: 'Permet de lancer une sanction envers un membre',
       examples: ['ss DraftMan'],
       guildOnly: true,
       args: [{
         key: 'member',
-        prompt: 'Quel membre voulez vous sanctionner',
+        prompt: 'Quel membre voulez-vous sanctionner ?',
         type: 'member'
       }],
       clientPermissions: ['KICK_MEMBERS','BAN_MEMBERS'],

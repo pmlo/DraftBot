@@ -19,18 +19,18 @@ module.exports = class PauseSongCommand extends Command {
     const queue = this.queue.get(msg.guild.id);
 
     if (!queue) {
-      return msg.reply('je ne joue pas de musique pour le moment, pourquoi ne pas commencer maintenant?');
+      return msg.reply('Je ne joue pas de musique pour le moment, pourquoi ne pas commencer maintenant?');
     }
     if (!queue.songs[0].dispatcher) {
-      return msg.reply('je ne peux pas mettre en pause une chanson qui n’a même pas encore été lancé.');
+      return msg.reply('Je ne peux pas mettre en pause une chanson qui n’a même pas encore été lancée.');
     }
     if (!queue.songs[0].playing) {
-      return msg.reply('la réception est impossible 🤔');
+      return msg.reply('La réception est impossible 🤔');
     }
     queue.songs[0].dispatcher.pause();
     queue.songs[0].playing = false;
 
-    return msg.reply(`la musique mise en pause. Utilisez \`${msg.guild.commandPrefix}resume\` pour relancer la musique.`);
+    return msg.reply(`La musique est mise en pause. Utilisez \`${msg.guild.commandPrefix}resume\` pour relancer la musique.`);
   }
 
   get queue () {

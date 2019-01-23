@@ -12,7 +12,7 @@ module.exports = class PrefixCommand extends Command {
 			examples: ['prefix', 'prefix ?', 'prefix @', 'prefix default', 'prefix none'],
 			args: [{
 				key: 'prefix',
-				prompt: 'Quel prefix voulez vous pour le bot',
+				prompt: 'Quel prefix voulez-vous pour le bot',
 				type: 'string',
 				max: 15,
 				default: ''
@@ -29,7 +29,7 @@ module.exports = class PrefixCommand extends Command {
 
 		if(msg.guild) {
 			if(!msg.member.hasPermission('ADMINISTRATOR') && !this.client.isOwner(msg.author)) {
-				return msg.reply('Uniquement les Administateurs peuvent changer le prefix du bot');
+				return msg.reply('Seuls les Administrateurs peuvent changer le prefix du bot');
 			}
 		} else if(!this.client.isOwner(msg.author)) {
 			return msg.reply('Seul le propriétaire du bot peut modifier le prefix global.');

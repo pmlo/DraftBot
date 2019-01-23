@@ -14,7 +14,7 @@ module.exports = class AvatarCommand extends Command {
       args: [
         {
           key: 'search',
-          prompt: 'Quelle recherche voulez vous ?',
+          prompt: 'Quelle recherche voulez-vous ?',
           type: 'string'
         }
       ]
@@ -31,7 +31,7 @@ module.exports = class AvatarCommand extends Command {
       .setColor('#cd6e57')
       .setTitle(member.user.username)
       .setURL(`https://www.lmgtfy.com/?q=${question}`)
-      .setDescription(`voici la solution à [ta question](https://www.lmgtfy.com/?q=${question}), c'est de la part de ${msg.author}, il pense que celà pourrais t'aider !`);
+      .setDescription(`voici la solution à [ta question](https://www.lmgtfy.com/?q=${question}), c'est de la part de ${msg.author}, il pense que cela pourrais t'aider !`);
 
     return msg.embed(embed);
   }

@@ -19,7 +19,7 @@ module.exports = class WarnCommand extends Command {
         },
         {
           key: 'reason',
-          prompt: 'Pour quelle raison souhaitez vous donner cet avertissement',
+          prompt: 'Pour quelle raison souhaitez-vous donner cet avertissement',
           type: 'string',
           default: ''
         }

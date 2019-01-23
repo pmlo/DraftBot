@@ -16,7 +16,7 @@ module.exports = class PrefixCommand extends Command {
 			args: [
 			{
 				key: 'argument',
-				prompt: 'Que souhaitez vous faire ? `ajouter`,`add`/`enlever`,`retirer`,`remove`',
+				prompt: 'Que souhaitez-vous faire ? `ajouter`,`add`/`enlever`,`retirer`,`remove`',
 				type: 'string',
 				validate: v => (/(ajouter|add|enlever|retirer|remove|supprimer)/i).test(v) ? true : 'doit être une valeur valide, `ajouter`,`add`/`enlever`,`retirer`,`remove`,`supprimer`',
 				parse: pf => pf.toLowerCase()
@@ -28,7 +28,7 @@ module.exports = class PrefixCommand extends Command {
 			},
 			{
 				key: 'role',
-				prompt: 'Quel role est la récompense ?',
+				prompt: 'Quel rôle est la récompense ?',
 				type: 'role'
 			}],
 			userPermissions: ['ADMINISTRATOR']
@@ -37,7 +37,7 @@ module.exports = class PrefixCommand extends Command {
 
 	async run(msg, {argument,level,role}) {
 		deleteCommandMessages(msg);
-		if(msg.guild.settings.get('levelSystem') === false) return msg.reply('impossible d\'ajouter des récompenses aux levels car ils ont été désactivés sur ce serveur.')
+		if(msg.guild.settings.get('levelSystem') === false) return msg.reply('impossible d\'ajouter des récompenses aux niveaux car ils ont été désactivés sur ce serveur.')
 		const db = new Database(path.join(__dirname, '../../storage.sqlite'));
 		if(argument === 'add' || argument === 'ajouter'){
 			const result = db.prepare(`SELECT * FROM "rewards" WHERE role='${role.id}' AND level='${level}' AND guild='${msg.guild.id}'`).get()
@@ -51,7 +51,7 @@ module.exports = class PrefixCommand extends Command {
 				level, 
 				date: `${new Date()}`
 			})
-			msg.reply(`La récompense \`${role.name}\` a bien été ajouté pour le niveau ${level} !`)
+			msg.reply(`La récompense \`${role.name}\` a bien été ajoutée pour le niveau ${level} !`)
 
 		}else if(argument === 'remove' || argument === 'enlever' || argument === 'retirer' || argument === 'supprimer'){
 			const result = db.prepare(`SELECT * FROM "rewards" WHERE role='${role.id}' AND guild='${msg.guild.id}'`).get()
@@ -60,7 +60,7 @@ module.exports = class PrefixCommand extends Command {
 				return msg.reply(`Il n'y a pas de récompense pour le niveau \`${level}\` !`)  
 			}
 			db.prepare(`DELETE FROM "rewards" WHERE role='${role.id}' AND guild='${msg.guild.id}'`).run()
-			msg.reply(`La récompense \`${role.name}\` a bien été supprimé du niveau ${level} !`)
+			msg.reply(`La récompense \`${role.name}\` a bien été supprimée du niveau ${level} !`)
 		}
 	}
 };
