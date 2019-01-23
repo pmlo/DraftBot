@@ -8,7 +8,7 @@ module.exports = class RewardCommand extends Command {
 		super(client, {
 			name: 'admin-reward',
 			memberName: 'admin-reward',
-			group: 'configuration',
+			group: 'levels',
 			aliases: ['addrecompense','addrécompense','addrewards'],
 			description: 'Ajouter des récompenses en fonction des niveaux',
 			examples: ['admin-reward 10 Actif'],

@@ -7,7 +7,7 @@ module.exports = class ReactRoleCommand extends Command {
     super(client, {
       name: 'role-msg',
       memberName: 'role-msg',
-      group: 'configuration',
+      group: 'interation',
       aliases: ['react-msg'],
       description: 'Créer un message avec des réactions permettant aux membres de s\'auto-attribuer des roles',
       examples: ['role-msg Rôles du serveur'],

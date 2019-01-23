@@ -185,6 +185,7 @@ DraftBot.registry
         ['leadersboards','Leadersboards - Consultez les statistiques de vos jeux préférés'],
         ['dev', 'Développeurs - Outils pour développeurs'],
         ['moderation', 'Moderation - Commandes de modération'],
+        ['interation', 'Interation - Commandes permettant de mettre en place des messages d\'intéraction'],
         ['configuration', 'Configuration - Commandes permettant de configurer le bot, toutes regroupés dans !init']
     ])
     .registerCommandsIn(path.join(__dirname, 'commands'));

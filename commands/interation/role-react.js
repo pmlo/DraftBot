@@ -9,7 +9,7 @@ module.exports = class ReactCommand extends Command {
     super(client, {
       name: 'role-react',
       memberName: 'role-react',
-      group: 'configuration',
+      group: 'interation',
       aliases: ['react-role'],
       description: 'Ajouter des réactions ainsi que des roles à un message qui seront attribués lors de l\'intéraction avec les réactions.',
       examples: ['role-react 5554845515145714 Graphiste 🖊'],
