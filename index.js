@@ -83,9 +83,10 @@ DraftBot.on('channelCreate', channel => {
 DraftBot.on('channelDelete', channel => sendLogsServ(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
 
 DraftBot.on('message', message => {
+
     if(!message.guild || message.author.bot) return;
-    if(message.guild && message.guild.settings.get('invites') === false && invites(message)) message.delete();
-    if(message.guild && message.guild.settings.get('badwords') && message.guild.settings.get('badwords').status === true && badwords(message).mots) message.delete();
+    if(message.guild.settings.get('invites') === false && invites(message)) message.delete();
+    if(message.guild.settings.get('badwords') && message.guild.settings.get('badwords').status === true && badwords(message)) message.delete();
 
     if(message.guild.settings.get('levelSystem') === false) return; 
 
@@ -184,8 +185,7 @@ DraftBot.registry
         ['leadersboards','Leadersboards - Consultez les statistiques de vos jeux préférés'],
         ['dev', 'Développeurs - Outils pour développeurs'],
         ['moderation', 'Moderation - Commandes de modération'],
-        ['configuration', 'Configuration - Commandes permettant de configurer le bot, toutes regroupés dans !init'],
-        ['admin', 'Admin - Commandes permettant de gérer les commandes sur le serveur']
+        ['configuration', 'Configuration - Commandes permettant de configurer le bot, toutes regroupés dans !init']
     ])
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
