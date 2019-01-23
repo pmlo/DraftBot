@@ -37,6 +37,6 @@ module.exports = class DisableCommand extends Command {
 		}
 		args.cmdOrGrp.setEnabledIn(msg.guild, false);
 	
-		return sendLogsBot(msg, `${args.cmdOrGrp.group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\`est maintenant désactivé.`)
+		return sendLogsBot(msg, `${args.cmdOrGrp.group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` est maintenant désactivé.`)
 	}
 };

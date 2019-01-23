@@ -41,6 +41,6 @@ module.exports = class EnableCommand extends Command {
 		}
 		args.cmdOrGrp.setEnabledIn(msg.guild, true);
 
-		return sendLogsBot(msg, `${group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` ${group && !group.isEnabledIn(msg.guild) ? `, mais le groupe \`${group.name}\` est désactivé, donc il ne peut toujours pas être utilisé` : ''}.`)
+		return sendLogsBot(msg, `${group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` est maintenant activé${group && !group.isEnabledIn(msg.guild) ? `, mais le groupe \`${group.name}\` est désactivé, donc il ne peut toujours pas être utilisé` : ''}.`)
 	}
 };
