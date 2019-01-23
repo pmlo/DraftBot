@@ -392,7 +392,7 @@ const badwords = msg => {
   if (msg.author.bot || msg.client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
       return false;
   }
-  return msg.guild.settings.get('badwords').some(v => msg.content.indexOf(v) >= 0);
+  return msg.guild.settings.get('badwords').mots.split(',').some(v => msg.content.indexOf(v) >= 0);
 };
 
 const createTables = () => {
