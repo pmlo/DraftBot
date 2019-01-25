@@ -21,9 +21,12 @@ module.exports = class InviteCommandCommand extends Command {
 	run(msg, { guild }) {
 		deleteCommandMessages(msg);
 		const newGuild = this.client.guilds.find(g => g.name.toLowerCase().includes(guild.toLowerCase()))
+
+		if(!newGuild) return msg.reply('impossible de trouver une guild ayant ce nom !')
 		
 		newGuild.fetchInvites()
 		.then(invites => {
+			if(!invites) return msg.reply('il n\'y a aucune invitation valide sur ce serveur !')
 			const embed = new MessageEmbed()
 			.setTitle(newGuild.name)
 			.setThumbnail(newGuild.iconURL({format: 'png'}))
