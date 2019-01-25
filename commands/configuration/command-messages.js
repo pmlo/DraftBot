@@ -7,7 +7,7 @@ module.exports = class CommandMessagesCommand extends Command {
       name: 'command-messages',
       memberName: 'command-messages',
       group: 'configuration',
-      aliases: ['messagecommands','messagecommand','messagescommand','commandmessages','commandsmessages','commandsmessage'],
+      aliases: ['messagecommands','messagecommand','messagescommand','commandmessages','commandsmessages','commandsmessage','commandsmsg','commandmsg'],
       description: 'Activer ou désactiver la suppression des messages de commandes.',
       examples: ['welcome'],
       guildOnly: true,
