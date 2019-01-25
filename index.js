@@ -86,7 +86,7 @@ DraftBot.on('message', message => {
 
     if(!message.guild || message.author.bot) return;
     if(message.guild.settings.get('invites') === false && invites(message)) message.delete();
-    if(message.guild.settings.get('badwords') && message.guild.settings.get('badwords').status === true && badwords(message)) message.delete();
+    if(message.guild.settings.get('lexique') && message.guild.settings.get('lexique').status === true && badwords(message)) message.delete();
 
     if(message.guild.settings.get('levelSystem') === false) return; 
 

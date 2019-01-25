@@ -392,8 +392,8 @@ const badwords = msg => {
   if (msg.author.bot || msg.client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
       return false;
   }
-  console.log(msg.guild.settings.get('badwords'))
-  const badswords = msg.guild.settings.get('badwords');
+  console.log(msg.guild.settings.get('lexique'))
+  const badswords = msg.guild.settings.get('lexique');
   const words = badswords.mots !== '' ? badswords.mots.split(',') : []
   return words.some(v => msg.content.indexOf(v) >= 0);
 };

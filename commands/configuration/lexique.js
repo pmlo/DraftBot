@@ -38,8 +38,8 @@ module.exports = class LexiqueCommand extends Command {
     let description;
 
     if(argument) {
-      if(msg.guild.settings.get('badwords')){
-        const badwords = msg.guild.settings.get('badwords');
+      if(msg.guild.settings.get('lexique')){
+        const badwords = msg.guild.settings.get('lexique');
         const oldWords = badwords.mots !== '' ? badwords.mots.split(',') : []
 
         if(['add','ajouter'].includes(argument)){
@@ -47,7 +47,7 @@ module.exports = class LexiqueCommand extends Command {
           
           oldWords.push(mot);
 
-          msg.guild.settings.set('badwords', {mots: oldWords.length > 1 ? oldWords.join(',') : oldWords[0], status: badwords.status});
+          msg.guild.settings.set('lexique', {mots: oldWords.length > 1 ? oldWords.join(',') : oldWords[0], status: badwords.status});
           description = `🎉 La liste des mots interdit est maintenant: \`${oldWords.join('\`, \`')}\` !`;
   
           if(badwords.status !== true){
@@ -59,7 +59,7 @@ module.exports = class LexiqueCommand extends Command {
           if(!oldWords.includes(mot)) return msg.reply('Ce mot n\'est pas dans la liste des mots interdits !')
           const newWords = oldWords.filter(w => w !== mot);
 
-          msg.guild.settings.set('badwords', {mots: newWords.length > 0 ? newWords.join(',') : '', status: badwords.status});
+          msg.guild.settings.set('lexique', {mots: newWords.length > 0 ? newWords.join(',') : '', status: badwords.status});
           description = `🎉 La liste des mots interdit est maintenant: \`${newWords.join('\`, \`')}\` !`;
   
           if(badwords.status !== true){
@@ -75,25 +75,25 @@ module.exports = class LexiqueCommand extends Command {
         }
       }else{
         if(['add','ajouter'].includes(argument)){
-          msg.guild.settings.set('badwords', {mots: mot, status: true});
+          msg.guild.settings.set('lexique', {mots: mot, status: true});
           description = `🎉 La liste des mots interdit est maintenant: \`${oldWords.join('\`, \`')}\` !`;
         }
         if(['enlever','retirer','remove','supprimer'].includes(argument)){
-          msg.guild.settings.set('badwords', {mots: '', status: true});
+          msg.guild.settings.set('lexique', {mots: '', status: true});
           return msg.reply('Ce mot n\'est pas dans la liste des mots interdits !')
         }
         if(['list','show','liste'].includes(argument)){
-          msg.guild.settings.set('badwords', {mots: '', status: true});
+          msg.guild.settings.set('lexique', {mots: '', status: true});
           description = `🎉 La liste des mots interdit est vide, vous pouvez en ajouter en faisant \`${msg.guild.commandPrefix}lexique add <votre mot>\` !`;
         }
         description = `🎉 Le lexique des mots interdit viens d'être **activé**, vous y avez ajouté les mots suivants: \`${mots.join('\`, \`')}\` !`;
       }
     }else{
-      if(msg.guild.settings.get('badwords') && msg.guild.settings.get('badwords').status == true) {
-        msg.guild.settings.set('badwords', {mots: msg.guild.settings.get('badwords') ? msg.guild.settings.get('badwords').mots : '', status: false});
+      if(msg.guild.settings.get('lexique') && msg.guild.settings.get('lexique').status == true) {
+        msg.guild.settings.set('lexique', {mots: msg.guild.settings.get('lexique') ? msg.guild.settings.get('lexique').mots : '', status: false});
         description = `🎉 La restriction du vocablulaire est maintenant **désactivé** !`;
       }else{
-        msg.guild.settings.set('badwords', {mots: msg.guild.settings.get('badwords') ? msg.guild.settings.get('badwords').mots : '', status: true});
+        msg.guild.settings.set('lexique', {mots: msg.guild.settings.get('lexique') ? msg.guild.settings.get('lexique').mots : '', status: true});
         description = `🎉 La restriction du vocablulaire est maintenant **activé** !`;
       }
     }
