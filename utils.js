@@ -220,7 +220,7 @@ const sendLogsBot = (msg, message) => {
   const embed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
-    .setDescription(stripIndents`**Action:** ${message}`)
+    .setDescription(message)
     .setFooter(`Logs du serveur ${msg.guild.name}`)
     .setTimestamp();
 
@@ -392,7 +392,10 @@ const badwords = msg => {
   if (msg.author.bot || msg.client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
       return false;
   }
-  return msg.guild.settings.get('badwords').mots.split(',').some(v => msg.content.indexOf(v) >= 0);
+  console.log(msg.guild.settings.get('badwords'))
+  const badswords = msg.guild.settings.get('badwords');
+  const words = badswords.mots !== '' ? badswords.mots.split(',') : []
+  return words.some(v => msg.content.indexOf(v) >= 0);
 };
 
 const createTables = () => {
