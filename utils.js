@@ -119,6 +119,7 @@ const makeWelcomeImage = async (member) => {
     }else{
       channel = member.guild.systemChannel
     }
+
     try {
       const canvas = new Jimp(500, 150);
       const avatar = await Jimp.read(member.user.displayAvatarURL({format: 'png'}));
@@ -210,6 +211,38 @@ const guildAdd = async guild => {
   }
 };
 
+const guildRemove = async guild => {
+  try {
+    const oldGuildEmbed = new MessageEmbed()
+    .setColor(0xcd6e57)
+    .setTitle('Plop 👋')
+    .setDescription(stripIndents`
+      Salut ${guild.owner}.
+      Je viens de remarquer que tu m’as exclu de ton serveur. 
+      Quel dommage, j’aurais vraiment apprécié t’aider davantage. 😟
+
+      Je ne satisfaisais sûrement pas tes attentes ou ta communauté, et je souhaiterais y remédier.
+      Pour cela, en souvenir de notre amitié, explique ce qui t'a amené à te séparer de moi. 
+      
+      Rejoins [mon support](https://www.draftman.fr/discord) et détaille au support ce qui te dérangeait chez moi. 
+      Je pourrais sûrement m'améliorer et combler mes lacunes ! 😀
+      
+      A très bientôt, je l'espère 👋
+    `)
+
+    guild.owner.DMChannel.send('',oldGuildEmbed)
+
+    const newBotEmbed = new MessageEmbed()
+    .setColor(0xce0000)
+    .setTitle(`Je viens viens d\'être exclu de ${guild.name} !`)
+    .setDescription(`Je suis maintenant sur **${guild.client.guilds.size}** serveurs discord !`)
+    .addField('Créateur',guild.owner.user.tag,true)
+    guild.client.channels.get('498406991891529728').send(newBotEmbed)
+  } catch (err) {
+    return console.log('Utils => OldServ',err);
+  }
+};
+
 const addRole = (role, member) => {
   if(member.guild.roles.find(r => r.name === role)){
     member.roles.add(member.guild.roles.find(r => r.name === role));
@@ -246,14 +279,11 @@ const sendLogsServ = (guild,title, message) => {
   if(message !== null) embed.setDescription(message)
 
   if (guild.settings.get('logsMessageServ') === true) {
-      const channel = guild.settings.get('logsChannel') ? guild.channels.find(c => c.id === guild.settings.get('logsChannel').id) : guild.channels.find(c => c.name === 'logs');
-      if(channel !== undefined){
-        channel.send('',embed)
-        return;
-      }
+    const channel = guild.settings.get('logsChannel') ? guild.channels.find(c => c.id === guild.settings.get('logsChannel').id) : guild.channels.find(c => c.name === 'logs');
+    if(channel) return channel.send('',embed)
     return guild.systemChannel.send(error('impossible de trouver de channel de logs !'))
   }
-}
+} 
 
 const newUser = (member,type) => {
   if (member.guild.settings.get('logsMessageBot') === true) {
@@ -405,14 +435,17 @@ const createTables = () => {
   db.prepare(`CREATE TABLE IF NOT EXISTS "reacts"(guild TEXT, message TEXT, emoji TEXT, role TEXT)`).run()
   db.prepare(`CREATE TABLE IF NOT EXISTS "rewards"(guild TEXT, level INTEGER, role TEXT, date DATE)`).run()
   db.prepare(`CREATE TABLE IF NOT EXISTS "access"(guild TEXT, message TEXT, role TEXT, date DATE)`).run()
+  db.prepare(`CREATE TABLE IF NOT EXISTS "giveaway"(guild TEXT, channel TEXT, user TEXT, message TEXT, reward TEXT, end TEXT, date DATE, status INTEGER)`).run()
+  db.prepare(`CREATE TABLE IF NOT EXISTS "messages"(guild TEXT, channel TEXT, user TEXT, content TEXT, time INTEGER, date DATE)`).run()
 }
+
 const warnUser = (msg,member,reason) => {
   const db = new Database(path.join(__dirname, './storage.sqlite'));
   db.prepare(`INSERT INTO "warnings"(guild, user, reason, date, mod) VALUES ($guild, $user, $reason, $date, $mod)`).run({
     guild: msg.guild.id,
     user: member.id,
     reason: reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur',
-    date: new Date(),
+    date: `${new Date()}`,
     mod: msg.member.id
   })
 
@@ -453,8 +486,8 @@ const banUser = (msg,member,reason) => {
     const embed = new MessageEmbed()
     .setColor(0xcd6e57)
     .setAuthor(msg.author.tag, msg.author.displayAvatarURL())
-    .setDescription(stripIndents`
-      **Membre:** ${member.user.tag}
+      .setDescription(stripIndents`
+        **Membre:** ${member.user.tag}
       **Action:** Ban
       **Raison:** ${reason !== '' ? reason : 'Aucune raison n\'a été spécifié par le modérateur'}`)
     .setFooter(msg.guild.name,msg.guild.iconURL({format: 'png'}))
@@ -653,6 +686,24 @@ const parse = str => {
 
 const capitalizeFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
+const parseShortTime = timestr => new Promise((resolve, reject) => {
+    timestr = timestr.toLowerCase();
+    if(!timestr.match(/\d{1,8}[mhdj]?/)) return reject('no');
+    let multiplier = 1;
+    switch(timestr.charAt(timestr.length-1)){
+        case 'd': 
+        case 'j': 
+        multiplier *= 24;
+        case 'h':   
+        multiplier *= 60;
+        case 'm':
+        timestr = timestr.substring(0, timestr.length-1);
+    }
+    return resolve({response: multiplier * new Number(timestr)});
+});
+
+const deleteM = message => message.deletable ? message.delete({timeout: 3000}) : null;
+
 module.exports = {
   makeWelcomeImage,
   addRole,
@@ -665,6 +716,7 @@ module.exports = {
   findChannel,
   findRole,
   guildAdd,
+  guildRemove,
   invites,
   badwords,
   createTables,
@@ -687,5 +739,7 @@ module.exports = {
   getSimpleUserXp,
   rewardGiven,
   ms,
-  capitalizeFirstLetter
+  capitalizeFirstLetter,
+  parseShortTime,
+  deleteM
 };
