@@ -1,6 +1,6 @@
 const {Command} = require('discord.js-commando');
 const {MessageEmbed} = require('discord.js');
-const {deleteCommandMessages} = require('../../utils.js');
+const {deleteM} = require('../../utils.js');
 
 module.exports = class ClearCommand extends Command {
   constructor (client) {
@@ -18,19 +18,37 @@ module.exports = class ClearCommand extends Command {
         min: 1,
         max: 100,
         type: 'integer'
+      },
+      {
+        key: 'search',
+        prompt: 'Un utilisateur en particulier ?',
+        default: '',
+        type: 'member|string' 
       }],
       clientPermissions: ['MANAGE_MESSAGES'],
       userPermissions: ['MANAGE_MESSAGES']
     });
   }
 
-  async run (msg, {amount}) {
-    deleteCommandMessages(msg);
-    let number = msg.channel.messages.array().reverse().findIndex(q => q.id === msg.id) 
-    number > 0 ? number-- : number
-    amount = amount + number >= 100 ? 99 : amount + number;
-    msg.channel.bulkDelete(amount + number + 1).then(msgs => {
-      msg.say(`\`${msgs.size - number - 1} messages supprimés\``).then(message => message.delete({timeout: 2000}))
+  async run (msg, {amount,search}) {
+
+    const listFetch = await msg.channel.messages.fetch({limit: 30, after: msg.id})
+    const list = listFetch.array()
+    list.push(msg)
+
+    let totalFetch = await msg.channel.messages.fetch({limit: 100, before: msg.id});
+
+    if(search) 
+    totalFetch = search.user 
+    ? totalFetch.filter(ms => ms.author.id === search.user.id) 
+    : totalFetch.filter(ms => ms.content.contains(search))
+
+    const total = totalFetch.array().slice(0,amount)
+    
+    const result = list.concat(total).slice(0,100)
+    
+    msg.channel.bulkDelete(result).then(msgs => {
+      msg.say(`\`${msgs.size - list.length} messages supprimés\``).then(deleteM)
     }).catch(err => {
       if(err.message === 'You can only bulk delete messages that are under 14 days old.'){
         return clearChannel(msg).then(response => {
