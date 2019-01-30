@@ -9,7 +9,7 @@ module.exports = class ReactCommand extends Command {
     super(client, {
       name: 'role-react',
       memberName: 'role-react',
-      group: 'interation',
+      group: 'interaction',
       aliases: ['react-role'],
       description: 'Ajouter des réactions ainsi que des roles à un message qui seront attribués lors de l\'intéraction avec les réactions.',
       examples: ['role-react 5554845515145714 Graphiste 🖊'],
@@ -36,6 +36,11 @@ module.exports = class ReactCommand extends Command {
 
   async run (msg, {emoji,role,message}) {
     deleteCommandMessages(msg);
+    
+    if(message.author.id !== this.client.user.id){
+      return msg.reply(`Il est impossible d\'ajouter un role-react sur un message non rédigé par le bot !\n**Astuce**: Vous pouvez utiliser la commande \`${msg.guild.commandPrefix}say\` pour écrire votre message, ou la commande \`${msg.guild.commandPrefix}msg-react\` qui s'occupera de tous les rôles !`)
+    }
+    
     const db = new Database(path.join(__dirname, '../../storage.sqlite'));
     const newEmoji = Util.parseEmoji(emoji)
 
@@ -45,10 +50,7 @@ module.exports = class ReactCommand extends Command {
     
     const embedBoo = focusMsg.embeds.length > 0 ? true : false;
     const embed = focusMsg.embeds[0];
-    const reactEmbed = new MessageEmbed()
-    .setColor(0xcd6e57)
-    .setAuthor(msg.author.username, msg.author.displayAvatarURL())
-    .setTimestamp();
+    let description;
 
     if (result) {
       const currentRole = msg.guild.roles.find(r => r.id === result.role)
@@ -70,7 +72,7 @@ module.exports = class ReactCommand extends Command {
           const description = roles.filter(r => r !== `${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} | ${currentRole.name}`).join('\n')
           embed.setDescription(description);
         }
-        reactEmbed.setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} viens d'être supprimé pour le role ${role.name} sur le selectionneur de roles !`)
+        description = `**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} viens d'être supprimé pour le role ${role.name} sur le selectionneur de roles !`
       }else{
         //UPDATE
         db.prepare(`UPDATE "reacts" SET role= ${role.id} WHERE message='${message.id}' AND emoji='${newEmoji.id||newEmoji.name}' AND guild='${msg.guild.id}'`).run()
@@ -83,7 +85,7 @@ module.exports = class ReactCommand extends Command {
         }
 
         if(embedBoo) embed.setDescription(embed.description.replace(currentRole.name, role.name))
-        reactEmbed.setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} viens de remplacer l'ancien pour le role ${role.name} sur le selectionneur de roles !`)
+        description = `**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} viens de remplacer l'ancien pour le role ${role.name} sur le selectionneur de roles !`;
       }
     } else {
       //AJOUTER
@@ -102,9 +104,9 @@ module.exports = class ReactCommand extends Command {
         embed.setDescription(`\n${roles.join('\n')}`);
       }
   
-      reactEmbed.setDescription(`**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} à été attributé au role ${role.name} sur le selectionneur de roles !`)
+      description = `**Action:** L'émoji ${newEmoji.id ? `<:${newEmoji.name}:${newEmoji.id}>` : newEmoji.name} à été attributé au role ${role.name} sur le selectionneur de roles !`;
     }
     if(embedBoo) focusMsg.edit('', {embed});
-    return msg.embed(reactEmbed).then(actionMessage => actionMessage.delete({timeout: 8000}))
+    return sendLogsBot(msg,description)
   }
 };

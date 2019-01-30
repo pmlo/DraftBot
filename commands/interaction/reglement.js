@@ -9,7 +9,7 @@ module.exports = class ReglementCommand extends Command {
     super(client, {
       name: 'reglement',
       memberName: 'reglement',
-      group: 'interation',
+      group: 'interaction',
       aliases: ['validator','valid-reglement'],
       description: 'Mettre en place un système de règlement avec validation',
       examples: ['reglement'],
