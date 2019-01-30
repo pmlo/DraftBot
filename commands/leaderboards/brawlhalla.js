@@ -12,7 +12,7 @@ module.exports = class BrawlhallaCommand extends Command {
     super(client, {
       name: 'brawlhalla',
       memberName: 'brawlhalla',
-      group: 'leadersboards',
+      group: 'leaderboards',
       description: 'Récupérer les statistiques d\'un joueur Brawlhalla',
       examples: ['brawlhalla DraftMan_Dev'],
       guildOnly: false,

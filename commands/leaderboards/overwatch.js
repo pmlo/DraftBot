@@ -11,7 +11,7 @@ module.exports = class LOLCommand extends Command {
     super(client, {
       name: 'overwatch',
       memberName: 'overwatch',
-      group: 'leadersboards',
+      group: 'leaderboards',
       description: 'Récupérer les statistiques d\'un joueur Overwatch',
       examples: ['overwatch DraftMan_Dev'],
       guildOnly: false,

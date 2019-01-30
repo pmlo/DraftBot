@@ -10,7 +10,7 @@ module.exports = class OSUCommand extends Command {
     super(client, {
       name: 'osu',
       memberName: 'osu',
-      group: 'leadersboards',
+      group: 'leaderboards',
       description: 'Récupérer les statistiques d\'un joueur OSU',
       examples: ['osu DraftMan_Dev'],
       guildOnly: false,
