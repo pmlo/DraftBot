@@ -1,13 +1,15 @@
 const { CommandoClient, SyncSQLiteProvider } = require('discord.js-commando');
 const path = require('path');
-const {makeWelcomeImage,rewardGiven,newUser,guildAdd,sendLogsServ,invites,badwords,createTables,error,getLevelFromXp,getLastUserReward} = require('./utils.js');
+const {makeWelcomeImage,rewardGiven,newUser,guildAdd,guildRemove,sendLogsServ,invites,badwords,createTables,error,getLevelFromXp,getLastUserReward} = require('./utils.js');
 const websocket = require('./websocket');
 const {oneLine} = require('common-tags');
 const Database = require('better-sqlite3');
 const moment = require('moment');
 const DBL = require("dblapi.js");
+moment().locale('fr');
 
 let users = new Map();
+let messagesList = new Map();
 
 require('dotenv').config();
 
@@ -36,14 +38,58 @@ DraftBot.on('ready', () => {
     console.log('DraftBot connecté !')
     console.log(`Actif sur ${DraftBot.guilds.size} serveurs.`);
     DraftBot.user.setActivity('ses lignes', {type: 'WATCHING'})
-    createTables()
+    createTables();
+    startTimeout();
 });
 
-// DraftBot.on('error', console.error);
+const startTimeout = () => {
+    const giveaways = db.prepare(`SELECT message,channel,end,reward FROM "giveaway" WHERE status=0`).all()
+    const messages = db.prepare(`SELECT rowid,content,channel,time FROM "messages"`).all();
+    
+    giveaways.forEach(giveaway => {
+        DraftBot.channels.get(giveaway.channel).messages.fetch(giveaway.message)
+        .then(async msg => {
+            const embed =  msg.embeds[0];
+            const momento = moment(giveaway.end)
+            if(momento.isBefore(moment().format())){              
+                const reaction = msg.reactions.find(r => r.emoji.name === '🎉')
+                const usersFetch = await reaction.users.fetch()
+                const users = usersFetch.filter(u => !u.bot).array()
+                const winner = users[Math.floor(Math.random()*users.length)];
+                const participants = reaction.count - 1;
+
+                if(winner){
+                    embed.setDescription(`Le giveaway est maintenant terminé, l'heureux chanceux est **${winner}** !\nIl a gagné : **${giveaway.reward}**\nIl y a eu **${participants}** participants !`);
+                }else{
+                    embed.setDescription(`Le giveaway est maintenant terminé, Il n'y a pas eu de participants donc je n'ai pas pu choisir de vainqueur !\nLa récompense était : **${giveaway.reward}**\nIl y a eu **${participants}** participants !`);
+                }
+
+                db.prepare(`UPDATE "giveaway" SET status= 1 WHERE message='${msg.id}' AND guild='${msg.guild.id}'`).run()
+            }else{
+                const split = embed.description.split('**')
+                embed.setDescription(`${split[0]}**${momento.fromNow()}**`)
+            }
+            msg.edit('',embed)
+        })
+    });
+    messages.forEach(message => {
+        if(!messagesList.get(message.rowid)) messagesList.set(message.rowid, 0)
+        const m = messagesList.get(message.rowid);
+        messagesList.set(message.rowid, new Number(m)+1);
+        if(m === message.time){    
+            const messageM = JSON.parse(message.content)
+            DraftBot.channels.get(message.channel).send(messageM.content,messageM.options)
+            messagesList.set(message.rowid, 0);
+        }
+    })
+    setTimeout(startTimeout,60000);
+}
+
+DraftBot.on('error', console.error);
 
 DraftBot.on('guildMemberAdd', member => {
     makeWelcomeImage(member);
-    newUser(member, true)
+    newUser(member, true);
 })
 
 DraftBot.on('guildMemberRemove', member => newUser(member, false))
@@ -75,10 +121,9 @@ DraftBot.on('emojiDelete', emoji => sendLogsServ(emoji.guild, `L'émoji ${emoji.
 
 DraftBot.on('guildCreate', guild => guildAdd(guild))
 
-DraftBot.on('channelCreate', channel => {
-    if(!channel.guild) return;
-    sendLogsServ(channel.guild, `Le salon ${channel.name} a été crée.`,null)
-})
+DraftBot.on('guildDelete', guild => guildRemove(guild))
+
+DraftBot.on('channelCreate', channel => channel.guild ? sendLogsServ(channel.guild, `Le salon ${channel.name} a été crée.`,null) : null)
 
 DraftBot.on('channelDelete', channel => sendLogsServ(channel.guild, `Le salon ${channel.name} a été supprimé.`,null))
 
@@ -179,13 +224,14 @@ DraftBot.registry
     .registerGroups([
         ['bot', 'Bot - Informations par rapport au bot et au discord'],
         ['musique', 'Musique - Commandes permettant de mettre de la musique'],
-        ['utils', 'Utils - Différents outils permettant différentes choses sur le serveur'],
+        ['utilitaires', 'Utilitaires - Différents outils permettant différentes choses sur le serveur'],
         ['fun', 'Fun - Commandes fun'],
+        ['emotions', 'Emotions - Commandes d\'émotions'],
         ['levels', 'Levels - Consultez votre activité sur une guild'],
-        ['leadersboards','Leadersboards - Consultez les statistiques de vos jeux préférés'],
+        ['leaderboards','Leadersboards - Consultez les statistiques de vos jeux préférés'],
         ['dev', 'Développeurs - Outils pour développeurs'],
         ['moderation', 'Moderation - Commandes de modération'],
-        ['interation', 'Interation - Commandes permettant de mettre en place des messages d\'intéraction'],
+        ['interaction', 'Interaction - Commandes permettant de mettre en place des messages d\'intéraction'],
         ['configuration', 'Configuration - Commandes permettant de configurer le bot, toutes regroupés dans !init']
     ])
     .registerCommandsIn(path.join(__dirname, 'commands'));
