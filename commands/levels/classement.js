@@ -31,7 +31,7 @@ module.exports = class ClassementCommand extends Command {
 			let userlist = '', xplist = '';
 			let place = 0;
 
-			const newUsers = users.filter(u => msg.guild.members.find(m => m.user.id === u.user));
+			const newUsers = users.filter(u => msg.guild.members.find(m => m.user.id === u.user)).slice(0,5);
 
 			await [].forEach.call(newUsers, user => {
 				this.client.users.fetch(user.user).then(u => {

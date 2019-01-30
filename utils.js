@@ -112,7 +112,7 @@ const rewardGiven = async (msg,role,level,member) => {
 const makeWelcomeImage = async (member) => {
   if (member.guild.settings.get('welcomeMessage') !== false && !member.user.bot) {
     let channel;   
-    if(member.guild.settings.get('welcomeChannel')){
+    if(member.guild.settings.get('welcomeChannel') && member.guild.channels.get(member.guild.settings.get('welcomeChannel').id)){
       channel = member.guild.settings.get('welcomeChannel')
     }else if(member.guild.channels.find(c => c.name === 'general' || c.name === 'général')){
       channel = member.guild.channels.find(c => c.name === 'general' || c.name === 'général')
@@ -422,7 +422,6 @@ const badwords = msg => {
   if (msg.author.bot || msg.client.isOwner(msg.author) || msg.member.hasPermission('MANAGE_MESSAGES')) {
       return false;
   }
-  console.log(msg.guild.settings.get('lexique'))
   const badswords = msg.guild.settings.get('lexique');
   const words = badswords.mots !== '' ? badswords.mots.split(',') : []
   return words.some(v => msg.content.indexOf(v) >= 0);
