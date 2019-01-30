@@ -153,7 +153,7 @@ DraftBot.on('message', message => {
             if(response !== undefined){
                 const member = message.guild.member(message.author)
                 const role = message.guild.roles.get(response.role)
-                if(member.roles.find(r => r.id === response.role)) {
+                if(message.guild.roles.find(r => r.id === response.role) && !member.roles.find(r => r.id === response.role)) {
                     member.roles.add(role).catch(error => {
                         if(error.message === 'Missing Permissions'){
                             return message.reply('Il y a un problème de permissions !')
