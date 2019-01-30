@@ -8,12 +8,11 @@ const { oneLine } = require('common-tags');
 module.exports = class AmourCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'amour',
-			memberName: 'amour',
+			name: 'cupidon',
+			memberName: 'cupidon',
 			group: 'fun',
-			aliases: ['amours'],
 			description: 'Trouver le couple parfait',
-			examples: ['amour'],
+			examples: ['cupidon'],
 			args: [
 				{
 				  key: 'romeo',
