@@ -5,12 +5,12 @@ const {deleteCommandMessages} = require('../../utils.js');
 module.exports = class InfoCommand extends Command {
   constructor (client) {
     super(client, {
-      name: 'info',
-      memberName: 'info',
+      name: 'botinfo',
+      memberName: 'botinfo',
       group: 'bot',
-      aliases: ['infos', 'liens'],
+      aliases: ['botinfos', 'liens'],
       description: 'Afficher quelques liens importants pour le bot discord',
-      examples: ['info'],
+      examples: ['botinfo'],
       guildOnly: false
     });
   }
@@ -19,10 +19,10 @@ module.exports = class InfoCommand extends Command {
     deleteCommandMessages(msg);
     const infoEmbed = new MessageEmbed()
     .setTitle("Informations")
-    .setDescription("Voici quelques informations concernant")
+    .setDescription("Voici quelques informations me concernant")
     .setColor(0xcd6e57)
-    .setFooter("DraftMan | Développeur FrontEnd & Graphiste", "https://www.draftman.fr/images/avatar.jpg")
-    .addField("Lib du bot", "[discord.js](https://discord.js.org)", true)
+    .setFooter("DraftMan | Développeur Js Full Stack & Graphiste", "https://www.draftman.fr/images/avatar.jpg")
+    .addField("Libs du bot", "[discord.js](https://discord.js.org)", true)
     .addField("Website", "[draftman.fr](https://www.draftman.fr/)", true)
     .addField("DiscordBots", "[discordbots.org/draftbot](https://discordbots.org/bot/318312854816161792)", true)
     .addField("Support", "[draftman.fr/discord](https://www.draftman.fr/discord)", true)
