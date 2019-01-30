@@ -7,7 +7,7 @@ module.exports = class AvatarCommand extends Command {
     super(client, {
       name: 'avatar',
       memberName: 'avatar',
-      group: 'utils',
+      group: 'utilitaires',
       aliases: ['image'],
       description: 'Récupérer l\'avatar d\'un membre',
       examples: ['avatar DraftMan 256'],

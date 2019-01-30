@@ -7,7 +7,7 @@ module.exports = class AvatarCommand extends Command {
     super(client, {
       name: 'lmgtfy',
       memberName: 'lmgtfy',
-      group: 'utils',
+      group: 'utilitaires',
       aliases: ['google','search','recherche'],
       description: 'Permet d\'envoyer un lien lmgtfy.',
       examples: ['lmgtfy Comment trouver des réponses soit même'],

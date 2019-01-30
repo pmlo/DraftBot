@@ -7,7 +7,7 @@ module.exports = class QuoteCommand extends Command {
     super(client, {
       name: 'quote',
       memberName: 'quote',
-      group: 'utils',
+      group: 'utilitaires',
       aliases: ['recup','cite'],
       description: 'Citer un message envoyé',
       examples: ['quote 5554845515145714'],

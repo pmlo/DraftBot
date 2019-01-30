@@ -11,7 +11,7 @@ module.exports = class MeteoCommand extends Command {
         super(client, {
             name: 'meteo',
             memberName: 'meteo',
-            group: 'utils',
+            group: 'utilitaires',
             aliases: ['meteo', 'météo', 'weather', 'temp'],
             description: 'Récupérer et afficher la météo d\'une ville',
             examples: ['meteo Montpellier'],

@@ -5,7 +5,7 @@ module.exports = class AvatarCommand extends Command {
     super(client, {
       name: 'say',
       memberName: 'say',
-      group: 'utils',
+      group: 'utilitaires',
       aliases: ['dit','sayd'],
       description: 'Permet de faire parler le bot',
       examples: ['say C\'est moi le plus fort ! Harder, better, faster, stronger 🎶'],
@@ -20,8 +20,8 @@ module.exports = class AvatarCommand extends Command {
     });
   }
 
-  async run (msg, {message}) {
-    await msg.say(message, {files: msg.attachments.map(a => a.proxyURL)})
-    await msg.delete();
+  run (msg, {message}) {
+    msg.say(message, {files: msg.attachments.map(a => a.proxyURL)})
+    msg.delete();
   }
 };

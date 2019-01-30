@@ -9,7 +9,7 @@ module.exports = class MathsCommand extends Command {
     super(client, {
       name: 'maths',
       memberName: 'maths',
-      group: 'utils',
+      group: 'utilitaires',
       aliases: ['calc','calculatrice','equation','math'],
       description: 'Résoudre une équation',
       examples: ['math PI * 3'],

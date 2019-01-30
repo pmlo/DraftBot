@@ -8,7 +8,7 @@ module.exports = class StrawpollCommand extends Command {
     super(client, {
       name: 'strawpoll',
       memberName: 'strawpoll',
-      group: 'utils',
+      group: 'utilitaires',
       aliases: ['straw', 'poll'],
       description: 'Créer un sondage Strawpoll.',
       format: '\'Title Of Strawpoll\' OptionA OptionB OptionC...',

@@ -7,7 +7,7 @@ module.exports = class QuoteCommand extends Command {
     super(client, {
       name: 'sondage',
       memberName: 'sondage',
-      group: 'utils',
+      group: 'utilitaires',
       aliases: ['vote'],
       description: 'Lancer un sondage pour la communauté',
       examples: ['sondage Aimez vous les frites ?'],
