@@ -52,6 +52,6 @@ module.exports = class ClassementCommand extends Command {
 			.addField('Niveau',xplist,true)
 
 			msg.embed(embed)
-		})
+		}).catch(err => console.log('Classement => getUsersXp',err))
 	}
 };

@@ -11,18 +11,16 @@ module.exports = class KickCommand extends Command {
       aliases: ['kicker','renvoyer'],
       examples: ['kick DraftMan'],
       guildOnly: true,
-      args: [
-        {
-          key: 'user',
-          prompt: 'Quel membre voulez vous kick',
-          type: 'member'
-        },
-        {
-          key: 'reason',
-          prompt: 'Pour quelle raison voulez-vous renvoyer ce membre?',
-          type: 'string'
-        }
-      ],
+      args: [{
+        key: 'user',
+        prompt: 'Quel membre voulez vous kick',
+        type: 'member'
+      },
+      {
+        key: 'reason',
+        prompt: 'Pour quelle raison voulez-vous renvoyer ce membre?',
+        type: 'string'
+      }],
       clientPermissions: ['KICK_MEMBERS'],
       userPermissions: ['KICK_MEMBERS']
     });

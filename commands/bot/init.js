@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 const { Command } = require('discord.js-commando')
 const { stripIndents } = require('common-tags')
-const { findChannel,findRole,deleteCommandMessages} = require('../../utils.js')
+const { findChannel,findRole,deleteCommandMessages,deleteM} = require('../../utils.js')
 
 module.exports = class InitCommand extends Command {
   constructor (client) {
@@ -219,7 +219,7 @@ const channelWelcome = (msg) => new Promise((resolve, reject) => {
         return resolve({ response: channel });
       }).catch(error => {
         if(message) message.delete()
-        msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
+        msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer!`)).then(deleteM)
         console.log('Init command => channelWelcome in findChannel func',error)
         return;
       })
@@ -276,8 +276,8 @@ const roleAuto = (msg) => new Promise((resolve, reject) => {
         if(question) question.delete()
         return resolve({ response: role });
       }).catch(error => {
-        message.delete({timeout: 2000})
-        msg.embed(errorEmbed(msg,`Impossible de trouver le rôle \`${message}\`, merci de réessayer!`)).then(m => m.delete({timeout: 3000}))
+        deleteM(message);
+        msg.embed(errorEmbed(msg,`Impossible de trouver le rôle \`${message}\`, merci de réessayer!`)).then(deleteM)
         console.log('Init command => roleAuto in FindRole func',error)
         return;
       })
@@ -360,7 +360,7 @@ const channelLogs = (msg) => new Promise((resolve, reject) => {
         const channel = response.channel;
         if(channel === null) {
           if(message) message.delete()
-          msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer !`)).then(m => m.delete({timeout: 3000}))
+          msg.embed(errorEmbed(msg,`Impossible de trouver le salon \`${message}\`, merci de réessayer !`)).then(deleteM)
           return;
         }
         if(message) message.delete()
