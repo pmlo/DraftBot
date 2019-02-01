@@ -72,16 +72,16 @@ const startTimeout = () => {
             msg.edit('',embed)
         })
     });
-    messages.forEach(message => {
-        if(!messagesList.get(message.rowid)) messagesList.set(message.rowid, 0)
-        const m = messagesList.get(message.rowid);
-        messagesList.set(message.rowid, new Number(m)+1);
-        if(m === message.time){    
-            const messageM = JSON.parse(message.content)
-            DraftBot.channels.get(message.channel).send(messageM.content,messageM.options)
-            messagesList.set(message.rowid, 0);
-        }
-    })
+    // messages.forEach(message => {
+    //     if(!messagesList.get(message.rowid)) messagesList.set(message.rowid, 0)
+    //     const m = messagesList.get(message.rowid);
+    //     messagesList.set(message.rowid, new Number(m)+1);
+    //     if(m === message.time){    
+    //         const messageM = JSON.parse(message.content)
+    //         DraftBot.channels.get(message.channel).send(messageM.content,messageM.options)
+    //         messagesList.set(message.rowid, 0);
+    //     }
+    // })
     setTimeout(startTimeout,60000);
 }
 

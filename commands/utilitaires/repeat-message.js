@@ -10,7 +10,7 @@ module.exports = class InitCommand extends Command {
     super(client, {
       name: 'repeat-message',
       memberName: 'repeat-message',
-      group: 'bot',
+      group: 'utilitaires',
       aliases: ['message-repeat','repeatmessage','messagerepeat','rmessage'],
       description: 'Créer un message récurrent',
       examples: ['repeat-message 30 C\'est mon message'],
@@ -35,6 +35,8 @@ module.exports = class InitCommand extends Command {
   async run(msg, {temps,message}) {
     const db = new Database(path.join(__dirname, '../../storage.sqlite'));
     deleteCommandMessages(msg);
+
+    msg.reply('Le système est désactivé pour l\'instant !')
 
     await parseShortTime(temps).then(response => {
       temps = response.response
