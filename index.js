@@ -47,6 +47,7 @@ const startTimeout = () => {
     const messages = db.prepare(`SELECT rowid,content,channel,time FROM "messages"`).all();
     
     giveaways.forEach(giveaway => {
+        if(!DraftBot.channels.get(giveaway.channel)) return;
         DraftBot.channels.get(giveaway.channel).messages.fetch(giveaway.message)
         .then(async msg => {
             const embed =  msg.embeds[0];
@@ -70,7 +71,7 @@ const startTimeout = () => {
                 embed.setDescription(`${split[0]}**${momento.fromNow()}**`)
             }
             msg.edit('',embed)
-        })
+        }).catch(err => console.log('Giveaway => fecth message',err))
     });
     // messages.forEach(message => {
     //     if(!messagesList.get(message.rowid)) messagesList.set(message.rowid, 0)
