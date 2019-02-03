@@ -114,7 +114,7 @@ DraftBot.on('roleUpdate', (oldRole,newRole) => {
     }
 })
 
-DraftBot.on('unhandledRejection', err => console.error(`ref: ${err.path}\n\nUncaught Promise Rejection: \n${err.stack}`));
+process.on('unhandledRejection', err => console.error(`ref: ${err.path}\n\nUncaught Promise Rejection: \n${err.stack}`));
 
 DraftBot.on('roleDelete', role => sendLogsServ(role.guild,`Le role ${role.name} a été supprimé.`,null))
 

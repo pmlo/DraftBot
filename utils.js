@@ -230,7 +230,8 @@ const guildRemove = async guild => {
       A très bientôt, je l'espère 👋
     `)
 
-    guild.owner.DMChannel.send('',oldGuildEmbed)
+    const dm = await guild.owner.createDM()
+    if(dm) dm.send('',oldGuildEmbed)
 
     const newBotEmbed = new MessageEmbed()
     .setColor(0xce0000)
@@ -279,8 +280,11 @@ const sendLogsServ = (guild,title, message) => {
   if(message !== null) embed.setDescription(message)
 
   if (guild.settings.get('logsMessageServ') === true) {
-    const channel = guild.settings.get('logsChannel') ? guild.channels.find(c => c.id === guild.settings.get('logsChannel').id) : guild.channels.find(c => c.name === 'logs');
-    if(channel) return channel.send('',embed)
+    const channel = msg.guild.settings.get('logsChannel') ? msg.guild.settings.get('logsChannel') : msg.guild.channels.find(c => c.name === 'logs');
+    if(channel !== undefined){
+      msg.guild.channels.find(c => c.id === channel.id).send('',embed)
+      return;
+    }
     return guild.systemChannel.send(error('impossible de trouver de channel de logs !'))
   }
 } 
