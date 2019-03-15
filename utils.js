@@ -168,10 +168,10 @@ const guildAdd = async guild => {
 
     Je possède de nombreuses commandes, elles sont toutes visibles avec \`${guild.client.commandPrefix}help\`.
 
-    Vous n'apréciez pas mon prefix ? \`${guild.client.commandPrefix}prefix [nouveau prefix]\`
-    Toutes mes commandes peuvent être lancés à partir de mon prefix \`${guild.client.commandPrefix}\` ou par mention \`@${guild.client.user.tag}\`
+    Vous n'appréciez pas mon prefix ? \`${guild.client.commandPrefix}prefix [nouveau prefix]\`
+    Toutes mes commandes peuvent être lancées à partir de mon prefix \`${guild.client.commandPrefix}\` ou par mention \`@${guild.client.user.tag}\`
 
-    **Pour répondre au mieux à vos besoins vous pouvez me configurer facielement avec: \`${guild.client.commandPrefix}init\`**
+    **Pour répondre au mieux à vos besoins vous pouvez me configurer facilement avec: \`${guild.client.commandPrefix}init\`**
     `)
 
     if(channel !== null) channel.send(newGuildEmbed);

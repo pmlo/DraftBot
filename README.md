@@ -17,7 +17,7 @@
 </div>
 
 ## A Propos
-DraftBot est un bot polivalent et 100% français à l'écoute des communautés afin de répondre le mieux à leurs besoins Il est développé en NodeJS avec la librairie DiscordJs et le framework Discord Commando
+DraftBot est un bot polyvalent et 100% français à l'écoute des communautés afin de répondre au mieux à leurs besoins. Il est développé en NodeJS avec la librairie DiscordJs et le framework Discord Commando
 
 [![DraftBot - Support](https://discordapp.com/api/guilds/422112414964908042/embed.png?style=banner2)](https://www.draftman.fr/discord)
 
@@ -45,7 +45,7 @@ DraftBot est un bot polivalent et 100% français à l'écoute des communautés a
 
 - Tous les créateurs de packages nodejs que j'ai pu utiliser sur ce projet
 
-## Auto-Hébergement (fortement déconsillé)
+## Auto-Hébergement (fortement déconseillé)
 
 ### #1 Téléchargement du bot
 ```

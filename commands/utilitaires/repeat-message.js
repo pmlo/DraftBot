@@ -17,7 +17,7 @@ module.exports = class InitCommand extends Command {
       guildOnly: true,
       args: [{
           key: 'temps',
-          prompt: 'Quel est le temps de récurence pour le message ?',
+          prompt: 'Combien de temps doit s\'écouler entre chaque message ?\nExemple : `30m` pour 30 minutes ; `3h` pour 3 heures ; `3j` ou `3d` pour 3 jours',
           type: 'string'
         },
         {
